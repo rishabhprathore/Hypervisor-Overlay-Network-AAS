@@ -91,7 +91,7 @@ def defineVM(conn, xmlPath):
     """
     f = open(xmlPath)
     xmlconfig = f.read()
-    dom = conn.defineXML(xmlconfig, 0)
+    dom = conn.defineXML(xmlconfig)
     if dom == None:
         print('Failed to define a domain from an XML definition.', file=sys.stderr)
         exit(1)
@@ -105,6 +105,7 @@ def defineVM(conn, xmlPath):
 def main():
 
     conn = getConnection()
+    defineVM(conn,"/home/atandon/sampleVM.xml")
 
 
 
