@@ -65,6 +65,18 @@ def defineVM(conn, xmlPath):
     f.close()
 
 
+def listNetworks(conn):
+    """
+    List all the virtual networks in the hypervisor
+    :param conn: connection pointer
+    """
+    networks = conn.listNetworks()
+    print('Virtual networks:')
+    for network in networks:
+        print('  ' + network)
+    print(' ')
+
+
 def main():
 
     conn = getConnection()
