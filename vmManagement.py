@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import sys
 import libvirt
+import commands
 
 def environmentSetup():
     """
@@ -45,6 +46,42 @@ def listDomInfo(conn):
         print(' ')
 
 
+def defineNetwork(conn, xmlPath, networkName):
+    # create a persistent virtual network
+    os.system("brctl addbr %s\nip link set %s up" %(networkName,networkName))
+    f = open(xmlPath)
+    xmlconfig = f.read()
+    network = conn.networkCreateXML(xmlconfig)
+    if network == None:
+        print('Failed to create a virtual network', file=sys.stderr)
+        exit(1)
+    active = network.isActive()
+    if active == 1:
+        print('The new persistent virtual network is active')
+    else:
+        print('The new persistent virtual network is not active')
+
+
+
+
+
+def listNetworks(conn):
+    """
+    List all the virtual networks in the hypervisor
+    :param conn: connection pointer
+    """
+    networks = conn.listNetworks()
+    print('Virtual networks:')
+    for network in networks:
+        print('  ' + network)
+    print(' ')
+
+    #### If you need to get list of linux virtual bridges uncomment the below lines
+    # status, output = commands.getstatusoutput("brctl show | cut -f1")
+    # existing = [x for x in output.split("\n")[1:] if x != '']
+    # print(existing)
+
+
 def defineVM(conn, xmlPath):
     """
     Creates a persistent VM and boots it up
@@ -63,18 +100,6 @@ def defineVM(conn, xmlPath):
         exit(1)
     print('Guest '+dom.name()+' has booted', file=sys.stderr)
     f.close()
-
-
-def listNetworks(conn):
-    """
-    List all the virtual networks in the hypervisor
-    :param conn: connection pointer
-    """
-    networks = conn.listNetworks()
-    print('Virtual networks:')
-    for network in networks:
-        print('  ' + network)
-    print(' ')
 
 
 def main():
