@@ -19,7 +19,7 @@ class Connection:
         for cmd in cmd_list:
             ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
             print(ssh_stdout.read())
-            res.append = ssh_stdout.read()
+            res.append(ssh_stdout.read())
         return res
 
 """
