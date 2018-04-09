@@ -6,21 +6,7 @@ import libvirt
 import jinja2
 import commands
 
-def environmentSetup():
-    """
-    Installs all the required libraries for KVM based VM creation & management on Ubuntu
-    """
-    os.system("sudo apt-get -y install qemu-kvm")
-    os.system("sudo apt-get -y install libvirt-bin")
-    os.system("sudo apt-get -y install virt-manager")
-    os.system("sudo apt-get -y install virt-viewer")
-    os.system("sudo apt-get install python-libvirt")
-    os.system("sudo apt-get install libvirt-doc")
 
-    ### Have to INSTALL the following before the script runs
-    # apt install -y python-pip
-    # pip install --upgrade pip
-    # pip install Jinja2
 
 def getConnection():
     """
@@ -53,6 +39,11 @@ def listDomInfo(conn):
 
 
 def defineNetwork(conn, networkName):
+    """
+    Creates a linux-bridge and then activates a persistent VIRSH Network
+    :param conn: connection pointer
+    :param networkName: name of the Network
+    """
     # create a persistent virtual network
     os.system("brctl addbr %s\nip link set %s up" %(networkName,networkName))
     JINJA_ENVIRONMENT = jinja2.Environment(
