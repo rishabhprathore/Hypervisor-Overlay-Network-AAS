@@ -62,9 +62,6 @@ def defineNetwork(conn, xmlPath, networkName):
         print('The new persistent virtual network is not active')
 
 
-
-
-
 def listNetworks(conn):
     """
     List all the virtual networks in the hypervisor
@@ -95,7 +92,7 @@ def defineVM(conn, xmlPath):
     if dom == None:
         print('Failed to define a domain from an XML definition.', file=sys.stderr)
         exit(1)
-    if dom.create(dom) < 0:
+    if dom.create() < 0:
         print('Can not boot guest domain.', file=sys.stderr)
         exit(1)
     print('Guest '+dom.name()+' has booted', file=sys.stderr)
