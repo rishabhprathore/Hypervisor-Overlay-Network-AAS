@@ -5,7 +5,6 @@ import sys
 import paramiko
 
 class Connection:
-
     def init(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
         try:
             self.ssh = paramiko.SSHClient()
