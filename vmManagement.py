@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import sys
 import libvirt
+import jinja2
 import commands
 
 def environmentSetup():
@@ -16,6 +17,11 @@ def environmentSetup():
     os.system("sudo apt-get install python-libvirt")
     os.system("sudo apt-get install libvirt-doc")
 
+    ### Have to INSTALL the following before the script runs
+    # apt install -y python-pip
+    # pip install --upgrade pip
+    # pip install Jinja2
+
 def getConnection():
     """
     Opens a connection to the local hypervisor
@@ -24,7 +30,7 @@ def getConnection():
     conn = libvirt.open('qemu:///system')
     if conn == None:
         print('Failed to open connection to qemu:///system', file=sys.stderr)
-        exit(1)
+        return
     else:
         return conn
 
@@ -46,20 +52,33 @@ def listDomInfo(conn):
         print(' ')
 
 
-def defineNetwork(conn, xmlPath, networkName):
+def defineNetwork(conn, networkName):
     # create a persistent virtual network
     os.system("brctl addbr %s\nip link set %s up" %(networkName,networkName))
-    f = open(xmlPath)
+    JINJA_ENVIRONMENT = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+        extensions=['jinja2.ext.autoescape'],
+        autoescape=True)
+    template_values = {
+        'networkName': networkName,
+        'bridgeName': networkName,
+    }
+    template = JINJA_ENVIRONMENT.get_template("bridge.xml")
+    finalXML = template.render(template_values)
+    filename = '/tmp/%s' %networkName
+    with open(filename, 'w') as f:
+        f.write(finalXML)
+    f.close()
+
+    f = open(filename)
     xmlconfig = f.read()
-    network = conn.networkCreateXML(xmlconfig)
+    network = conn.networkDefineXML(xmlconfig)
     if network == None:
         print('Failed to create a virtual network', file=sys.stderr)
-        exit(1)
-    active = network.isActive()
-    if active == 1:
-        print('The new persistent virtual network is active')
-    else:
-        print('The new persistent virtual network is not active')
+        return
+    network.setAutostart(True)
+    network.create()
+    print('The new persistent virtual network is active')
 
 
 def listNetworks(conn):
