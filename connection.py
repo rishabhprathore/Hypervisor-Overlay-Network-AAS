@@ -10,8 +10,8 @@ class Connection:
         try:
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(remote_ip, username=username, pkey=privkey)
+            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.ssh.connect(remote_ip, username=username, pkey=privkey)
         except as e:
             print("Error while initiating connection to remote hypervisor: ", e)
 
