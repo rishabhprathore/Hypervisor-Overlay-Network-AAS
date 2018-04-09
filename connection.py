@@ -17,7 +17,7 @@ class Connection:
     def ssh_remote(self, cmd_list):
         for cmd in cmd_list:
             ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
-            print(stdout.read())
+            print(ssh_stdout.read())
 
 """
 conn = libvirt.open('qemu+ssh://ckogant@152.46.18.27/system')
