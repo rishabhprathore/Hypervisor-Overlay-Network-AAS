@@ -5,7 +5,7 @@ import sys
 import paramiko
 
 class Connection:
-    def init(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
+    def __init__(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
         try:
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
