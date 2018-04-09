@@ -19,8 +19,8 @@ class Connection:
         for cmd in cmd_list:
             ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
             #print(type(ssh_stdout.read())
-            if ssh_stdout is '':
-                if ssh_stderr is not '':
+            if ssh_stdout is None:
+                if ssh_stderr is not None:
                     res.append('error:',ssh_stderr.read())
                     print(res[-1])
                     continue
