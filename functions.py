@@ -62,7 +62,6 @@ def assign_ip_address_namespace(name_space, interface, ip_address, primary=True)
     global prefix
     cmd = prefix + name_space + ' ip addr add '+ ip_address + ' dev {}'.format(interface)
     print(cmd)
-    set_link_up_in_namespace(name_space, interface, primary)
     if primary==True:
         print('local:')
         os.system(cmd)
