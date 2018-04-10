@@ -2,6 +2,7 @@ from connection import Connection
 import os
 
 conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
+print("fucntions imported")
 prefix = 'sudo ip netns exec '
 
 def create_namespace(name, primary='True'):
