@@ -12,6 +12,7 @@ apt-get install libvirt-doc
 apt install -y python-pip
 pip install --upgrade pip
 pip install Jinja2
+pip install pyyaml
 pip install paramiko
 cd /var/lib/libvirt/boot
 wget http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2

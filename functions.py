@@ -1,5 +1,7 @@
+from __future__ import print_function
 from connection import Connection
 import os
+
 print("fucntions imported")
 
 conn = None
@@ -15,6 +17,7 @@ def get_connection():
 
 def create_namespace(name, primary='True'):
     cmd = 'sudo ip netns add {}'.format(name)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
@@ -23,6 +26,7 @@ def create_namespace(name, primary='True'):
 
 def create_vethpair(name1, name2, primary='True'):
     cmd = 'sudo ip link add {} type veth peer name {}'.format(name1, name2)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
@@ -30,17 +34,19 @@ def create_vethpair(name1, name2, primary='True'):
     return
 
 def set_link_up(interface_name,primary=True):
-    cmd1= 'sudo ip link set dev {} up'.format(interface_name)
+    cmd= 'sudo ip link set dev {} up'.format(interface_name)
+    print(cmd)
     if primary == True:
-        os.system(cmd1)
+        os.system(cmd)
         return
-    conn.ssh_remote([cmd1])
+    conn.ssh_remote([cmd])
     return
 
 
 def set_link_up_in_namespace(name_space, interface, primary=True):
     global prefix
-    cmd= prefix + name_space + 'ip link set dev {} up'.format(interface)
+    cmd= prefix + name_space + ' ip link set dev {} up'.format(interface)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
@@ -50,7 +56,8 @@ def set_link_up_in_namespace(name_space, interface, primary=True):
 
 def assign_ip_address_namespace(name_space, interface, ip_address, primary=True):
     global prefix
-    cmd = prefix + name_space + 'ip addr add '+ ip_address + ' dev {}'.format(interface)
+    cmd = prefix + name_space + ' ip addr add '+ ip_address + ' dev {}'.format(interface)
+    print(cmd)
     set_link_up_in_namespace(name_space, interface, primary)
     if primary==True:
         os.system(cmd)
@@ -60,6 +67,7 @@ def assign_ip_address_namespace(name_space, interface, ip_address, primary=True)
 
 def assign_ip_address(interface, ip_address, primary=True):
     cmd = 'sudo ip addr add {} dev {}'.format(ip_address,interface)
+    print(cmd)
     set_link_up(interface, primary)
     if primary==True:
         os.system(cmd)
@@ -70,6 +78,7 @@ def assign_ip_address(interface, ip_address, primary=True):
 
 def move_veth_to_namespace(vethname, name_space, primary=True):
     cmd = 'sudo ip link set {} netns {}'.format(vethname, name_space)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
@@ -79,6 +88,7 @@ def move_veth_to_namespace(vethname, name_space, primary=True):
 
 def move_veth_to_bridge(vethname, bridge_name, primary=True):
     cmd = 'sudo brctl addif {} {}'.format(bridge_name, vethname)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
@@ -87,6 +97,7 @@ def move_veth_to_bridge(vethname, bridge_name, primary=True):
 
 def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
     cmd= 'sudo ip tunnel {} mode gre remote {} local {} ttl 255'.format(gre_tunnel_name, remote_ip, local_ip)
+    print(cmd)
     if primary==True:
         os.system(cmd)
         return
