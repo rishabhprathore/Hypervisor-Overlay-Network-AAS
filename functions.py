@@ -135,6 +135,16 @@ def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
     conn.ssh_remote([cmd])
     return
 
+def add_route_for_gre_cidr(cidr, gre_tunnel_name,primary=True):
+    cmd = 'sudo ip route add {} dev {}'.format(cidr, gre_tunnel_name)
+    print(cmd)
+    if primary==True:
+        print('local:')
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
 def add_route_in_hypervisor(ip_address, interface, primary=True):
     ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add default via {} dev {}'.format(ip_address, interface)
@@ -144,4 +154,42 @@ def add_route_in_hypervisor(ip_address, interface, primary=True):
         os.system(cmd)
         return
     conn.ssh_remote([cmd])
+    return
+
+def add_route_in_hypervisor_non_default(ip_address,subnet, primary=True):
+    ip_address=ip_address.split('/')[0]
+    cmd = 'sudo ip route add {} via {} '.format(subnet, ip_address)
+    print(cmd)
+    if primary==True:
+        print('local:')
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
+def add_route_in_namespace(name_space,ip_address, primary=True):
+    global prefix
+    ip_address=ip_address.split('/')[0]
+    cmd = prefix+ 'sudo ip route add default via {}'.format(ip_address)
+    print(cmd)
+    if primary==True:
+        print('local:')
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
+def create_vxlan_tunnel(remote_ip, local_ip, vxlan_tunnel_name,bridge_name, primary=True):
+    cmd= 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(vxlan_tunnel_name, id, remote_ip, interface)
+    cmd_1= 'brctl addif {} {}'.format(bridge_name,vxlan_tunnel_name)
+    cmd_2= 'ip link set {} up'.format(vxlan_tunnel_name)
+
+    cmd_list=[cmd,cmd_1,cmd_2]
+    print(cmd)
+    if primary==True:
+        print('local:')
+        for cmd in cmd_list:
+            os.system(cmd)
+        return
+    conn.ssh_remote(cmd_list)
     return
