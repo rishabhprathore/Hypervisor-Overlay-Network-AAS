@@ -11,7 +11,7 @@ import functions
 #functions.set_link_up_in_namespace('testNS2', 'test_veth0', primary=True)
 #functions.assign_ip_address('test_veth1', '99.99.99.2/24', primary=True)
 functions.set_link_up('test_veth1', primary=True)
-print('')
+print ''
 
 
 
