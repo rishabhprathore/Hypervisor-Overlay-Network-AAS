@@ -120,6 +120,7 @@ def defineVM(vmIP="192.168.1.2", subnet="24", bridgeName="default"):
     with open('/var/user-data', 'w') as yaml_file:
         yaml.dump(userYamlDict, yaml_file, default_flow_style=False)
 
+    os.system("pip uninstall -y  pyOpenSSL")
     os.system("bash defineVM.sh {0} {1} {2}".format(vmIP, subnet, bridgeName))
 
 
