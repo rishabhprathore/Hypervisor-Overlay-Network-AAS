@@ -85,4 +85,13 @@ def move_veth_to_bridge(vethname, bridge_name, primary=True):
     conn.ssh_remote([cmd])
     return
 
+def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
+    cmd= 'sudo ip tunnel {} mode gre remote {} local {} ttl 255'.format(gre_tunnel_name, remote_ip, local_ip)
+    if primary==True:
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
 
+def create_vxlan_tunnel(vxdevice, remote_ip,  ):
+    cmd= 'sudo ip link {} type vxlan id'
