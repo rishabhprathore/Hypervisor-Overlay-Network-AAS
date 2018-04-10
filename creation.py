@@ -18,8 +18,8 @@ def create_tenant(tenant_id=''):
     tenant_name='T'+str(tenant_id)
     #create namespace PGW-TNAME
     ns_name='PGW-'+tenant_name
-    veth_hyp = 'pgw-hyp-t'+str(tenant_id)
-    veth_ns='hypt'+str(tenant_id)+'-pgw'
+    veth_ns = 'pgw-hyp-t'+str(tenant_id)
+    veth_hyp='hyp-t'+str(tenant_id)+'-pgw'
     veth_hyp_ip='1.1.'+str(tenant_id)+'.1'
     veth_ns_ip='1.1.'+str(tenant_id)+'.2'
     functions.create_namespace(ns_name, primary=True)
