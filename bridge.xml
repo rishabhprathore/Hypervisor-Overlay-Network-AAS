@@ -1,5 +1,5 @@
 <network>
   <name>{{ networkName }}</name>
-  <bridge name={{ bridgeName }}/>
+  <bridge name="{{ bridgeName }}"/>
   <forward mode="bridge"/>
 </network>
