@@ -11,7 +11,7 @@ class Connection:
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             self.ssh.connect(remote_ip, username=username, pkey=privkey)
-        except e:
+        except Exception as e:
             print("Error while initiating connection to remote hypervisor: ", e)
 
     def ssh_remote(self, cmd_list):
@@ -20,7 +20,7 @@ class Connection:
             ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
             #print(type(ssh_stdout.read())
             if ssh_stdout is '':
-                print("test1")
+                #print("test1")
                 if ssh_stderr is not None:
                     res.append('error:',ssh_stderr.read())
                     print(res[-1])
