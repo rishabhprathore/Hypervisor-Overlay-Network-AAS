@@ -2,10 +2,10 @@ from connection import Connection
 import os
 print("fucntions imported")
 
-conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
+#conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 prefix = 'sudo ip netns exec '
 
-def create_namespace(name, primary='True'):
+def create_namespace(conn, name, primary='True'):
     cmd = 'sudo ip netns add {}'.format(name)
     if primary==True:
         os.system(cmd)
