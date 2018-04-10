@@ -45,7 +45,7 @@ def set_link_up(interface_name,primary=True):
 
 def set_link_up_in_namespace(name_space, interface, primary=True):
     global prefix
-    cmd= prefix + name_space + 'ip link set dev {} up'.format(interface)
+    cmd= prefix + name_space + ' ip link set dev {} up'.format(interface)
     print(cmd)
     if primary==True:
         os.system(cmd)
@@ -56,7 +56,7 @@ def set_link_up_in_namespace(name_space, interface, primary=True):
 
 def assign_ip_address_namespace(name_space, interface, ip_address, primary=True):
     global prefix
-    cmd = prefix + name_space + 'ip addr add '+ ip_address + ' dev {}'.format(interface)
+    cmd = prefix + name_space + ' ip addr add '+ ip_address + ' dev {}'.format(interface)
     print(cmd)
     set_link_up_in_namespace(name_space, interface, primary)
     if primary==True:
