@@ -93,5 +93,28 @@ def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
     conn.ssh_remote([cmd])
     return
 
-def create_vxlan_tunnel(vxdevice, remote_ip,  ):
-    cmd= 'sudo ip link {} type vxlan id'
+def add_default_route_in_namespace(ip_address, interface_name, name_space, primary=True):
+    global prefix
+    cmd = prefix + '{} ip route add default via {} dev {}'.format(name_space, ip_address, interface_name)
+    if primary==True:
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
+
+def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
+    cmd = 'sudo ip route add {} dev {}'.format(ip_address, gre_tunnel_name)
+    if primary==True:
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
+def add_route_in_hypervisor(ip_address, interface, primary=True):
+    cmd = 'sudo ip route add default via {} dev {}'.format(ip_address, interface)
+    if primary==True:
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
