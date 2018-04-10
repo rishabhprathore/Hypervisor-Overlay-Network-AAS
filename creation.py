@@ -85,7 +85,7 @@ def create_tenant(tenant_id=''):
 
 
     #to create a GRE tunnel in primary
-    functions.create_gre_tunnel(secondary_ip_l2+'/20', primary_ip_l2+'/20', gre_tunnel_name, primary=True)
+    functions.create_gre_tunnel(secondary_ip_l2, primary_ip_l2, gre_tunnel_name, primary=True)
     functions.set_link_up(gre_tunnel_name, primary=True)
     functions.assign_ip_address(gre_tunnel_name, gre_tunnel_ip_local, primary=True)
 
@@ -93,7 +93,7 @@ def create_tenant(tenant_id=''):
     functions.add_route_for_gre(gre_tunnel_ip_remote, gre_tunnel_name, primary=True)
 
     # to create a GRE tunnel in secondary
-    functions.create_gre_tunnel(primary_ip_l2+'/20', secondary_ip_l2+'/20', gre_tunnel_name, primary=False)
+    functions.create_gre_tunnel(primary_ip_l2, secondary_ip_l2, gre_tunnel_name, primary=False)
     functions.set_link_up(gre_tunnel_name, primary=False)
     functions.assign_ip_address(gre_tunnel_name, gre_tunnel_ip_remote, primary=False)
 
