@@ -35,8 +35,8 @@ def create_tenant(tenant_id=''):
 
     #local ::Another a namespace for tenant (input: tenant_name)
     functions.create_namespace(tenant_name, primary=True)
-    veth_pgw_t='pgw_t'+str(tenant_id)
-    veth_t_pgw='t'+str(tenant_id)+'_pgw'
+    veth_t_pgw='pgw_t'+str(tenant_id)
+    veth_pgw_t='t'+str(tenant_id)+'_pgw'
     veth_pgw_t_ip='192.168.'+str(tenant_id)+'.1'
     veth_t_pgw_ip='192.168.'+str(tenant_id)+'.2'
     functions.create_vethpair(veth_pgw_t,veth_t_pgw,primary=True)
