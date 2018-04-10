@@ -112,6 +112,7 @@ def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
     return
 
 def add_default_route_in_namespace(ip_address, interface_name, name_space, primary=True):
+    ip_address=ip_address.split('/')[0]
     global prefix
     cmd = prefix + '{} ip route add default via {} dev {}'.format(name_space, ip_address, interface_name)
     print(cmd)
@@ -124,6 +125,7 @@ def add_default_route_in_namespace(ip_address, interface_name, name_space, prima
 
 
 def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
+    ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add {} dev {}'.format(ip_address, gre_tunnel_name)
     print(cmd)
     if primary==True:
@@ -134,6 +136,7 @@ def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
     return
 
 def add_route_in_hypervisor(ip_address, interface, primary=True):
+    ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add default via {} dev {}'.format(ip_address, interface)
     print(cmd)
     if primary==True:
