@@ -1,5 +1,6 @@
+echo -e "\n## NOTE ## ---> ** Before running the script, switch to root user! If you are not root, "CTRL + C" now!!! **"
+sleep 3
 echo -e "\n\n******Starting with environment setup******\n"
-sudo su
 apt-get -y install qemu-kvm
 apt-get -y install libvirt-bin
 apt-get -y install virt-manager
