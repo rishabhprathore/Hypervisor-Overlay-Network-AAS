@@ -1,6 +1,7 @@
+from __future__ import print_function
 from connection import Connection
 import os
-from __future__ import print_function
+
 print("fucntions imported")
 
 conn = None
