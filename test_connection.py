@@ -1,10 +1,12 @@
 from connection import Connection
 import functions
+import creation
 #conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
-functions.get_connection()
-functions.create_gre_tunnel('1.1.1.1', '2.2.2.2', 'gre_test', primary=True)
+#functions.get_connection()
+#functions.create_gre_tunnel('1.1.1.1', '2.2.2.2', 'gre_test', primary=True)
 
-
+#primary_conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
+creation.create_tenant(25)
 print ''
 
 """
