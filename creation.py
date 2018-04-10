@@ -14,6 +14,7 @@ secondary_ip_l2='10.25.12.13'
 
 
 def create_tenant(tenant_id=''):
+    functions.get_connection()
     tenant_name='T'+str(tenant_id)
     #create namespace PGW-TNAME
     ns_name='PGW-'+tenant_name
