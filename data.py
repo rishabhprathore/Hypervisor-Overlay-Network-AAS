@@ -8,3 +8,5 @@ data_store={'PGW-T1':{'NS1':{'interfaces':{'veth1':'192.168.1.1',
 }
 
 pprint(data_store)
+
+print(data_store['PGW-T1']['NS1']['veth1'])
