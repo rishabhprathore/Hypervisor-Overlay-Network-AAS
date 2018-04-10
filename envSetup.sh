@@ -1,3 +1,4 @@
+#!/bin/bash
 echo -e "\n## NOTE ## ---> ** Before running the script, switch to root user! If you are not root, "CTRL + C" now!!! **"
 sleep 3
 echo -e "\n\n******Starting with environment setup******\n"
