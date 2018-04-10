@@ -73,7 +73,6 @@ def assign_ip_address_namespace(name_space, interface, ip_address, primary=True)
 def assign_ip_address(interface, ip_address, primary=True):
     cmd = 'sudo ip addr add {} dev {}'.format(ip_address,interface)
     print(cmd)
-    set_link_up(interface, primary)
     if primary==True:
         print('local:')
         os.system(cmd)
