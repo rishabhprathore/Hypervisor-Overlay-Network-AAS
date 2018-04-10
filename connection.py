@@ -11,6 +11,10 @@ class Connection:
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             self.ssh.connect(remote_ip, username=username, pkey=privkey)
+
+            self.primary_conn=libvirt.open('qemu:///system')
+
+            self.secondary_con=libvirt.open('qemu+ssh://{}@{}/system'.format(username,remote_ip))
         except Exception as e:
             print("Error while initiating connection to remote hypervisor: ", e)
 
