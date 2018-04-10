@@ -34,12 +34,12 @@ def create_vethpair(name1, name2, primary='True'):
     return
 
 def set_link_up(interface_name,primary=True):
-    cmd1= 'sudo ip link set dev {} up'.format(interface_name)
+    cmd= 'sudo ip link set dev {} up'.format(interface_name)
     print(cmd)
     if primary == True:
-        os.system(cmd1)
+        os.system(cmd)
         return
-    conn.ssh_remote([cmd1])
+    conn.ssh_remote([cmd])
     return
 
 
