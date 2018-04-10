@@ -4,6 +4,7 @@ import os
 import sys
 import libvirt
 import jinja2
+import yaml
 import commands
 
 
@@ -89,24 +90,50 @@ def listNetworks(conn):
     # print(existing)
 
 
-def defineVM(conn, xmlPath):
+def defineVM(vmIP="192.168.1.2", subnet="24", bridgeName="default"):
+    ## old signature: def defineVM(conn, xmlPath)
     """
     Creates a persistent VM and boots it up
     :param conn: connection pointer
     :param xmlPath: absolute path to xml config file as string
     :return:
     """
-    f = open(xmlPath)
-    xmlconfig = f.read()
-    dom = conn.defineXML(xmlconfig)
-    if dom == None:
-        print('Failed to define a domain from an XML definition.', file=sys.stderr)
-        exit(1)
-    if dom.create() < 0:
-        print('Can not boot guest domain.', file=sys.stderr)
-        exit(1)
-    print('Guest '+dom.name()+' has booted', file=sys.stderr)
-    f.close()
+    userYamlDict = {}
+    with open("user-data", 'r') as stream:
+        try:
+            userYamlDict = yaml.load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+            print("\nUser-data file not found or is empty")
+            return
+
+    userYamlDict['runcmd'].insert(0, "ip addr add {0}/{1} dev eth0".format(vmIP, subnet))
+    gw = vmIP.split(".")
+    gw[-1] = "1"
+    gw = ".".join(gw)
+    userYamlDict['runcmd'].insert(1, "ip route add default via %s dev eth0" % gw)
+    nw = gw.split(".")
+    nw[-1] = "0"
+    nw = ".".join(nw)
+    userYamlDict['runcmd'].insert(2, "ip route add {0}/{1} dev eth0".format(nw, subnet))
+    os.system("touch /var/user-data")
+    with open('/var/user-data', 'w') as yaml_file:
+        yaml.dump(userYamlDict, yaml_file, default_flow_style=False)
+
+    os.system("bash defineVM.sh {0} {1} {2}".format(vmIP, subnet, bridgeName))
+
+
+    # f = open(xmlPath)
+    # xmlconfig = f.read()
+    # dom = conn.defineXML(xmlconfig)
+    # if dom == None:
+    #     print('Failed to define a domain from an XML definition.', file=sys.stderr)
+    #     exit(1)
+    # if dom.create() < 0:
+    #     print('Can not boot guest domain.', file=sys.stderr)
+    #     exit(1)
+    # print('Guest '+dom.name()+' has booted', file=sys.stderr)
+    # f.close()
 
 
 def main():
