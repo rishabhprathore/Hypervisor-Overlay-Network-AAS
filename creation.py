@@ -20,8 +20,8 @@ def create_tenant(tenant_id=''):
     ns_name='PGW-'+tenant_name
     veth_ns = 'pgw-hyp-t'+str(tenant_id)
     veth_hyp='hyp-t'+str(tenant_id)+'-pgw'
-    veth_hyp_ip='1.1.'+str(tenant_id)+'.1'
-    veth_ns_ip='1.1.'+str(tenant_id)+'.2'
+    veth_hyp_ip='1.1.'+str(tenant_id)+'.2'
+    veth_ns_ip='1.1.'+str(tenant_id)+'.1'
     functions.create_namespace(ns_name, primary=True)
     #Create veth pair in hypervisor  (pgw-hypt11)(1.1.1.1)(<1.1.tenant-id.1>)
     functions.create_vethpair(veth_hyp,veth_ns,primary=True)
@@ -35,15 +35,15 @@ def create_tenant(tenant_id=''):
 
     #local ::Another a namespace for tenant (input: tenant_name)
     functions.create_namespace(tenant_name, primary=True)
-    veth_t_pgw='pgw_t'+str(tenant_id)
-    veth_pgw_t='t'+str(tenant_id)+'_pgw'
+    veth_pgw_t='pgw_t'+str(tenant_id)
+    veth_t_pgw='t'+str(tenant_id)+'_pgw'
     veth_pgw_t_ip='192.168.'+str(tenant_id)+'.1'
     veth_t_pgw_ip='192.168.'+str(tenant_id)+'.2'
     functions.create_vethpair(veth_pgw_t,veth_t_pgw,primary=True)
 
-    functions.move_veth_to_namespace(veth_pgw_t, tenant_name, primary=True)
-    functions.assign_ip_address_namespace(tenant_name, veth_pgw_t, veth_pgw_t_ip, primary=True)
-    functions.set_link_up_in_namespace(tenant_name, veth_pgw_t, primary=True)
+    functions.move_veth_to_namespace(veth_pgw_t, ns_name, primary=True)
+    functions.assign_ip_address_namespace(ns_name, veth_pgw_t, veth_pgw_t_ip, primary=True)
+    functions.set_link_up_in_namespace(ns_name, veth_pgw_t, primary=True)
 
     functions.move_veth_to_namespace(veth_t_pgw, tenant_name, primary=True)
     functions.assign_ip_address_namespace(tenant_name, veth_t_pgw, veth_t_pgw_ip, primary=True)
@@ -53,17 +53,18 @@ def create_tenant(tenant_id=''):
     functions.create_namespace(tenant_name, primary=False)
 
     veth_tenant='t'+str(tenant_id)+'-hyp'
-    veth_t1_hyp='hyp-t'+str(tenant_id)
-    veth_t1_hyp_ip='192.168.'+str(tenant_id)+'.1'
+    veth_hyp_t='hyp-t'+str(tenant_id)
+    veth_hyp_t_ip='192.168.'+str(tenant_id)+'.1'
     veth_tenant_ip='192.168.'+str(tenant_id)+'.2'
 
-    functions.create_vethpair(veth_tenant, veth_t1_hyp, primary=False)
-    functions.move_veth_to_namespace(veth_t1_hyp, tenant_name, primary=False)
-    functions.assign_ip_address_namespace(tenant_name, veth_t1_hyp, veth_t1_hyp_ip, primary=False)
+    functions.create_vethpair(veth_tenant, veth_hyp_t, primary=False)
 
-    functions.set_link_up_in_namespace(tenant_name, veth_t1_hyp, primary=False)
-    functions.assign_ip_address(veth_tenant, veth_tenant_ip, primary=False)
-    functions.set_link_up(veth_tenant, primary=False)
+    functions.move_veth_to_namespace(veth_tenant, tenant_name, primary=False)
+    functions.assign_ip_address_namespace(tenant_name, veth_tenant, veth_tenant_ip, primary=False)
+    functions.set_link_up_in_namespace(tenant_name, veth_tenant, primary=False)
+
+    functions.assign_ip_address(veth_hyp_t, veth_hyp_t_ip, primary=False)
+    functions.set_link_up(veth_hyp_t, primary=False)
 
     #add default route via 1.1.1.2 in PGW-T1 namespace
 
@@ -75,7 +76,7 @@ def create_tenant(tenant_id=''):
 
     #route in remote
 
-    functions.add_default_route_in_namespace(veth_t1_hyp_ip, veth_tenant, tenant_name, primary=False)
+    functions.add_default_route_in_namespace(veth_hyp_t_ip, veth_tenant, tenant_name, primary=False)
 
     # to create a gre tunnel
 
