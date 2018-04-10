@@ -20,8 +20,8 @@ def create_tenant(tenant_id=''):
     ns_name='PGW-'+tenant_name
     veth_ns = 'pgw-hyp-t'+str(tenant_id)
     veth_hyp='hyp-t'+str(tenant_id)+'-pgw'
-    veth_hyp_ip='1.1.'+str(tenant_id)+'.2'
-    veth_ns_ip='1.1.'+str(tenant_id)+'.1'
+    veth_hyp_ip='1.1.'+str(tenant_id)+'.2/24'
+    veth_ns_ip='1.1.'+str(tenant_id)+'.1/24'
     functions.create_namespace(ns_name, primary=True)
     #Create veth pair in hypervisor  (pgw-hypt11)(1.1.1.1)(<1.1.tenant-id.1>)
     functions.create_vethpair(veth_hyp,veth_ns,primary=True)
@@ -37,8 +37,8 @@ def create_tenant(tenant_id=''):
     functions.create_namespace(tenant_name, primary=True)
     veth_pgw_t='pgw_t'+str(tenant_id)
     veth_t_pgw='t'+str(tenant_id)+'_pgw'
-    veth_pgw_t_ip='192.168.'+str(tenant_id)+'.1'
-    veth_t_pgw_ip='192.168.'+str(tenant_id)+'.2'
+    veth_pgw_t_ip='192.168.'+str(tenant_id)+'.1/24'
+    veth_t_pgw_ip='192.168.'+str(tenant_id)+'.2/24'
     functions.create_vethpair(veth_pgw_t,veth_t_pgw,primary=True)
 
     functions.move_veth_to_namespace(veth_pgw_t, ns_name, primary=True)
@@ -54,8 +54,8 @@ def create_tenant(tenant_id=''):
 
     veth_tenant='t'+str(tenant_id)+'-hyp'
     veth_hyp_t='hyp-t'+str(tenant_id)
-    veth_hyp_t_ip='192.168.'+str(tenant_id)+'.1'
-    veth_tenant_ip='192.168.'+str(tenant_id)+'.2'
+    veth_hyp_t_ip='192.168.'+str(tenant_id)+'.1/24'
+    veth_tenant_ip='192.168.'+str(tenant_id)+'.2/24'
 
     functions.create_vethpair(veth_tenant, veth_hyp_t, primary=False)
 
