@@ -22,6 +22,7 @@ isGreCreated=False
 def create_tenant(tenant_id=''):
     functions.get_connection()
     tenant_name='T'+str(tenant_id)
+    global isGreCreated
     #create namespace PGW-TNAME
     ns_name='PGW-'+tenant_name
     veth_ns = 'pgw-hyp-t'+str(tenant_id)
