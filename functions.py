@@ -12,7 +12,7 @@ def get_connection():
     if conn:
         return conn
     else:
-        conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
+        conn = Connection(remote_ip='152.46.18.192', username='rrathor', pkey_path='/root/.ssh/id_rsa')
     return conn
 
 def create_namespace(name, primary='True'):
