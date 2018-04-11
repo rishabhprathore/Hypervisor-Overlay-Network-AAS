@@ -2,6 +2,9 @@ from __future__ import print_function
 from connection import Connection
 import os
 
+from time import sleep
+import alarm
+
 print("fucntions imported")
 
 conn = None
@@ -14,7 +17,7 @@ def get_connection():
     else:
         conn = Connection(remote_ip='152.46.18.192', username='rrathor', pkey_path='/root/.ssh/id_rsa')
     return conn
-
+"""
 def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
     cmd="virt-install --name {} --memory {}"\ 
         "--vcpu=1 --cpu host "\
@@ -23,10 +26,15 @@ def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
     print(cmd)
     if primary==True:
         print('local:')
-        os.system(cmd) 
+        try:
+            with alarm.Timeout(id='a', seconds=300):
+                os.system(cmd) 
+        except alarm.TimeoutError as e:
+            continue
         return
     conn.ssh_remote([cmd])
     return
+"""
 
 def create_namespace(name, primary='True'):
     cmd = 'sudo ip netns add {}'.format(name)
