@@ -46,11 +46,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
     print(cmd)
     if primary==True:
         print('local:')
-        try:
-            with alarm.Timeout(id='a', seconds=300):
-                os.system(cmd) 
-        except alarm.TimeoutError as e:
-            continue
+        os.system(cmd)
         return
     conn.ssh_remote([cmd])
     return
@@ -220,7 +216,7 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
     conn.ssh_remote([cmd])
     return
 
-def create_vxlan_tunnel(remote_ip, local_ip, vxlan_tunnel_name,bridge_name, primary=True):
+def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,bridge_name, primary=True):
     cmd= 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(vxlan_tunnel_name, id, remote_ip, interface)
     cmd_1= 'brctl addif {} {}'.format(bridge_name,vxlan_tunnel_name)
     cmd_2= 'ip link set {} up'.format(vxlan_tunnel_name)

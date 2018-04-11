@@ -135,6 +135,8 @@ def create_tenant(tenant_id=''):
 
         functions.add_route_in_hypervisor_non_default(veth_ns_ip,subnet_cidr, primary=True)
 
+        functions.create_vm(vm_name,"512",bridge_name,"/tmp/TinyCore.iso", primary=True)
+
     def createVM_secondary_dif_subnet(tenant_id, subnet_cidr, vm_name, vm_ip):
         conn=functions.get_connection()
         tenant_name='T'+str(tenant_id)
@@ -180,6 +182,40 @@ def create_tenant(tenant_id=''):
 
         for subnet in subnet_hyp2_tenant1:
             functions.add_route_for_gre_cidr(subnet, gre_tunnel_name,primary=True)
+
+        functions.create_vm(vm_name,"512",bridge_name,"/tmp/TinyCore.iso", primary=False)
+
+
+    def createVM_secondary_same_subnet(tenant_id, subnet_cidr, vm_name, vm_ip):
+        # tenant bridge on secondary is already created
+        conn=functions.get_connection()
+        tenant_name='T'+str(tenant_id)
+        ip=subnet_cidr.split('/')[0]
+        bridge_name=tenant_name+'-br'+ip
+        vxlan_tunnel_name='vx_'+tenant_name
+        veth_br_t='br-t'+ip
+        veth_t_br='t-br'+ip
+
+        ip_u=unicode(ip,'utf-8')
+        veth_t_br_ip=str(ipaddress.ip_address(ip_u)+1)
+
+        functions.create_vethpair(veth_br_t, veth_t_br, primary=False)
+        functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=False)
+        functions.set_link_up(veth_br_t,primary=False)
+
+        functions.move_veth_to_namespace(veth_t_br, tenant_name, primary=False)
+        functions.assign_ip_address_namespace(tenant_name, veth_t_br, veth_t_br_ip, primary=False)
+        functions.set_link_up_in_namespace(tenant_name, veth_t_br, primary=False)
+
+
+
+        functions.create_vxlan_tunnel(secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
+
+        functions.create_vxlan_tunnel(primary_ip_l2, vxlan_tunnel_name, bridge_name, primary=False)
+
+        functions.create_vm(vm_name,"512",bridge_name,"/tmp/TinyCore.iso", primary=False)
+
+
         
 
 
