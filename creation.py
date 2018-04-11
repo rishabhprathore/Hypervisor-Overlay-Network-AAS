@@ -89,7 +89,7 @@ def create_tenant(tenant_id=''):
     if not isGreCreated:
         gre_tunnel_name='GRE-T'+str(tenant_id)
         gre_tunnel_ip_local='11.1.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_remote='12.1'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_remote='12.1.'+str(tenant_id)+'.1/32'
 
 
         #to create a GRE tunnel in primary
