@@ -3,7 +3,7 @@ from connection import Connection
 import os
 
 from time import sleep
-import alarm
+#import alarm
 
 print("fucntions imported")
 
