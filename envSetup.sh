@@ -14,6 +14,5 @@ pip install --upgrade pip
 pip install Jinja2
 pip install pyyaml
 pip install paramiko
-cd /var/lib/libvirt/boot
 wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /tmp/TinyCore.iso
 echo -e "\n\n******Environment setup completed! ****\n"
