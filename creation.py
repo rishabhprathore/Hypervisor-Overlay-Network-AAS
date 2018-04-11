@@ -13,9 +13,9 @@ subnet_hyp1_tenant1=['10.1.0.0/24','10.2.0.0/24']
 subnet_hyp2_tenant1=['10.2.0.0/24']
 
 primary_ip_l3='152.46.18.168'
-secondary_ip_l3='152.46.18.27'
+secondary_ip_l3='152.46.18.192'
 primary_ip_l2='10.25.7.229'
-secondary_ip_l2='10.25.12.13'
+secondary_ip_l2='10.25.11.143'
 isGreCreated=False
 
 
