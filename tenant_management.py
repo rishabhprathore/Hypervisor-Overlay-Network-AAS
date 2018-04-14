@@ -14,32 +14,29 @@ import vmManagement as vmm
 # creation.create_tenant(5)
 user_data_tenant1 = {
     'tenant': {
-        'id': "1",
+        'id': "3",
         'primary': {
             "subnets": [{
-                "cidr": "",
-                "vm_ips": [""],
+                "cidr": "10.2.5.0/24",
+                "vm_ips": ["10.2.5.3"],
             }, {
-                "cidr": "",
-                "vm_ips": [""],
+                "cidr": "10.2.6.0/24",
+                "vm_ips": ["10.2.6.2"],
             }]
     },
         'secondary': {
             "subnets": [{
-                "cidr": "",
-                "vm_ips": [""],
-            }, {
-                "cidr": "",
-                "vm_ips": [""],
+                "cidr": "10.2.5.0/24",
+                "vm_ips": ["10.2.5.5"],
             }]
     }
 }}
 
 username='rrathor'
-primary_ip_l3='152.46.18.168'
-secondary_ip_l3='152.46.18.192'
-primary_ip_l2='10.25.7.229'
-secondary_ip_l2='10.25.11.143'
+primary_ip_l3='152.46.19.111'
+secondary_ip_l3='152.46.17.221'
+primary_ip_l2='10.25.8.65'
+secondary_ip_l2='10.25.8.12'
 isGreCreated=False
 
 
@@ -188,7 +185,7 @@ def primary(data):
             gre_tunnel_ip_local, gre_tunnel_name, primary=True)
         functions.add_route_for_gre(
             gre_tunnel_ip_remote, gre_tunnel_name, primary=True)
-
+        #
     
         # adding routes for other subnets on secondary
         get_subnets_for_gre = _get_subnets_for_gre_primary(data)
