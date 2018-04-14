@@ -3,6 +3,7 @@ import functions
 import creation
 import ipaddress
 import unicodedata
+import vmManagement as vmm
 
 #conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 #functions.get_connection()
@@ -117,6 +118,8 @@ def _get_subnets_for_gre_secondary(data):
 
 
 def primary(data):
+    global isGreCreated
+    conn=functions.get_connection()
     primary = data.get("primary")
     tenant_id = data.get("id")
     secondary = data.get("secondary")
@@ -125,8 +128,9 @@ def primary(data):
     functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
     ns_name = 'PGW-' + tenant_name
-    veth_ns = 'pgw-hyp-t' + str(tenant_id)
+
     veth_hyp = 'hyp-t' + str(tenant_id) + '-pgw'
+    veth_ns = 'pgw-hyp-t' + str(tenant_id)
     veth_hyp_ip = '1.1.' + str(tenant_id) + '.2/24'
     veth_ns_ip = '1.1.' + str(tenant_id) + '.1/24'
 
@@ -185,14 +189,14 @@ def primary(data):
         functions.add_route_for_gre(
             gre_tunnel_ip_remote, gre_tunnel_name, primary=True)
 
+    
         # adding routes for other subnets on secondary
         get_subnets_for_gre = _get_subnets_for_gre_primary(data)
         for subnet in get_subnets_for_gre:
             functions.add_route_for_gre_cidr(
                 subnet, gre_tunnel_name, primary=True)
         isGreCreated = True
-        ##
-
+        
     ## VXLAN part
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
@@ -207,6 +211,13 @@ def primary(data):
         veth_t_br = 't-br' + ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)
+
+
+        #add routes for all the primary subnets in primary hypervisor
+        functions.add_route_in_hypervisor_non_default(
+            veth_ns_ip, cidr, primary=True)
+
+        vmm.defineNetwork(conn.primary_conn, bridge_name)
 
         functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
         functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=True)
@@ -230,13 +241,9 @@ def primary(data):
             vxlan_tunnel_name = 'vx_' + tenant_name + ip
             functions.create_vxlan_tunnel(
                 secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
-    # Subnets for that tenant
-    subnets = primary.get("subnets")
-    
-    
 
 def secondary(data):
-    functions.get_connection()
+    conn = functions.get_connection()
     tenant_id = data["tenant"]["id"]
     tenant_name='T'+str(tenant_id)
 
@@ -300,6 +307,7 @@ def secondary(data):
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)
 
+        vmm.defineNetwork(conn.secondary_conn, bridge_name)
 
         functions.create_vethpair(veth_br_t, veth_t_br, primary=False)
         functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=False)
@@ -319,6 +327,10 @@ def secondary(data):
             functions.create_vm(vm_name, "512", bridge_name,
                                 "/tmp/TinyCore.iso", primary=False)
         
+        #add routes for all the primary subnets in primary hypervisor
+        functions.add_route_in_hypervisor_non_default(
+            veth_tenant_ip, cidr, primary=False)
+
         if cidr in common_cidrs:
             # create vxlan 
             vxlan_tunnel_name = 'vx_'+tenant_name+ip

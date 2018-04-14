@@ -46,6 +46,7 @@ def defineNetwork(conn, networkName):
     :param networkName: name of the Network
     """
     # create a persistent virtual network
+    fix this for secondary
     os.system("brctl addbr %s\nip link set %s up" %(networkName,networkName))
     JINJA_ENVIRONMENT = jinja2.Environment(
         loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
