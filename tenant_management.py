@@ -346,7 +346,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-main()
 """
 functions.create_namespace('testNS3', primary=True)
 functions.create_vethpair('test_veth2','test_veth3',primary=True)
