@@ -28,7 +28,10 @@ user_data_tenant3 = {
 }}
 
 def main():
-    functions.get_connection()
+    conn = functions.get_connection()
+    conn.primary_conn.close()
+    conn.secondary_con.close()
+
     #tm.primary(user_data_tenant3)
     #tm.secondary(user_data_tenant3)
 
