@@ -32,7 +32,7 @@ def main():
     import pdb
     pdb.set_trace()
     
-    tm.primary(user_data_tenant3)
+    tm.primary(user_data_tenant3.get("tenant"))
     #tm.secondary(user_data_tenant3)
     #conn.primary_conn.close()
     #conn.secondary_con.close()
