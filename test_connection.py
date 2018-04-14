@@ -35,6 +35,206 @@ user_data_tenant1 = {
 }}
 
 
+primary_ip_l3='152.46.18.168'
+secondary_ip_l3='152.46.18.192'
+primary_ip_l2='10.25.7.229'
+secondary_ip_l2='10.25.11.143'
+isGreCreated=False
+
+
+
+def _check_need_to_create_gre(data):
+    primary = data.get("primary")
+    tenant_id = data.get("id")
+    secondary = data.get("secondary")
+    primary_subnet = primary.get('subnets')
+    p_cidrs = []
+    for s in primary_subnet:
+        sub = s.get('cidr')
+        p_cidrs.append(sub)
+
+    secondary_subnet = secondary.get('subnets')
+    s_cidrs = []
+    for s in primary_subnet:
+        sub = s.get('cidr')
+        s_cidrs.append(sub)
+    if len(set(p_cidrs).intersection(set(s_cidrs))) == 0:
+        return False
+    return True
+
+def _check_need_to_create_vxlan(data):
+    """
+    returns list of cidrs that are common in primary and secondary
+    """
+    p_cidrs, s_cidrs = _give_cidr_ps(data)
+    common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
+    return list(common_cidrs)
+
+
+def _give_cidr_ps(data):
+    primary = data.get("primary")
+    tenant_id = data.get("id")
+    secondary = data.get("secondary")
+    primary_subnet = primary.get('subnets')
+    p_cidrs = []
+    for s in primary_subnet:
+        sub = s.get('cidr')
+        p_cidrs.append(sub)
+
+    secondary_subnet = secondary.get('subnets')
+    s_cidrs = []
+    for s in primary_subnet:
+        sub = s.get('cidr')
+        s_cidrs.append(sub)
+    return p_cidrs, s_cidrs
+
+
+def _check_need_to_create_gre(data):
+    p_cidrs, s_cidrs = _give_cidr_ps(data)
+    if len(set(p_cidrs).intersection(set(s_cidrs))) == 0:
+        return False
+    return True
+
+
+def _get_subnets_for_gre_primary(data):
+    p_cidrs, s_cidrs = _give_cidr_ps(data)
+    sp = set(p_cidrs)
+    cp = set(s_cidrs)
+    intersection = list(sp.intersection(cp))
+    for i in intersection:
+        s_cidrs.remove(i)
+    return s_cidrs
+
+
+def _get_subnets_for_gre_secondary(data):
+    p_cidrs, s_cidrs = _give_cidr_ps(data)
+    sp = set(p_cidrs)
+    cp = set(s_cidrs)
+    intersection = list(sp.intersection(cp))
+    for i in intersection:
+        p_cidrs.remove(i)
+    return p_cidrs
+
+
+def primary(data):
+    primary = data.get("primary")
+    tenant_id = data.get("id")
+    secondary = data.get("secondary")
+
+    # Create Tenant
+    functions.get_connection()
+    tenant_name = 'T' + str(tenant_id)
+    ns_name = 'PGW-' + tenant_name
+    veth_ns = 'pgw-hyp-t' + str(tenant_id)
+    veth_hyp = 'hyp-t' + str(tenant_id) + '-pgw'
+    veth_hyp_ip = '1.1.' + str(tenant_id) + '.2/24'
+    veth_ns_ip = '1.1.' + str(tenant_id) + '.1/24'
+
+    # create a namespace for tenant PGW-T1
+    functions.create_namespace(ns_name, primary=True)
+    # Create veth pair in hypervisor  (pgw-hypt1)(1.1.1.1)(<1.1.tenant-id.1>)
+    functions.create_vethpair(veth_hyp, veth_ns, primary=True)
+
+    functions.move_veth_to_namespace(veth_ns, ns_name, primary=True)
+    functions.assign_ip_address_namespace(
+        ns_name, veth_ns, veth_ns_ip, primary=True)
+    functions.set_link_up_in_namespace(ns_name, veth_ns, primary=True)
+    functions.assign_ip_address(veth_hyp, veth_hyp_ip, primary=True)
+    functions.set_link_up(veth_hyp, primary=True)
+
+    # Create tenant namespace in primary
+    functions.create_namespace(tenant_name, primary=True)
+    veth_pgw_t = 'pgw-t' + str(tenant_id)
+    veth_t_pgw = 't' + str(tenant_id) + '-pgw'
+    veth_pgw_t_ip = '192.168.' + str(tenant_id) + '.1/24'
+    veth_t_pgw_ip = '192.168.' + str(tenant_id) + '.2/24'
+    functions.create_vethpair(veth_pgw_t, veth_t_pgw, primary=True)
+
+    functions.move_veth_to_namespace(veth_pgw_t, ns_name, primary=True)
+    functions.assign_ip_address_namespace(
+        ns_name, veth_pgw_t, veth_pgw_t_ip, primary=True)
+    functions.set_link_up_in_namespace(ns_name, veth_pgw_t, primary=True)
+
+    functions.move_veth_to_namespace(veth_t_pgw, tenant_name, primary=True)
+    functions.assign_ip_address_namespace(
+        tenant_name, veth_t_pgw, veth_t_pgw_ip, primary=True)
+    functions.set_link_up_in_namespace(tenant_name, veth_t_pgw, primary=True)
+
+    # add default route via 1.1.1.2 in PGW-T1 namespace
+    functions.add_default_route_in_namespace(
+        veth_hyp_ip, veth_ns, ns_name, primary=True)
+
+    # add route in tenant namespace as a default route as pgw-t1 in primary
+    functions.add_default_route_in_namespace(
+        veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
+
+    if _check_need_to_create_gre(data) and not isGreCreated:
+        gre_tunnel_name = 'GRE-T'+str(tenant_id)
+        gre_tunnel_ip_local = '11.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_remote = '12.1.'+str(tenant_id)+'.1/32'
+
+        #to create a GRE tunnel in primary
+        functions.create_gre_tunnel(
+            secondary_ip_l2, primary_ip_l2, gre_tunnel_name, primary=True)
+        functions.set_link_up(gre_tunnel_name, primary=True)
+        functions.assign_ip_address(
+            gre_tunnel_name, gre_tunnel_ip_local, primary=True)
+        # adding default routes
+        functions.add_route_for_gre(
+            gre_tunnel_ip_local, gre_tunnel_name, primary=True)
+        functions.add_route_for_gre(
+            gre_tunnel_ip_remote, gre_tunnel_name, primary=True)
+
+        # adding routes for other subnets on secondary
+        get_subnets_for_gre = _get_subnets_for_gre_primary(data)
+        for subnet in get_subnets_for_gre:
+            functions.add_route_for_gre_cidr(
+                subnet, gre_tunnel_name, primary=True)
+        isGreCreated = True
+        ##
+
+    ## VXLAN part
+    primary_subnets = data.get('primary').get('subnets')
+    secondary_subnets = data.get('secondary').get('subnets')
+    common_cidrs = _check_need_to_create_vxlan(data)
+    for subnet in primary_subnets:
+        cidr = subnet["cidr"]
+        vm_ips = subnet["vm_ips"]
+        ip = cidr.split('/')[0]
+
+        bridge_name = tenant_name + '-br' + ip
+        veth_br_t = 'br-t' + ip
+        veth_t_br = 't-br' + ip
+        ip_u = unicode(ip, 'utf-8')
+        veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)
+
+        functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
+        functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=True)
+        functions.set_link_up(veth_br_t, primary=True)
+
+        functions.move_veth_to_namespace(veth_t_br, tenant_name, primary=True)
+        functions.assign_ip_address_namespace(
+            tenant_name, veth_t_br, veth_t_br_ip, primary=True)
+        functions.set_link_up_in_namespace(
+            tenant_name, veth_t_br, primary=True)
+
+        num_vms = len(vm_ips)
+        for vm_ip in vm_ips:
+            vm_name = "vm_" + vm_ip
+            functions.create_vm(vm_name, "512", bridge_name,
+                                "/tmp/TinyCore.iso", primary=True)
+        # spawn vms and connect to bridge
+
+        if cidr in common_cidrs:
+            # create vxlan
+            vxlan_tunnel_name = 'vx_' + tenant_name + ip
+            functions.create_vxlan_tunnel(
+                secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
+    # Subnets for that tenant
+    subnets = primary.get("subnets")
+    
+    
+
 def secondary(data):
     functions.get_connection()
     tenant_id = data["tenant"]["id"]
@@ -59,7 +259,36 @@ def secondary(data):
     #route in remote
     functions.add_default_route_in_namespace(veth_hyp_t_ip, veth_tenant, tenant_name, primary=False)
 
-    secondary_subnets = data["tenant"]["secondary"]["subnets"]
+    common_cidrs = _check_need_to_create_vxlan(data)
+
+
+    if _check_need_to_create_gre(data) and not isGreCreated:
+        gre_tunnel_name='GRE-T'+str(tenant_id)
+        gre_tunnel_ip_remote='11.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_local='12.1.'+str(tenant_id)+'.1/32'
+
+
+        #to create a GRE tunnel in primary
+        functions.create_gre_tunnel(
+            primary_ip_l2, secondary_ip_l2, gre_tunnel_name, primary=False)
+
+        functions.set_link_up(gre_tunnel_name, primary=False)
+        functions.assign_ip_address(
+            gre_tunnel_name, gre_tunnel_ip_local, primary=False)
+        # adding default routes
+        functions.add_route_for_gre(
+            gre_tunnel_ip_local, gre_tunnel_name, primary=False)
+        functions.add_route_for_gre(gre_tunnel_ip_remote, gre_tunnel_name, primary=False)
+
+        # adding routes for other subnets on secondary
+        get_subnets_for_gre = _get_subnets_for_gre_secondary(data)
+        for subnet in get_subnets_for_gre:
+            functions.add_route_for_gre_cidr(subnet, gre_tunnel_name, primary=False)
+        isGreCreated = True
+
+    primary_subnets = data.get('primary').get('subnets')
+    secondary_subnets = data.get('secondary').get('subnets')
+
     for subnet in secondary_subnets:
         cidr = subnet["cidr"]
         vm_ips = subnet["vm_ips"]
@@ -83,14 +312,21 @@ def secondary(data):
 
 
         num_vms = len(vm_ips)
-        #spawn vms and connect to bridge
         
+        #spawn vms and connect to bridge
+        for vm_ip in vm_ips:
+            vm_name = 'vm_'+str(vm_ip)
+            functions.create_vm(vm_name, "512", bridge_name,
+                                "/tmp/TinyCore.iso", primary=False)
+        
+        if cidr in common_cidrs:
+            # create vxlan 
+            vxlan_tunnel_name = 'vx_'+tenant_name+ip
+            #functions.create_vxlan_tunnel(
+            #    secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
 
-
-
-
-    
-
+            functions.create_vxlan_tunnel(
+                primary_ip_l2, vxlan_tunnel_name, bridge_name, primary=False)
 print('')
 
 """
