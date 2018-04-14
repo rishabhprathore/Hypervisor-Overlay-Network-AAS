@@ -27,9 +27,9 @@ user_data_tenant3 = {
 }}
 
 def main():
-    tm.primary(user_data_tenant3)
-    tm.secondary(user_data_tenant3)
-    
+    functions.get_connection()
+    #tm.primary(user_data_tenant3)
+    #tm.secondary(user_data_tenant3)
 
 if __name__ == '__main__':
     main()
