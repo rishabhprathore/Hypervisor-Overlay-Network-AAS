@@ -11,8 +11,9 @@ apt-get install python-libvirt
 apt-get install libvirt-doc
 apt install -y python-pip
 pip install --upgrade pip
-pip install Jinja2
-pip install pyyaml
-pip install paramiko
+apt-get install python-paramiko
+#sudo python -m easy_install --upgrade pyOpenSSL
+apt-get install python-jinja2
+apt-get install python-yaml
 wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /tmp/TinyCore.iso
 echo -e "\n\n******Environment setup completed! ****\n"
