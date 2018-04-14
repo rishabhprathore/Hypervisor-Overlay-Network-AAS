@@ -1,7 +1,7 @@
 from __future__ import print_function
 from connection import Connection
 import os
-
+import tenant_management
 from time import sleep
 import signal
 
@@ -34,17 +34,19 @@ def get_connection():
     if conn:
         return conn
     else:
-        conn = Connection(remote_ip='152.46.18.192', username='rrathor', pkey_path='/root/.ssh/id_rsa')
+        conn = Connection(remote_ip=tenant_management.primary_ip_l3,
+                          username=tenant_management.username, 
+                          pkey_path='/root/.ssh/id_rsa')
     return conn
 
 @deadline(300)
 def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
     cmd = "virt-install --name {} --memory {} " \
-      "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
-      " --network network={} -c {} -v".format(
-    vm_name,memory,vm_name+".img",bridge_name, iso_path)
+        "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
+        " --network network={} -c {} -v".format(
+            vm_name, memory, vm_name+".img", bridge_name, iso_path)
     print(cmd)
-    if primary==True:
+    if primary == True:
         print('local:')
         os.system(cmd)
         return
@@ -217,9 +219,10 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
     return
 
 def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,bridge_name, primary=True):
-    cmd= 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(vxlan_tunnel_name, id, remote_ip, interface)
-    cmd_1= 'brctl addif {} {}'.format(bridge_name,vxlan_tunnel_name)
-    cmd_2= 'ip link set {} up'.format(vxlan_tunnel_name)
+    cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
+          vxlan_tunnel_name, id, remote_ip, interface)
+    cmd_1 = 'brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
+    cmd_2 = 'ip link set {} up'.format(vxlan_tunnel_name)
 
     cmd_list=[cmd,cmd_1,cmd_2]
     print(cmd)

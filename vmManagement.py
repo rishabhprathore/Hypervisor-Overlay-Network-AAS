@@ -6,8 +6,7 @@ import libvirt
 import jinja2
 import yaml
 import commands
-
-
+import functions
 
 def getConnection():
     """
@@ -39,15 +38,27 @@ def listDomInfo(conn):
         print(' ')
 
 
-def defineNetwork(conn, networkName):
+def defineNetwork(conn, networkName, primary=True):
     """
     Creates a linux-bridge and then activates a persistent VIRSH Network
     :param conn: connection pointer
     :param networkName: name of the Network
     """
+    conn = functions.get_connection()
+
     # create a persistent virtual network
-    fix this for secondary
-    os.system("brctl addbr %s\nip link set %s up" %(networkName,networkName))
+
+    #create the bridge using brctl command
+    cmd_1 = "brctl addbr {}".format(networkName)
+    cmd_2 = "ip link set {} up".format(networkName)
+    cmd_list = [cmd_1, cmd_2]
+    if primary == True:
+        print('local:')
+        for cmd in cmd_list:
+            os.system(cmd)
+    else:
+        conn.ssh_remote(cmd_list)
+
     JINJA_ENVIRONMENT = jinja2.Environment(
         loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
         extensions=['jinja2.ext.autoescape'],
@@ -65,7 +76,10 @@ def defineNetwork(conn, networkName):
 
     f = open(filename)
     xmlconfig = f.read()
-    network = conn.networkDefineXML(xmlconfig)
+    if primary==True:
+        network = conn.primary_conn.networkDefineXML(xmlconfig)
+    else:
+        network = conn.secondary_con.networkDefineXML(xmlconfig)
     if network == None:
         print('Failed to create a virtual network', file=sys.stderr)
         return
@@ -73,13 +87,16 @@ def defineNetwork(conn, networkName):
     network.create()
     print('The new persistent virtual network is active')
 
-
-def listNetworks(conn):
+def listNetworks(conn, primary=True):
     """
     List all the virtual networks in the hypervisor
     :param conn: connection pointer
     """
-    networks = conn.listNetworks()
+    conn = functions.get_connection()
+    if primary==True:
+        networks = conn.primary_conn.listNetworks()
+    else:
+        networks = conn.secondary_con.listNetworks()
     print('Virtual networks:')
     for network in networks:
         print('  ' + network)
@@ -142,10 +159,6 @@ def main():
 
     conn = getConnection()
     defineVM(conn,"/home/atandon/sampleVM.xml")
-
-
-
-
     conn.close()
     exit(0)
 
