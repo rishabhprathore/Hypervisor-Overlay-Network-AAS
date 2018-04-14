@@ -230,6 +230,8 @@ def primary(data):
         num_vms = len(vm_ips)
         for vm_ip in vm_ips:
             vm_name = "vm_" + vm_ip
+            import pdb
+            pdb.set_trace()
             functions.create_vm(vm_name, "512", bridge_name,
                                 "/tmp/TinyCore.iso", primary=True)
         # spawn vms and connect to bridge
