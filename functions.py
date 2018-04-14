@@ -34,7 +34,7 @@ def get_connection():
     if conn:
         return conn
     else:
-        conn = Connection(remote_ip=tenant_management.primary_ip_l3,
+        conn = Connection(remote_ip=tenant_management.secondary_ip_l3,
                           username=tenant_management.username, 
                           pkey_path='/root/.ssh/id_rsa')
     return conn
