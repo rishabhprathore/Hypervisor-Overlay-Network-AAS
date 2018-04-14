@@ -29,10 +29,12 @@ user_data_tenant3 = {
 
 def main():
     conn = functions.get_connection()
-    conn.primary_conn.close()
-    conn.secondary_con.close()
+    import pdb
+    pdb.set_trace()
+    #conn.primary_conn.close()
+    #conn.secondary_con.close()
 
-    #tm.primary(user_data_tenant3)
+    tm.primary(user_data_tenant3)
     #tm.secondary(user_data_tenant3)
 
 if __name__ == '__main__':
