@@ -52,7 +52,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
     return
 
 
-def create_namespace(name, primary='True'):
+def create_namespace(name, primary=True):
     cmd = 'sudo ip netns add {}'.format(name)
     print(cmd)
     if primary==True:
@@ -62,7 +62,7 @@ def create_namespace(name, primary='True'):
     conn.ssh_remote([cmd])
     return
 
-def create_vethpair(name1, name2, primary='True'):
+def create_vethpair(name1, name2, primary=True):
     cmd = 'sudo ip link add {} type veth peer name {}'.format(name1, name2)
     print(cmd)
     if primary==True:
