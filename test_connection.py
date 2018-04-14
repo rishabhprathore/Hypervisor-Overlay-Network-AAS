@@ -327,8 +327,16 @@ def secondary(data):
 
             functions.create_vxlan_tunnel(
                 primary_ip_l2, vxlan_tunnel_name, bridge_name, primary=False)
-print('')
 
+def main():
+    tenant_data = user_data_tenant1.get('tenant')
+    primary(tenant_data)
+    secondary(tenant_data)
+    
+
+if __name__ == '__main__':
+    main()
+main()
 """
 functions.create_namespace('testNS3', primary=True)
 functions.create_vethpair('test_veth2','test_veth3',primary=True)
