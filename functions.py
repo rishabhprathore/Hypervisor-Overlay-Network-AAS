@@ -14,7 +14,8 @@ def deadline(timeout, *args):
       raise TimedOutExc()
 
     def new_f(*args):
-
+      import pdb
+      pdb.set_trace()
       signal.signal(signal.SIGALRM, handler)
       signal.alarm(timeout)
       return f(*args)
