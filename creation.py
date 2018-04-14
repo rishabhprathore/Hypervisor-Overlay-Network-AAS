@@ -1,11 +1,13 @@
+from __future__ import print_function
 from connection import Connection
 import functions
 import vmManagement as vmm 
 import ipaddress
-data_store={'PGW-T1':{'NST1':{'interfaces':{'veth1':'192.168.1.1',
+data_store={'Tenant1':{'NST1':{'interfaces':{'veth1':'192.168.1.1',
 'veth3':'192.168.3.1'},
 },'NST2':{'interfaces':{'veth2':'192.168.2.1',
 'veth4':'192.168.4.1'},
+
 }}}
 
 
