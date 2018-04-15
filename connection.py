@@ -13,7 +13,9 @@ class Connection:
             self.ssh.connect(remote_ip, username=username, pkey=privkey)
 
             self.primary_conn=libvirt.open('qemu:///system')
-            cmd = "sudo usermod -G libvirtd -a {}".format(username)
+            cmd = ["sudo usermod -G libvirtd -a {}".format(username)]
+            cmd.append("sed - i - e 's/#user/user/g' / etc/libvirt/qemu.conf")
+            cmd.append("sed - i - e 's/#group/group/g' / etc/libvirt/qemu.conf")
             self.ssh_remote([cmd])
             
             self.secondary_con=libvirt.open('qemu+ssh://{}@{}/system'.format(username,remote_ip))
