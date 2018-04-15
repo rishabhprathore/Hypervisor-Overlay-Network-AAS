@@ -15,11 +15,11 @@ def deadline(timeout, *args):
 
     def new_f(*args):
       import pdb
-      pdb.set_trace()
+      
       signal.signal(signal.SIGALRM, handler)
       signal.alarm(timeout)
       return f(*args)
-      signa.alarm(0)
+      signal.alarm(0)
 
     new_f.__name__ = f.__name__
     return new_f
