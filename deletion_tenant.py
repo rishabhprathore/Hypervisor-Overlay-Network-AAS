@@ -82,14 +82,14 @@ def delete_network(primary=True):
 
 def delete_routes(primary=True):
     if primary == True:
-        status, output = commands.getstatusoutput("ip route | grep 10.2.* | awk '{print $1}")
+        status, output = commands.getstatusoutput("ip route | grep 10.2.* | awk '{print $1}' ")
         existing = [x for x in output.split("\n")]
         for i in existing:
             cmd = "sudo ip route delete {}".format(i)
             os.system(cmd)
         return
     else:
-        ret = conn.ssh_remote(["ip route | grep 10.2.* | awk '{print $1}"])
+        ret = conn.ssh_remote(["ip route | grep 10.2.* | awk '{print $1}' "])
         existing = [x for x in ret.split("\n")]
         for i in existing:
             cmd = "sudo ip route delete {}".format(i)
@@ -99,14 +99,14 @@ def delete_routes(primary=True):
 
 def delete_gre(primary=True):
     if primary == True:
-        status, output = commands.getstatusoutput("ip addr | grep GRE* | awk '{print $2}")
+        status, output = commands.getstatusoutput("ip addr | grep GRE* | awk '{print $2}' ")
         existing = [x for x in output.split("\n")]
         for i in existing:
             cmd = "sudo ip tunnel delete {}".format(i[:-6])
             os.system(cmd)
         return
     else:
-        ret = conn.ssh_remote(["ip addr | grep GRE* | awk '{print $2}"])
+        ret = conn.ssh_remote(["ip addr | grep GRE* | awk '{print $2}' "])
         existing = [x for x in ret.split("\n")]
         for i in existing:
             cmd = "sudo ip tunnel delete {}".format(i[:-6])
@@ -115,14 +115,14 @@ def delete_gre(primary=True):
 
 def delete_vxlan(primary=True):
     if primary == True:
-        status, output = commands.getstatusoutput("ip addr | grep vx_* | awk '{print $2}")
+        status, output = commands.getstatusoutput("ip addr | grep vx_* | awk '{print $2}'")
         existing = [x for x in output.split("\n")]
         for i in existing:
             cmd = "sudo ip link delete dev {}".format(i[:-1])
             os.system(cmd)
         return
     else:
-        ret = conn.ssh_remote(["ip addr | grep vx_* | awk '{print $2}"])
+        ret = conn.ssh_remote(["ip addr | grep vx_* | awk '{print $2}' "])
         existing = [x for x in ret.split("\n")]
         for i in existing:
             cmd = "sudo ip link delete dev {}".format(i[:-1])
