@@ -44,7 +44,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
     cmd = "virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
         " --network network={} -c {} -v".format(
-            vm_name, memory, vm_name+".img", bridge_name, iso_path)
+            vm_name, memory, vm_name, bridge_name, iso_path)
     print(cmd)
     try:
         if primary == True:
@@ -223,7 +223,7 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
     conn.ssh_remote([cmd])
     return
 
-def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,bridge_name, primary=True):
+def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,bridge_name,interface, primary=True):
     cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
           vxlan_tunnel_name, id, remote_ip, interface)
     cmd_1 = 'brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)

@@ -21,6 +21,8 @@ secondary_ip_l3='152.46.17.221'
 primary_ip_l2='10.25.8.65'
 secondary_ip_l2='10.25.8.12'
 isGreCreated=False
+interface_primary="eth0"
+interface_secondary="eth0"
 
 
 
@@ -153,7 +155,7 @@ def primary(data):
         veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
 
     if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name = 'GRE-TS'
+        gre_tunnel_name = 'GRE-TP'
         gre_tunnel_ip_local = '11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_remote = '12.1.'+str(tenant_id)+'.1/32'
 
@@ -187,8 +189,8 @@ def primary(data):
         ip = cidr.split('/')[0]
 
         bridge_name = tenant_name + '-br' + ip
-        veth_br_t = 'br-t' + ip
-        veth_t_br = 't-br' + ip
+        veth_br_t = tenant_name+'br-t' + ip
+        veth_t_br = tenant_name+'t-br' + ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)
 
@@ -222,7 +224,7 @@ def primary(data):
             # create vxlan
             vxlan_tunnel_name = 'vx_' + tenant_name + ip
             functions.create_vxlan_tunnel(
-                secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
+                secondary_ip_l2, vxlan_tunnel_name, bridge_name,interface_primary, primary=True)
 
 def secondary(data):
     conn = functions.get_connection()
@@ -320,7 +322,7 @@ def secondary(data):
             #    secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
 
             functions.create_vxlan_tunnel(
-                primary_ip_l2, vxlan_tunnel_name, bridge_name, primary=False)
+                primary_ip_l2, vxlan_tunnel_name, bridge_name, interface_secondary primary=False)
 
 def main():
     tenant_data = user_data_tenant1.get('tenant')
