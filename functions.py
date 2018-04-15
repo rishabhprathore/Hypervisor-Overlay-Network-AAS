@@ -11,8 +11,8 @@ class TimedOutExc(Exception):
 def deadline(timeout, *args):
   def decorate(f):
     def handler(signum, frame):
-      raise TimedOutExc()
-
+      pass
+ 
     def new_f(*args):
       import pdb
       
