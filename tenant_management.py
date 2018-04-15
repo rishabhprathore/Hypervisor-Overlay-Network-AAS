@@ -331,7 +331,7 @@ def secondary(data):
             i += 1
             print("vxlan id: {}".format(vx_id))
             functions.create_vxlan_tunnel(
-                primary_ip_l2, vxlan_tunnel_name, bridge_name, interface_secondary, primary=False)
+                primary_ip_l2, vxlan_tunnel_name, vx_id, bridge_name, interface_secondary, primary=False)
 
 def main():
     tenant_data = user_data_tenant1.get('tenant')
