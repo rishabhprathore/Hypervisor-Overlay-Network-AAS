@@ -39,7 +39,7 @@ def get_connection():
                           pkey_path='/root/.ssh/id_rsa')
     return conn
 
-@deadline(300)
+@deadline(60)
 def create_vm(vm_name, memory,bridge_name,iso_path,primary):
     cmd = "sudo virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
