@@ -30,6 +30,7 @@ def delete_veth(primary=True):
     else:
         ret = conn.ssh_remote(["ifconfig | grep veth | awk '{ print $1}'"])
         print("ret : {} type: {}".format(ret, type(ret)))
+        import pdb; pdb.set_trace()
         existing = ret.split("\n")
         for i in existing:
             cmd = "sudo ip addr delete {}".format(i)
