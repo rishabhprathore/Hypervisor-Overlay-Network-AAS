@@ -44,8 +44,6 @@ def defineNetwork(conn, networkName, primary=True):
     :param conn: connection pointer
     :param networkName: name of the Network
     """
-    import pdb 
-    pdb.set_trace()
     conn = functions.get_connection()
 
     # create a persistent virtual network

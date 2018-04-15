@@ -30,8 +30,6 @@ def _check_need_to_create_vxlan(data):
     """
     returns list of cidrs that are common in primary and secondary
     """
-    import pdb
-    pdb.set_trace()
     p_cidrs, s_cidrs = _give_cidr_ps(data)
     common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
     return list(common_cidrs)
@@ -177,8 +175,6 @@ def primary(data):
         veth_br_t = tenant_name+'br-t' + ip
         veth_t_br = tenant_name+'t-br' + ip
         ip_u = unicode(ip, 'utf-8')
-        import pdb
-        pdb.set_trace()
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
 
@@ -201,8 +197,6 @@ def primary(data):
         num_vms = len(vm_ips)
         for vm_ip in vm_ips:
             vm_name = "vm_" + vm_ip
-            import pdb
-            pdb.set_trace()
             functions.create_vm(vm_name, "512", bridge_name,
                                 "/root/TinyCore.iso", True)
         # spawn vms and connect to bridge
@@ -280,8 +274,6 @@ def secondary(data):
         veth_br_t = 'br-t'+ip
         veth_t_br = 't-br'+ip
         ip_u = unicode(ip, 'utf-8')
-        import pdb
-        pdb.set_trace()
         veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)+'/24'
 
         vmm.defineNetwork(conn.secondary_con, bridge_name, primary=False)

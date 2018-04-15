@@ -14,7 +14,6 @@ def deadline(timeout, *args):
       pass
  
     def new_f(*args):
-      import pdb
       
       signal.signal(signal.SIGALRM, handler)
       signal.alarm(timeout)
