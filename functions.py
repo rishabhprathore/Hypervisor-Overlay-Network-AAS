@@ -230,7 +230,7 @@ def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface, pr
     cmd_2 = 'sudo ip link set {} up'.format(vxlan_tunnel_name)
 
     cmd_list=[cmd,cmd_1,cmd_2]
-    print(cmd)
+    print(cmd_list)
     if primary==True:
         print('local:')
         for cmd in cmd_list:
