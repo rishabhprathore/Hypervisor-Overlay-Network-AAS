@@ -13,25 +13,7 @@ import vmManagement as vmm
 #primary_conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 # Example @TODO: Please uncomment them.
 # creation.create_tenant(5)
-user_data_tenant1 = {
-    'tenant': {
-        'id': "3",
-        'primary': {
-            "subnets": [{
-                "cidr": "10.2.5.0/24",
-                "vm_ips": ["10.2.5.3"],
-            }, {
-                "cidr": "10.2.6.0/24",
-                "vm_ips": ["10.2.6.2"],
-            }]
-    },
-        'secondary': {
-            "subnets": [{
-                "cidr": "10.2.5.0/24",
-                "vm_ips": ["10.2.5.5"],
-            }]
-    }
-}}
+
 
 username='rrathor'
 primary_ip_l3='152.46.19.111'
