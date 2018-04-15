@@ -49,7 +49,7 @@ def _give_cidr_ps(data):
 
     secondary_subnet = secondary.get('subnets')
     s_cidrs = []
-    for s in primary_subnet:
+    for s in secondary_subnet:
         sub = s.get('cidr')
         s_cidrs.append(sub)
     return p_cidrs, s_cidrs
