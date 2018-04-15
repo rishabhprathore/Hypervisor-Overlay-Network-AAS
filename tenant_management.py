@@ -171,7 +171,7 @@ def primary(data):
         veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
 
     if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name = 'GRE-T'+str(tenant_id)
+        gre_tunnel_name = 'GRE-TS'
         gre_tunnel_ip_local = '11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_remote = '12.1.'+str(tenant_id)+'.1/32'
 
@@ -233,7 +233,7 @@ def primary(data):
             import pdb
             pdb.set_trace()
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", primary=True)
+                                "/tmp/TinyCore.iso", True)
         # spawn vms and connect to bridge
 
         if cidr in common_cidrs:
@@ -270,7 +270,7 @@ def secondary(data):
 
 
     if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name='GRE-T'+str(tenant_id)
+        gre_tunnel_name='GRE-TP'
         gre_tunnel_ip_remote='11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_local='12.1.'+str(tenant_id)+'.1/32'
 
@@ -325,7 +325,7 @@ def secondary(data):
         for vm_ip in vm_ips:
             vm_name = 'vm_'+str(vm_ip)
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", primary=False)
+                                "/tmp/TinyCore.iso", False)
         
         #add routes for all the primary subnets in primary hypervisor
         functions.add_route_in_hypervisor_non_default(
