@@ -21,7 +21,7 @@ def delete_namespace(primary=True):
 def delete_veth(primary=True):
     if primary == True:
         print('local:')
-        status, output = commands.getstatusoutput("ifconfig -a| grep veth | awk '{ print $1}'")
+        status, output = commands.getstatusoutput("ifconfig -a| grep Y | awk '{ print $1}'")
         existing = [x for x in output.split("\n")]
         for i in existing:
             cmd = "sudo ip link delete {}".format(i)

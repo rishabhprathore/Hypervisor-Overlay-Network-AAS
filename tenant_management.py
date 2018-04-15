@@ -24,7 +24,7 @@ isSecondaryGreCreated = False
 
 interface_primary="eth0"
 interface_secondary="eth0"
-prefix_veth = "veth"
+prefix_veth = "Y"
 
 def _check_need_to_create_vxlan(data):
     """
