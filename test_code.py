@@ -34,10 +34,7 @@ user_data_tenant3 = {
 
 def main():
     #conn = functions.get_connection()
-    import pdb
-    pdb.set_trace()
-    
-    tm.primary(user_data_tenant3.get("tenant"))
+    stm.primary(user_data_tenant3.get("tenant"))
     tm.secondary(user_data_tenant3.get("tenant"))
 
 
