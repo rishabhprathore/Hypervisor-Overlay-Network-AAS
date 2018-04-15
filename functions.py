@@ -41,7 +41,7 @@ def get_connection():
 
 @deadline(300)
 def create_vm(vm_name, memory,bridge_name,iso_path,primary):
-    cmd = "virt-install --name {} --memory {} " \
+    cmd = "sudo virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
         " --network network={} -c {} -v".format(
             vm_name, memory, vm_name, bridge_name, iso_path)
