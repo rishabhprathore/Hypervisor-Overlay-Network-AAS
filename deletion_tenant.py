@@ -21,7 +21,7 @@ def delete_namespace(primary=True):
 def delete_veth(primary=True):
     if primary == True:
         print('local:')
-        status, output = commands.getstatusoutput("ifconfig | grep veth | awk '{ print $1}'")
+        status, output = commands.getstatusoutput("ifconfig -a| grep veth | awk '{ print $1}'")
         existing = [x for x in output.split("\n")]
         for i in existing:
             cmd = "sudo ip addr delete {}".format(i)
@@ -31,7 +31,7 @@ def delete_veth(primary=True):
         ret = conn.ssh_remote(["ifconfig -a | grep veth | awk '{ print $1}'"])
         print("ret : {} type: {}".format(ret, type(ret)))
         import pdb; pdb.set_trace()
-        existing = ret.split("\n")
+        existing = ret[0].split("\n")
         for i in existing:
             cmd = "sudo ip addr delete {}".format(i)
             conn.ssh_remote([cmd])
