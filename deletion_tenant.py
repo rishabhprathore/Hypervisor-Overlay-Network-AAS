@@ -24,7 +24,7 @@ def delete_veth(primary=True):
         status, output = commands.getstatusoutput("ifconfig -a| grep veth | awk '{ print $1}'")
         existing = [x for x in output.split("\n")]
         for i in existing:
-            cmd = "sudo ip addr delete {}".format(i)
+            cmd = "sudo ip link delete {}".format(i)
             os.system(cmd)
         return
     else:
@@ -33,7 +33,7 @@ def delete_veth(primary=True):
         import pdb; pdb.set_trace()
         existing = ret[0].split("\n")
         for i in existing:
-            cmd = "sudo ip addr delete {}".format(i)
+            cmd = "sudo ip link delete {}".format(i)
             conn.ssh_remote([cmd])
         return
 
@@ -51,7 +51,7 @@ def delete_bridge(primary=True):
         return
     else:
         ret = conn.ssh_remote(["brctl show | cut -f1"])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing[1:]:
             if i != 'virbr0':
                 cmd1 = "ip link set dev {} down".format(i)
@@ -73,7 +73,7 @@ def delete_network(primary=True):
         return
     else:
         ret = conn.ssh_remote(["ls -l /etc/libvirt/qemu/networks/ | awk '{print $9}'"])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing[3:]:
             cmd1 = "sudo virsh net-destroy {}".format(i[:-4])
             cmd2 = "sudo virsh net-undefine {}".format(i[:-4])
@@ -92,7 +92,7 @@ def delete_routes(primary=True):
         return
     else:
         ret = conn.ssh_remote(["ip route | grep 10.2.* | awk '{print $1}' "])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing:
             cmd = "sudo ip route delete {}".format(i)
             conn.ssh_remote([cmd])
@@ -109,7 +109,7 @@ def delete_gre(primary=True):
         return
     else:
         ret = conn.ssh_remote(["ip addr | grep GRE* | awk '{print $2}' "])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing:
             cmd = "sudo ip tunnel delete {}".format(i[:-6])
             conn.ssh_remote([cmd])
@@ -125,7 +125,7 @@ def delete_vxlan(primary=True):
         return
     else:
         ret = conn.ssh_remote(["ip addr | grep vx_* | awk '{print $2}' "])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing:
             cmd = "sudo ip link delete dev {}".format(i[:-1])
             conn.ssh_remote([cmd])
@@ -144,7 +144,7 @@ def delete_vm(primary=True):
         return
     else:
         ret = conn.ssh_remote(["ls -l /etc/libvirt/qemu/ | awk '{print $9}'"])
-        existing = [x for x in ret.split("\n")]
+        existing = ret[0].split("\n")
         for i in existing[1:]:
             if i != 'networks':
                 cmd1 = "sudo virsh net-destroy {}".format(i[:-4])
