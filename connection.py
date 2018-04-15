@@ -7,6 +7,8 @@ import paramiko
 class Connection:
     def __init__(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
         try:
+            import import pdb; pdb.set_trace()
+            
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -14,8 +16,8 @@ class Connection:
 
             self.primary_conn=libvirt.open('qemu:///system')
             cmd = ["sudo usermod -G libvirtd -a {}".format(username)]
-            cmd.append("sudo sed -i -e 's/#user/user/g' / etc/libvirt/qemu.conf")
-            cmd.append("sudo sed -i -e 's/#group/group/g' / etc/libvirt/qemu.conf")
+            cmd.append("sudo sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf")
+            cmd.append("sudo sed -i -e 's/#group/group/g' /etc/libvirt/qemu.conf")
             cmd.append("sudo service libvirtd restart")
             print(cmd)
             self.ssh_remote(cmd)
