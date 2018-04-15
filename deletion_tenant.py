@@ -156,7 +156,7 @@ def delete_vm(primary=True):
 
 
 def main():
-    primary=False
+    primary=True
     
     delete_namespace(primary)
     delete_veth(primary)
@@ -167,7 +167,7 @@ def main():
     delete_gre(primary)
     delete_vxlan(primary)
 
-    primary = True
+    primary = False
 
     delete_namespace(primary)
     delete_veth(primary)
