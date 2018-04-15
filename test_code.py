@@ -56,13 +56,36 @@ user_data_tenant3 = {
     }
 }}
 
+user_data_tenant4 = {
+    'tenant': {
+        'id': "4",
+        'primary': {
+            "subnets": [{
+                "cidr": "4.4.4.0/24",
+                "vm_ips": ["4.4.4.3"],
+            }]
+    },
+        'secondary': {
+            "subnets": [{
+                "cidr": "4.4.4.0/24",
+                "vm_ips": ["4.4.4.5"],
+            }
+
+]
+    }
+}}
+
+
 def main():
     #conn = functions.get_connection()
-    tm.primary(user_data_tenant2.get("tenant"))
-    tm.secondary(user_data_tenant2.get("tenant"))
+    #tm.primary(user_data_tenant2.get("tenant"))
+    #tm.secondary(user_data_tenant2.get("tenant"))
 
     #tm.primary(user_data_tenant3.get("tenant"))
     #tm.secondary(user_data_tenant3.get("tenant"))
+
+    tm.primary(user_data_tenant4.get("tenant"))
+    tm.secondary(user_data_tenant4.get("tenant"))
 
 if __name__ == '__main__':
     main()
