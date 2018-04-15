@@ -13,32 +13,18 @@ import vmManagement as vmm
 #primary_conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 # Example @TODO: Please uncomment them.
 # creation.create_tenant(5)
-user_data_tenant1 = {
-    'tenant': {
-        'id': "3",
-        'primary': {
-            "subnets": [{
-                "cidr": "10.2.5.0/24",
-                "vm_ips": ["10.2.5.3"],
-            }, {
-                "cidr": "10.2.6.0/24",
-                "vm_ips": ["10.2.6.2"],
-            }]
-    },
-        'secondary': {
-            "subnets": [{
-                "cidr": "10.2.5.0/24",
-                "vm_ips": ["10.2.5.5"],
-            }]
-    }
-}}
+
 
 username='rrathor'
 primary_ip_l3='152.46.19.111'
 secondary_ip_l3='152.46.17.221'
 primary_ip_l2='10.25.8.65'
 secondary_ip_l2='10.25.8.12'
-isGreCreated=False
+isPrimaryGreCreated=False
+isSecondaryGreCreated = False
+
+interface_primary="eth0"
+interface_secondary="eth0"
 
 
 
@@ -116,7 +102,7 @@ def _get_subnets_for_gre_secondary(data):
 
 
 def primary(data):
-    global isGreCreated
+    global isPrimaryGreCreated
     conn=functions.get_connection()
     primary = data.get("primary")
     tenant_id = data.get("id")
@@ -170,8 +156,8 @@ def primary(data):
     functions.add_default_route_in_namespace(
         veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
 
-    if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name = 'GRE-T'+str(tenant_id)
+    if _check_need_to_create_gre(data) and not isPrimaryGreCreated:
+        gre_tunnel_name = 'GRE-TP'
         gre_tunnel_ip_local = '11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_remote = '12.1.'+str(tenant_id)+'.1/32'
 
@@ -193,20 +179,21 @@ def primary(data):
         for subnet in get_subnets_for_gre:
             functions.add_route_for_gre_cidr(
                 subnet, gre_tunnel_name, primary=True)
-        isGreCreated = True
+        isPrimaryGreCreated = True
         
     ## VXLAN part
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
     common_cidrs = _check_need_to_create_vxlan(data)
+    i=0
     for subnet in primary_subnets:
         cidr = subnet["cidr"]
         vm_ips = subnet["vm_ips"]
         ip = cidr.split('/')[0]
 
         bridge_name = tenant_name + '-br' + ip
-        veth_br_t = 'br-t' + ip
-        veth_t_br = 't-br' + ip
+        veth_br_t = tenant_name+'br-t' + ip
+        veth_t_br = tenant_name+'t-br' + ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)
 
@@ -233,18 +220,22 @@ def primary(data):
             import pdb
             pdb.set_trace()
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", primary=True)
+                                "/root/TinyCore.iso", True)
         # spawn vms and connect to bridge
 
         if cidr in common_cidrs:
             # create vxlan
             vxlan_tunnel_name = 'vx_' + tenant_name + ip
+            vx_id=str(int(str(tenant_id+'00')) + i)
+            i+=1
+            print("vxlan id: {}".format(vx_id))
             functions.create_vxlan_tunnel(
-                secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
+                secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
 def secondary(data):
+    global isSecondaryGreCreated
     conn = functions.get_connection()
-    tenant_id = data["tenant"]["id"]
+    tenant_id = data["id"]
     tenant_name='T'+str(tenant_id)
 
     functions.create_namespace(tenant_name, primary=False)
@@ -269,8 +260,8 @@ def secondary(data):
     common_cidrs = _check_need_to_create_vxlan(data)
 
 
-    if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name='GRE-T'+str(tenant_id)
+    if _check_need_to_create_gre(data) and not isSecondaryGreCreated:
+        gre_tunnel_name='GRE-TS'
         gre_tunnel_ip_remote='11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_local='12.1.'+str(tenant_id)+'.1/32'
 
@@ -291,11 +282,11 @@ def secondary(data):
         get_subnets_for_gre = _get_subnets_for_gre_secondary(data)
         for subnet in get_subnets_for_gre:
             functions.add_route_for_gre_cidr(subnet, gre_tunnel_name, primary=False)
-        isGreCreated = True
+        isSecondaryGreCreated = True
 
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
-
+    i=0
     for subnet in secondary_subnets:
         cidr = subnet["cidr"]
         vm_ips = subnet["vm_ips"]
@@ -307,7 +298,7 @@ def secondary(data):
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)
 
-        vmm.defineNetwork(conn.secondary_conn, bridge_name)
+        vmm.defineNetwork(conn.secondary_con, bridge_name, primary=False)
 
         functions.create_vethpair(veth_br_t, veth_t_br, primary=False)
         functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=False)
@@ -325,7 +316,7 @@ def secondary(data):
         for vm_ip in vm_ips:
             vm_name = 'vm_'+str(vm_ip)
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", primary=False)
+                                "/root/TinyCore.iso", False)
         
         #add routes for all the primary subnets in primary hypervisor
         functions.add_route_in_hypervisor_non_default(
@@ -336,9 +327,11 @@ def secondary(data):
             vxlan_tunnel_name = 'vx_'+tenant_name+ip
             #functions.create_vxlan_tunnel(
             #    secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
-
+            vx_id=str(int(str(tenant_id+'00')) + i)
+            i += 1
+            print("vxlan id: {}".format(vx_id))
             functions.create_vxlan_tunnel(
-                primary_ip_l2, vxlan_tunnel_name, bridge_name, primary=False)
+                primary_ip_l2, vxlan_tunnel_name, vx_id, bridge_name, interface_secondary, primary=False)
 
 def main():
     tenant_data = user_data_tenant1.get('tenant')

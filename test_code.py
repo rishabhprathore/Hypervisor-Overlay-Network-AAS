@@ -9,7 +9,7 @@ import tenant_management as tm
 
 user_data_tenant3 = {
     'tenant': {
-        'id': "3",
+        'id': "14",
         'primary': {
             "subnets": [{
                 "cidr": "10.2.5.0/24",
@@ -32,7 +32,8 @@ def main():
     import pdb
     pdb.set_trace()
     
-    tm.primary(user_data_tenant3.get("tenant"))
+    #tm.primary(user_data_tenant3.get("tenant"))
+    tm.secondary(user_data_tenant3.get("tenant"))
     #tm.secondary(user_data_tenant3)
     #conn.primary_conn.close()
     #conn.secondary_con.close()

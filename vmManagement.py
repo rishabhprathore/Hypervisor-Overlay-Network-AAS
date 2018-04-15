@@ -44,13 +44,15 @@ def defineNetwork(conn, networkName, primary=True):
     :param conn: connection pointer
     :param networkName: name of the Network
     """
+    import pdb 
+    pdb.set_trace()
     conn = functions.get_connection()
 
     # create a persistent virtual network
 
     #create the bridge using brctl command
-    cmd_1 = "brctl addbr {}".format(networkName)
-    cmd_2 = "ip link set {} up".format(networkName)
+    cmd_1 = "sudo brctl addbr {}".format(networkName)
+    cmd_2 = "sudo ip link set {} up".format(networkName)
     cmd_list = [cmd_1, cmd_2]
     if primary == True:
         print('local:')

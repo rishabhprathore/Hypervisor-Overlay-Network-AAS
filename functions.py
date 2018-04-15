@@ -15,11 +15,10 @@ def deadline(timeout, *args):
 
     def new_f(*args):
       import pdb
-      pdb.set_trace()
+      
       signal.signal(signal.SIGALRM, handler)
       signal.alarm(timeout)
       return f(*args)
-      signa.alarm(0)
 
     new_f.__name__ = f.__name__
     return new_f
@@ -40,18 +39,22 @@ def get_connection():
                           pkey_path='/root/.ssh/id_rsa')
     return conn
 
-@deadline(300)
-def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
-    cmd = "virt-install --name {} --memory {} " \
+@deadline(60)
+def create_vm(vm_name, memory,bridge_name,iso_path,primary):
+    cmd = "sudo virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
         " --network network={} -c {} -v".format(
-            vm_name, memory, vm_name+".img", bridge_name, iso_path)
+            vm_name, memory, vm_name, bridge_name, iso_path)
     print(cmd)
-    if primary == True:
-        print('local:')
-        os.system(cmd)
-        return
-    conn.ssh_remote([cmd])
+    try:
+        if primary == True:
+            print('local:')
+            os.system(cmd)
+            return
+        conn.ssh_remote([cmd])
+    except Exception as e:
+        print("timeout in create_vm {}".format(e))
+        pass
     return
 
 
@@ -220,14 +223,14 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
     conn.ssh_remote([cmd])
     return
 
-def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,bridge_name, primary=True):
+def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface, primary=True):
     cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
           vxlan_tunnel_name, id, remote_ip, interface)
-    cmd_1 = 'brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
-    cmd_2 = 'ip link set {} up'.format(vxlan_tunnel_name)
+    cmd_1 = 'sudo brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
+    cmd_2 = 'sudo ip link set {} up'.format(vxlan_tunnel_name)
 
     cmd_list=[cmd,cmd_1,cmd_2]
-    print(cmd)
+    print(cmd_list)
     if primary==True:
         print('local:')
         for cmd in cmd_list:
