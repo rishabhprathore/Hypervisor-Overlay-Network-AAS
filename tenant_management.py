@@ -218,7 +218,7 @@ def primary(data):
             import pdb
             pdb.set_trace()
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", True)
+                                "/root/TinyCore.iso", True)
         # spawn vms and connect to bridge
 
         if cidr in common_cidrs:
@@ -313,7 +313,7 @@ def secondary(data):
         for vm_ip in vm_ips:
             vm_name = 'vm_'+str(vm_ip)
             functions.create_vm(vm_name, "512", bridge_name,
-                                "/tmp/TinyCore.iso", False)
+                                "/root/TinyCore.iso", False)
         
         #add routes for all the primary subnets in primary hypervisor
         functions.add_route_in_hypervisor_non_default(
