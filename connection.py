@@ -27,7 +27,7 @@ class Connection:
     def ssh_remote(self, cmd_list):
         res =[]
         for cmd in cmd_list:
-            ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
+            ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd, timeout=60)
             #print(type(ssh_stdout.read())
             if ssh_stdout is '':
                 #print("test1")
