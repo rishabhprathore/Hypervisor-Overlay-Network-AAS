@@ -41,19 +41,21 @@ def delete_bridge(primary=True):
         status, output = commands.getstatusoutput("brctl show | cut -f1")
         existing = [x for x in output.split("\n")]
         for i in existing[1:]:
-            cmd1 = "ip link set dev {} down".format(i)
-            cmd2 = "sudo brctl delbr {}".format(i)
-            os.system(cmd1)
-            os.system(cmd2)
+            if i != 'virbr0':
+                cmd1 = "ip link set dev {} down".format(i)
+                cmd2 = "sudo brctl delbr {}".format(i)
+                os.system(cmd1)
+                os.system(cmd2)
         return
     else:
         ret = conn.ssh_remote(["brctl show | cut -f1"])
         existing = [x for x in ret.split("\n")]
         for i in existing[1:]:
-            cmd1 = "ip link set dev {} down".format(i)
-            cmd2 = "sudo brctl delbr {}".format(i)
-            conn.ssh_remote([cmd1])
-            conn.ssh_remote([cmd2])
+            if i != 'virbr0':
+                cmd1 = "ip link set dev {} down".format(i)
+                cmd2 = "sudo brctl delbr {}".format(i)
+                conn.ssh_remote([cmd1])
+                conn.ssh_remote([cmd2])
         return
 
 
