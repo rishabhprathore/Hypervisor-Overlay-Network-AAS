@@ -183,6 +183,7 @@ def primary(data):
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
     common_cidrs = _check_need_to_create_vxlan(data)
+    i=0
     for subnet in primary_subnets:
         cidr = subnet["cidr"]
         vm_ips = subnet["vm_ips"]
@@ -223,8 +224,11 @@ def primary(data):
         if cidr in common_cidrs:
             # create vxlan
             vxlan_tunnel_name = 'vx_' + tenant_name + ip
+            vx_id=str(int(str(tenant_id+'00')) + i)
+            i+=1
+            print("vxlan id: {}".format(vx_id)
             functions.create_vxlan_tunnel(
-                secondary_ip_l2, vxlan_tunnel_name, bridge_name,interface_primary, primary=True)
+                secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
 def secondary(data):
     conn = functions.get_connection()
@@ -279,7 +283,7 @@ def secondary(data):
 
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
-
+    i=0
     for subnet in secondary_subnets:
         cidr = subnet["cidr"]
         vm_ips = subnet["vm_ips"]
@@ -320,7 +324,9 @@ def secondary(data):
             vxlan_tunnel_name = 'vx_'+tenant_name+ip
             #functions.create_vxlan_tunnel(
             #    secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
-
+            vx_id=str(int(str(tenant_id+'00')) + i)
+            i += 1
+            print("vxlan id: {}".format(vx_id)
             functions.create_vxlan_tunnel(
                 primary_ip_l2, vxlan_tunnel_name, bridge_name, interface_secondary, primary=False)
 
