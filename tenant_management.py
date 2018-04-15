@@ -226,7 +226,7 @@ def primary(data):
             vxlan_tunnel_name = 'vx_' + tenant_name + ip
             vx_id=str(int(str(tenant_id+'00')) + i)
             i+=1
-            print("vxlan id: {}".format(vx_id)
+            print("vxlan id: {}".format(vx_id))
             functions.create_vxlan_tunnel(
                 secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
@@ -326,7 +326,7 @@ def secondary(data):
             #    secondary_ip_l2, vxlan_tunnel_name, bridge_name, primary=True)
             vx_id=str(int(str(tenant_id+'00')) + i)
             i += 1
-            print("vxlan id: {}".format(vx_id)
+            print("vxlan id: {}".format(vx_id))
             functions.create_vxlan_tunnel(
                 primary_ip_l2, vxlan_tunnel_name, bridge_name, interface_secondary, primary=False)
 
