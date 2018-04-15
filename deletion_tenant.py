@@ -44,7 +44,7 @@ def delete_bridge(primary=True):
         existing = [x for x in output.split("\n")]
         for i in existing[1:]:
             if i != 'virbr0':
-                cmd1 = "ip link set dev {} down".format(i)
+                cmd1 = "sudo ip link set dev {} down".format(i)
                 cmd2 = "sudo brctl delbr {}".format(i)
                 os.system(cmd1)
                 os.system(cmd2)
@@ -54,7 +54,7 @@ def delete_bridge(primary=True):
         existing = ret[0].split("\n")
         for i in existing[1:]:
             if i != 'virbr0':
-                cmd1 = "ip link set dev {} down".format(i)
+                cmd1 = "sudo ip link set dev {} down".format(i)
                 cmd2 = "sudo brctl delbr {}".format(i)
                 conn.ssh_remote([cmd1])
                 conn.ssh_remote([cmd2])
