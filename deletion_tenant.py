@@ -167,6 +167,17 @@ def main():
     delete_gre(primary)
     delete_vxlan(primary)
 
+    primary = True
+
+    delete_namespace(primary)
+    delete_veth(primary)
+    delete_bridge(primary)
+    delete_network(primary)
+    delete_routes(primary)
+    delete_vm(primary)
+    delete_gre(primary)
+    delete_vxlan(primary)
+
     
 
 if __name__ == '__main__':
