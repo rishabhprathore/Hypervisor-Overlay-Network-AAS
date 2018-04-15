@@ -214,7 +214,7 @@ def add_route_in_hypervisor_non_default(ip_address,subnet, primary=True):
 def add_route_in_namespace_non_default(name_space, ip_address, subnet, primary=True):
     global prefix
     ip_address = ip_address.split('/')[0]
-    cmd = prefix+' ip route add {} via {} '.format(subnet, ip_address)
+    cmd = prefix+'{} ip route add {} via {} '.format(name_space subnet, ip_address)
     print(cmd)
     if primary == True:
         print('local:')
