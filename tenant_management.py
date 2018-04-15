@@ -20,7 +20,9 @@ primary_ip_l3='152.46.19.111'
 secondary_ip_l3='152.46.17.221'
 primary_ip_l2='10.25.8.65'
 secondary_ip_l2='10.25.8.12'
-isGreCreated=False
+isPrimaryGreCreated=False
+isSecondaryGreCreated = False
+
 interface_primary="eth0"
 interface_secondary="eth0"
 
@@ -100,7 +102,7 @@ def _get_subnets_for_gre_secondary(data):
 
 
 def primary(data):
-    global isGreCreated
+    global isPrimaryGreCreated
     conn=functions.get_connection()
     primary = data.get("primary")
     tenant_id = data.get("id")
@@ -154,7 +156,7 @@ def primary(data):
     functions.add_default_route_in_namespace(
         veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
 
-    if _check_need_to_create_gre(data) and not isGreCreated:
+    if _check_need_to_create_gre(data) and not isPrimaryGreCreated:
         gre_tunnel_name = 'GRE-TP'
         gre_tunnel_ip_local = '11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_remote = '12.1.'+str(tenant_id)+'.1/32'
@@ -177,7 +179,7 @@ def primary(data):
         for subnet in get_subnets_for_gre:
             functions.add_route_for_gre_cidr(
                 subnet, gre_tunnel_name, primary=True)
-        isGreCreated = True
+        isPrimaryGreCreated = True
         
     ## VXLAN part
     primary_subnets = data.get('primary').get('subnets')
@@ -231,7 +233,7 @@ def primary(data):
                 secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
 def secondary(data):
-    global isGreCreated
+    global isSecondaryGreCreated
     conn = functions.get_connection()
     tenant_id = data["id"]
     tenant_name='T'+str(tenant_id)
@@ -258,7 +260,7 @@ def secondary(data):
     common_cidrs = _check_need_to_create_vxlan(data)
 
 
-    if _check_need_to_create_gre(data) and not isGreCreated:
+    if _check_need_to_create_gre(data) and not isSecondaryGreCreated:
         gre_tunnel_name='GRE-TS'
         gre_tunnel_ip_remote='11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_local='12.1.'+str(tenant_id)+'.1/32'
@@ -280,7 +282,7 @@ def secondary(data):
         get_subnets_for_gre = _get_subnets_for_gre_secondary(data)
         for subnet in get_subnets_for_gre:
             functions.add_route_for_gre_cidr(subnet, gre_tunnel_name, primary=False)
-        isGreCreated = True
+        isSecondaryGreCreated = True
 
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
