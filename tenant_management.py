@@ -298,7 +298,7 @@ def secondary(data):
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)
 
-        vmm.defineNetwork(conn.secondary_con, bridge_name)
+        vmm.defineNetwork(conn.secondary_con, bridge_name, primary=False)
 
         functions.create_vethpair(veth_br_t, veth_t_br, primary=False)
         functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=False)
