@@ -95,6 +95,38 @@ def delete_routes(primary=True):
         return
 
 
+def delete_gre(primary=True):
+    if primary == True:
+        status, output = commands.getstatusoutput("ip addr | grep GRE* | awk '{print $2}")
+        existing = [x for x in output.split("\n")]
+        for i in existing:
+            cmd = "sudo ip tunnel delete {}".format(i[:-6])
+            os.system(cmd)
+        return
+    else:
+        ret = conn.ssh_remote(["ip addr | grep GRE* | awk '{print $2}"])
+        existing = [x for x in ret.split("\n")]
+        for i in existing:
+            cmd = "sudo ip tunnel delete {}".format(i[:-6])
+            conn.ssh_remote([cmd])
+        return
+
+def delete_vxlan(primary=True):
+    if primary == True:
+        status, output = commands.getstatusoutput("ip addr | grep vx_* | awk '{print $2}")
+        existing = [x for x in output.split("\n")]
+        for i in existing:
+            cmd = "sudo ip link delete dev {}".format(i[:-1])
+            os.system(cmd)
+        return
+    else:
+        ret = conn.ssh_remote(["ip addr | grep vx_* | awk '{print $2}"])
+        existing = [x for x in ret.split("\n")]
+        for i in existing:
+            cmd = "sudo ip link delete dev {}".format(i[:-1])
+            conn.ssh_remote([cmd])
+        return
+
 def delete_vm(primary=True):
     if primary == True:
         status, output = commands.getstatusoutput("ls -l /etc/libvirt/qemu/ | awk '{print $9}'")
