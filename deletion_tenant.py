@@ -151,7 +151,7 @@ def delete_vm(primary=True):
 
 
 def main():
-    primary=True
+    primary=False
     
     delete_namespace(primary)
     delete_veth(primary)
