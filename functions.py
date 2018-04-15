@@ -52,7 +52,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
             os.system(cmd)
             return
         conn.ssh_remote([cmd])
-    except TimedOutExc as e:
+    except Exception as e:
         print("timeout in create_vm {}".format(e))
         pass
     return

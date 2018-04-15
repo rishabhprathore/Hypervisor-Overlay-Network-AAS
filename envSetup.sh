@@ -15,7 +15,7 @@ apt-get install python-paramiko -y
 #sudo python -m easy_install --upgrade pyOpenSSL
 apt-get install python-jinja2 -y
 apt-get install python-yaml -y
-wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /tmp/TinyCore.iso
+wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /root/TinyCore.iso
 
 sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf
 sed -i -e 's/#group/group/g' /etc/libvirt/qemu.conf
