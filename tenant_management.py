@@ -259,7 +259,7 @@ def secondary(data):
 
 
     if _check_need_to_create_gre(data) and not isGreCreated:
-        gre_tunnel_name='GRE-TP'
+        gre_tunnel_name='GRE-TS'
         gre_tunnel_ip_remote='11.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_local='12.1.'+str(tenant_id)+'.1/32'
 
