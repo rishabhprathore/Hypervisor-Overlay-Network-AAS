@@ -115,6 +115,7 @@ def primary(data):
     veth_t_pgw = 't' + str(tenant_id) + '-pgw'
     veth_pgw_t_ip = '192.168.' + str(tenant_id) + '.1/24'
     veth_t_pgw_ip = '192.168.' + str(tenant_id) + '.2/24'
+
     functions.create_vethpair(veth_pgw_t, veth_t_pgw, primary=True)
 
     functions.move_veth_to_namespace(veth_pgw_t, ns_name, primary=True)
@@ -130,7 +131,6 @@ def primary(data):
     # add default route via 1.1.1.2 in PGW-T1 namespace
     functions.add_default_route_in_namespace(
         veth_hyp_ip, veth_ns, ns_name, primary=True)
-
     # add route in tenant namespace as a default route as pgw-t1 in primary
     functions.add_default_route_in_namespace(
         veth_pgw_t_ip, veth_t_pgw, tenant_name, primary=True)
@@ -181,6 +181,8 @@ def primary(data):
         #add routes for all the primary subnets in primary hypervisor
         functions.add_route_in_hypervisor_non_default(
             veth_ns_ip, cidr, primary=True)
+
+        functions.add_route_in_namespace_non_default(ns_name, veth_t_pgw_ip, cidr, primary=True)
 
         vmm.defineNetwork(conn.primary_conn, bridge_name)
 

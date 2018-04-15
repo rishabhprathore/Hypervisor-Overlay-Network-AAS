@@ -210,6 +210,19 @@ def add_route_in_hypervisor_non_default(ip_address,subnet, primary=True):
     conn.ssh_remote([cmd])
     return
 
+
+def add_route_in_namespace_non_default(name_space, ip_address, subnet, primary=True):
+    global prefix
+    ip_address = ip_address.split('/')[0]
+    cmd = prefix+' ip route add {} via {} '.format(subnet, ip_address)
+    print(cmd)
+    if primary == True:
+        print('local:')
+        os.system(cmd)
+        return
+    conn.ssh_remote([cmd])
+    return
+
 def add_route_in_namespace(name_space,ip_address, primary=True):
     global prefix
     ip_address=ip_address.split('/')[0]
