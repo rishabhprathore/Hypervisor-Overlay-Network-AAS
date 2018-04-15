@@ -38,12 +38,13 @@ def delete_veth(primary=True):
 
 
 def delete_bridge(primary=True):
-    import pdb; pdb.set_trace()
+    import pdb
+    pdb.set_trace()
     if primary == True:
         status, output = commands.getstatusoutput("brctl show | cut -f1")
         existing = [x for x in output.split("\n")]
         for i in existing[1:]:
-            if i != 'virbr0':
+            if i != 'virbr0' and i != '':
                 cmd1 = "sudo ip link set dev {} down".format(i)
                 cmd2 = "sudo brctl delbr {}".format(i)
                 os.system(cmd1)
@@ -53,7 +54,7 @@ def delete_bridge(primary=True):
         ret = conn.ssh_remote(["brctl show | cut -f1"])
         existing = ret[0].split("\n")
         for i in existing[1:]:
-            if i != 'virbr0':
+            if i != 'virbr0' and i != '':
                 cmd1 = "sudo ip link set dev {} down".format(i)
                 cmd2 = "sudo brctl delbr {}".format(i)
                 conn.ssh_remote([cmd1])
@@ -136,7 +137,7 @@ def delete_vm(primary=True):
         status, output = commands.getstatusoutput("ls -l /etc/libvirt/qemu/ | awk '{print $9}'")
         existing = [x for x in output.split("\n")]
         for i in existing[1:]:
-            if i != 'networks':
+            if i != 'networks' and i != '':
                 cmd1 = "sudo virsh destroy {}".format(i[:-4])
                 cmd2 = "sudo virsh undefine {}".format(i[:-4])
                 os.system(cmd1)
@@ -146,7 +147,7 @@ def delete_vm(primary=True):
         ret = conn.ssh_remote(["ls -l /etc/libvirt/qemu/ | awk '{print $9}'"])
         existing = ret[0].split("\n")
         for i in existing[1:]:
-            if i != 'networks':
+            if i != 'networks' and i != '':
                 cmd1 = "sudo virsh net-destroy {}".format(i[:-4])
                 cmd2 = "sudo virsh net-undefine {}".format(i[:-4])
                 conn.ssh_remote([cmd1])
