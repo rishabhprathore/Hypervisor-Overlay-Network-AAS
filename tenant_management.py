@@ -51,6 +51,8 @@ def _check_need_to_create_vxlan(data):
     """
     returns list of cidrs that are common in primary and secondary
     """
+    import pdb
+    pdb.set_trace()
     p_cidrs, s_cidrs = _give_cidr_ps(data)
     common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
     return list(common_cidrs)
@@ -184,6 +186,7 @@ def primary(data):
     ## VXLAN part
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
+
     common_cidrs = _check_need_to_create_vxlan(data)
     i=0
     for subnet in primary_subnets:
