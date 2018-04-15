@@ -15,42 +15,23 @@ import vmManagement as vmm
 # creation.create_tenant(5)
 
 
-username='rrathor'
-primary_ip_l3='152.46.19.111'
-secondary_ip_l3='152.46.17.221'
-primary_ip_l2='10.25.8.65'
-secondary_ip_l2='10.25.8.12'
+username='ckogant'
+primary_ip_l3='152.46.20.191'
+secondary_ip_l3='152.46.19.135'
+primary_ip_l2='10.25.11.205'
+secondary_ip_l2='10.25.7.94'
 isPrimaryGreCreated=False
 isSecondaryGreCreated = False
 
 interface_primary="eth0"
 interface_secondary="eth0"
 
-
-
-def _check_need_to_create_gre(data):
-    primary = data.get("primary")
-    tenant_id = data.get("id")
-    secondary = data.get("secondary")
-    primary_subnet = primary.get('subnets')
-    p_cidrs = []
-    for s in primary_subnet:
-        sub = s.get('cidr')
-        p_cidrs.append(sub)
-
-    secondary_subnet = secondary.get('subnets')
-    s_cidrs = []
-    for s in primary_subnet:
-        sub = s.get('cidr')
-        s_cidrs.append(sub)
-    if len(set(p_cidrs).intersection(set(s_cidrs))) == 0:
-        return False
-    return True
-
 def _check_need_to_create_vxlan(data):
     """
     returns list of cidrs that are common in primary and secondary
     """
+    import pdb
+    pdb.set_trace()
     p_cidrs, s_cidrs = _give_cidr_ps(data)
     common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
     return list(common_cidrs)
@@ -109,7 +90,7 @@ def primary(data):
     secondary = data.get("secondary")
 
     # Create Tenant
-    functions.get_connection()
+    #functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
     ns_name = 'PGW-' + tenant_name
 
@@ -184,6 +165,7 @@ def primary(data):
     ## VXLAN part
     primary_subnets = data.get('primary').get('subnets')
     secondary_subnets = data.get('secondary').get('subnets')
+
     common_cidrs = _check_need_to_create_vxlan(data)
     i=0
     for subnet in primary_subnets:
@@ -195,7 +177,9 @@ def primary(data):
         veth_br_t = tenant_name+'br-t' + ip
         veth_t_br = tenant_name+'t-br' + ip
         ip_u = unicode(ip, 'utf-8')
-        veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)
+        import pdb
+        pdb.set_trace()
+        veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
 
         #add routes for all the primary subnets in primary hypervisor
@@ -296,7 +280,9 @@ def secondary(data):
         veth_br_t = 'br-t'+ip
         veth_t_br = 't-br'+ip
         ip_u = unicode(ip, 'utf-8')
-        veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)
+        import pdb
+        pdb.set_trace()
+        veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)+'/24'
 
         vmm.defineNetwork(conn.secondary_con, bridge_name, primary=False)
 
@@ -333,14 +319,8 @@ def secondary(data):
             functions.create_vxlan_tunnel(
                 primary_ip_l2, vxlan_tunnel_name, vx_id, bridge_name, interface_secondary, primary=False)
 
-def main():
-    tenant_data = user_data_tenant1.get('tenant')
-    primary(tenant_data)
-    secondary(tenant_data)
-    
 
-if __name__ == '__main__':
-    main()
+
 """
 functions.create_namespace('testNS3', primary=True)
 functions.create_vethpair('test_veth2','test_veth3',primary=True)

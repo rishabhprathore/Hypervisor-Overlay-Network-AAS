@@ -32,4 +32,8 @@ wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.is
 sudo sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf
 sudo sed -i -e 's/#group/group/g' /etc/libvirt/qemu.conf
 sudo service libvirtd restart
+
+echo "Runing the bash"
+./bg.sh&
+
 echo -e "\n\n******Environment setup completed! ****\n"
