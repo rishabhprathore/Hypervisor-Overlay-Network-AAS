@@ -226,8 +226,8 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
 def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface, primary=True):
     cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
           vxlan_tunnel_name, id, remote_ip, interface)
-    cmd_1 = 'brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
-    cmd_2 = 'ip link set {} up'.format(vxlan_tunnel_name)
+    cmd_1 = 'sudo brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
+    cmd_2 = 'sudo ip link set {} up'.format(vxlan_tunnel_name)
 
     cmd_list=[cmd,cmd_1,cmd_2]
     print(cmd)
