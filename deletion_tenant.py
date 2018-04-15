@@ -30,7 +30,6 @@ def delete_veth(primary=True):
     else:
         ret = conn.ssh_remote(["ifconfig -a | grep veth | awk '{ print $1}'"])
         print("ret : {} type: {}".format(ret, type(ret)))
-        import pdb; pdb.set_trace()
         existing = ret[0].split("\n")
         for i in existing:
             cmd = "sudo ip link delete {}".format(i)
@@ -39,6 +38,7 @@ def delete_veth(primary=True):
 
 
 def delete_bridge(primary=True):
+    import pdb; pdb.set_trace()
     if primary == True:
         status, output = commands.getstatusoutput("brctl show | cut -f1")
         existing = [x for x in output.split("\n")]
