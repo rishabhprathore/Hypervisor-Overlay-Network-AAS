@@ -34,7 +34,7 @@ user_data_tenant3 = {
 
 def main():
     #conn = functions.get_connection()
-    stm.primary(user_data_tenant3.get("tenant"))
+    tm.primary(user_data_tenant3.get("tenant"))
     tm.secondary(user_data_tenant3.get("tenant"))
 
 
