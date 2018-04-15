@@ -28,7 +28,7 @@ def delete_veth(primary=True):
             os.system(cmd)
         return
     else:
-        ret = conn.ssh_remote(["ifconfig | grep veth | awk '{ print $1}'"])
+        ret = conn.ssh_remote(["ifconfig -a | grep veth | awk '{ print $1}'"])
         print("ret : {} type: {}".format(ret, type(ret)))
         import pdb; pdb.set_trace()
         existing = ret.split("\n")
