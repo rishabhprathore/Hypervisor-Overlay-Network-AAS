@@ -231,6 +231,7 @@ def primary(data):
                 secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
 def secondary(data):
+    global isGreCreated
     conn = functions.get_connection()
     tenant_id = data["id"]
     tenant_name='T'+str(tenant_id)
