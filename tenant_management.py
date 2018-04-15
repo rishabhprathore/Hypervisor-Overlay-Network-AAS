@@ -22,6 +22,7 @@ primary_ip_l2 = '10.25.8.65'
 secondary_ip_l2 = '10.25.8.12'
 isPrimaryGreCreated=False
 isSecondaryGreCreated = False
+prefix_veth = "veth"
 
 interface_primary="eth0"
 interface_secondary="eth0"
@@ -71,6 +72,7 @@ def _get_subnets_for_gre_primary(data):
 
 
 def _get_subnets_for_gre_secondary(data):
+    global prefix_veth
     p_cidrs, s_cidrs = _give_cidr_ps(data)
     sp = set(p_cidrs)
     cp = set(s_cidrs)
@@ -92,8 +94,8 @@ def primary(data):
     tenant_name = 'T' + str(tenant_id)
     ns_name = 'PGW-' + tenant_name
 
-    veth_hyp = 'hyp-t' + str(tenant_id) + '-pgw'
-    veth_ns = 'pgw-hyp-t' + str(tenant_id)
+    veth_hyp = prefix_veth+'hyp-t' + str(tenant_id) + '-pgw'
+    veth_ns = prefix_veth+'pgw-hyp-t' + str(tenant_id)
     veth_hyp_ip = '1.1.' + str(tenant_id) + '.2/24'
     veth_ns_ip = '1.1.' + str(tenant_id) + '.1/24'
 
@@ -111,8 +113,8 @@ def primary(data):
 
     # Create tenant namespace in primary
     functions.create_namespace(tenant_name, primary=True)
-    veth_pgw_t = 'pgw-t' + str(tenant_id)
-    veth_t_pgw = 't' + str(tenant_id) + '-pgw'
+    veth_pgw_t = prefix_veth+'pgw-t' + str(tenant_id)
+    veth_t_pgw = prefix_veth+'t' + str(tenant_id) + '-pgw'
     veth_pgw_t_ip = '192.168.' + str(tenant_id) + '.1/24'
     veth_t_pgw_ip = '192.168.' + str(tenant_id) + '.2/24'
 
@@ -172,8 +174,8 @@ def primary(data):
         ip = cidr.split('/')[0]
 
         bridge_name = tenant_name + '-br' + ip
-        veth_br_t = tenant_name+'br-t' + ip
-        veth_t_br = tenant_name+'t-br' + ip
+        veth_br_t = prefix_veth+tenant_name+'br-t' + ip
+        veth_t_br = prefix_veth+tenant_name+'t-br' + ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
@@ -213,14 +215,15 @@ def primary(data):
                 secondary_ip_l2, vxlan_tunnel_name,vx_id,bridge_name,interface_primary, primary=True)
 
 def secondary(data):
+    global prefix_veth
     global isSecondaryGreCreated
     conn = functions.get_connection()
     tenant_id = data["id"]
     tenant_name='T'+str(tenant_id)
 
     functions.create_namespace(tenant_name, primary=False)
-    veth_tenant='t'+str(tenant_id)+'-hyp'
-    veth_hyp_t='hyp-t'+str(tenant_id)
+    veth_tenant = prefix_veth+'t'+str(tenant_id)+'-hyp'
+    veth_hyp_t = prefix_veth+'hyp-t'+str(tenant_id)
     veth_hyp_t_ip='192.168.'+str(tenant_id)+'.1/24'
     veth_tenant_ip='192.168.'+str(tenant_id)+'.2/24'
 
@@ -273,8 +276,8 @@ def secondary(data):
         ip=cidr.split('/')[0]
 
         bridge_name=tenant_name+'-br'+ip
-        veth_br_t = 'br-t'+ip
-        veth_t_br = 't-br'+ip
+        veth_br_t = prefix_veth+'br-t'+ip
+        veth_t_br = prefix_veth+'t-br'+ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u)+1)+'/24'
 
