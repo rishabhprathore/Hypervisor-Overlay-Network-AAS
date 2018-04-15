@@ -19,7 +19,6 @@ def deadline(timeout, *args):
       signal.signal(signal.SIGALRM, handler)
       signal.alarm(timeout)
       return f(*args)
-      signal.alarm(0)
 
     new_f.__name__ = f.__name__
     return new_f
@@ -41,17 +40,21 @@ def get_connection():
     return conn
 
 @deadline(300)
-def create_vm(vm_name, memory,bridge_name,iso_path, primary=True):
+def create_vm(vm_name, memory,bridge_name,iso_path,primary):
     cmd = "virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
         " --network network={} -c {} -v".format(
             vm_name, memory, vm_name+".img", bridge_name, iso_path)
     print(cmd)
-    if primary == True:
-        print('local:')
-        os.system(cmd)
-        return
-    conn.ssh_remote([cmd])
+    try:
+        if primary == True:
+            print('local:')
+            os.system(cmd)
+            return
+        conn.ssh_remote([cmd])
+    except TimedOutExc as e:
+        print("timeout in create_vm {}".format(e))
+        pass
     return
 
 
