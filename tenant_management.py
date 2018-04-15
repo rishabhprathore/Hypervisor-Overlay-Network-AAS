@@ -173,8 +173,8 @@ def primary(data):
         ip = cidr.split('/')[0]
 
         bridge_name = tenant_name + '-br' + ip
-        veth_br_t = prefix_veth+tenant_name+'br-t' + ip
-        veth_t_br = prefix_veth+tenant_name+'t-br' + ip
+        veth_br_t = prefix_veth+tenant_name+'-t' + ip
+        veth_t_br = prefix_veth+tenant_name+'t-' + ip
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
