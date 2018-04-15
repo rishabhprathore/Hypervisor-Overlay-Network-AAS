@@ -149,7 +149,7 @@ def createVM_secondary_dif_subnet(tenant_id, subnet_cidr, vm_name, vm_ip):
     gre_tunnel_name='GRE-T'+str(tenant_id)
 
 
-    vmm.defineNetwork(conn.secondary_conn, bridge_name)
+    vmm.defineNetwork(conn.secondary_con, bridge_name)
     veth_br_t='br-t'+ip
     veth_t_br='t-br'+ip
 
