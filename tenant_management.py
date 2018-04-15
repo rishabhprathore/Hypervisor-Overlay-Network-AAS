@@ -232,7 +232,7 @@ def primary(data):
 
 def secondary(data):
     conn = functions.get_connection()
-    tenant_id = data["tenant"]["id"]
+    tenant_id = data["id"]
     tenant_name='T'+str(tenant_id)
 
     functions.create_namespace(tenant_name, primary=False)
