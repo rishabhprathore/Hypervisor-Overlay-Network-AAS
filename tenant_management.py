@@ -14,11 +14,11 @@ import vmManagement as vmm
 # Example @TODO: Please uncomment them.
 # creation.create_tenant(5)
 
-username='ckogant'
-primary_ip_l3='152.46.20.191'
-secondary_ip_l3='152.46.19.135'
-primary_ip_l2='10.25.11.205'
-secondary_ip_l2='10.25.7.94'
+username='atandon'
+primary_ip_l3='152.46.20.80'
+secondary_ip_l3='152.46.19.47'
+primary_ip_l2='10.25.7.241'
+secondary_ip_l2='10.25.8.44'
 isPrimaryGreCreated=False
 isSecondaryGreCreated = False
 
