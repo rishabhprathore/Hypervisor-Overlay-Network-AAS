@@ -6,16 +6,7 @@ import functions
 
 
 conn = None
-def get_connection():
-    global conn
-    global prefix
-    if conn:
-        return conn
-    else:
-        conn = Connection(remote_ip=tenant_management.secondary_ip_l3,
-                          username=tenant_management.username,
-                          pkey_path='/root/.ssh/id_rsa')
-    return conn
+conn = functions.get_connection()
 
 
 def delete_namespace(primary=True):
@@ -121,3 +112,18 @@ def delete_vm(primary=True):
                 conn.ssh_remote([cmd1])
                 conn.ssh_remote([cmd2])
         return
+
+
+def main():
+    primary=True
+    
+    delete_namespace(primary)
+    delete_veth(primary)
+    delete_bridge(primary)
+    delete_network(primary)
+    delete_routes(primary)
+    delete_vm(primary)
+    
+
+if __name__ == '__main__':
+    main()

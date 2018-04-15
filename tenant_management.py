@@ -109,7 +109,7 @@ def primary(data):
     secondary = data.get("secondary")
 
     # Create Tenant
-    functions.get_connection()
+    #functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
     ns_name = 'PGW-' + tenant_name
 
