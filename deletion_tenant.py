@@ -159,6 +159,9 @@ def main():
     delete_network(primary)
     delete_routes(primary)
     delete_vm(primary)
+    delete_gre(primary)
+    delete_vxlan(primary)
+
     
 
 if __name__ == '__main__':
