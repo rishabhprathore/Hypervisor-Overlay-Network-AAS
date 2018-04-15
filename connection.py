@@ -7,8 +7,8 @@ import paramiko
 class Connection:
     def __init__(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
         try:
-            import import pdb; pdb.set_trace()
-            
+            import pdb; pdb.set_trace()
+
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
