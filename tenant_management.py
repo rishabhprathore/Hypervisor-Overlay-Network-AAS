@@ -1,10 +1,12 @@
 from __future__ import print_function
-from connection import Connection
-import functions
-import creation
+
 import ipaddress
 import unicodedata
+
+import creation
+import functions
 import vmManagement as vmm
+from connection import Connection
 
 #conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 #functions.get_connection()
@@ -328,8 +330,3 @@ functions.set_link_up_in_namespace('testNS3', 'test_veth3', primary=True)
 functions.assign_ip_address('test_veth2', '99.99.98.2/24', primary=True)
 functions.set_link_up('test_veth2', primary=True)
 """
-
-
-
-
-
