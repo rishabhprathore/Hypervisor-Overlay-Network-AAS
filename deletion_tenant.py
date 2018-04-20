@@ -1,9 +1,9 @@
 import commands
 import os
-from connection import Connection
-import tenant_management
-import functions
 
+import functions
+import tenant_management
+from connection import Connection
 
 conn = None
 conn = functions.get_connection()
