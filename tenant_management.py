@@ -32,7 +32,7 @@ def _check_need_to_create_vxlan(data):
     """
     returns list of cidrs that are common in primary and secondary and tertiary
     """
-    p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+    p_cidrs, s_cidrs = _give_cidr_ps(data)
     common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
     return list(common_cidrs)
 
@@ -89,6 +89,11 @@ def _get_subnets_for_gre_secondary(data):
     for i in intersection:
         p_cidrs.remove(i)
     return p_cidrs
+
+def run(data):
+    run_primary(data)
+    run_secondary(data)
+    run_tertiary(data)
 
 
 def primary(data):

@@ -30,20 +30,22 @@ class Connection:
         except Exception as e:
             print("Error while initiating connection to remote hypervisor: ", e)
 
-    def ssh_remote(self, conn, cmd_list):
-        res =[]
-        for cmd in cmd_list:
-            ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(cmd, timeout=60)
-            #print(type(ssh_stdout.read())
-            if ssh_stdout is '':
-                #print("test1")
-                if ssh_stderr is not None:
-                    res.append('error:',ssh_stderr.read())
-                    print(res[-1])
-                    continue
-            res.append(ssh_stdout.read())
-            print(res[-1])
-        return res
+
+def ssh_remote(conn, cmd_list):
+    res = []
+    for cmd in cmd_list:
+        ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
+            cmd, timeout=60)
+        #print(type(ssh_stdout.read())
+        if ssh_stdout is '':
+            #print("test1")
+            if ssh_stderr is not None:
+                res.append('error:', ssh_stderr.read())
+                print(res[-1])
+                continue
+        res.append(ssh_stdout.read())
+        print(res[-1])
+    return res
 
 """
 conn = libvirt.open('qemu+ssh://ckogant@152.46.18.27/system')

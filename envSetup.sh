@@ -27,8 +27,6 @@ apt-get install python-jinja2 -y
 sleep 2
 apt-get install python-yaml -y
 sleep 2
-pip install docker
-sleep 2
 wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /root/TinyCore.iso
 
 sudo sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf
@@ -37,5 +35,14 @@ sudo service libvirtd restart
 
 echo "Runing the bash"
 ./bg.sh&
+
+export DOCKER_HOST = "tcp://0.0.0.0:2375"
+# change this manually
+#sudo sed -i -e 's/"ExecStart=/usr/bin/dockerd -H fd://"/"ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375"/g' /lib/systemd/system/docker.service
+
+sudo service docker stop
+systemctl daemon-reload
+sudo service docker start
+
 
 echo -e "\n\n******Environment setup completed! ****\n"

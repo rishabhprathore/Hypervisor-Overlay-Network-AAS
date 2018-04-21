@@ -1,9 +1,15 @@
 from __future__ import print_function
-from connection import Connection
+
 import os
-import tenant_management
-from time import sleep
 import signal
+from time import sleep
+
+import docker
+import tenant_management
+from connection import Connection
+from connection import ssh_remote
+from docker import client
+
 
 class TimedOutExc(Exception):
       pass
@@ -25,20 +31,9 @@ def deadline(timeout, *args):
 
 print("fucntions imported")
 
-conn = None
 prefix = 'sudo ip netns exec '
-def get_connection():
-    global conn
-    global prefix
-    if conn:
-        return conn
-    else:
-        conn = Connection(remote_ip=tenant_management.secondary_ip_l3,
-                          username=tenant_management.username, 
-                          pkey_path='/root/.ssh/id_rsa')
-    return conn
 
-@deadline(60)
+"""@deadline(60)
 def create_vm(vm_name, memory,bridge_name,iso_path,primary):
     cmd = "sudo virt-install --name {} --memory {} " \
         "--vcpu=1 --cpu host  --disk path=/var/lib/libvirt/images/{}.img,size=8" \
@@ -50,45 +45,45 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
             print('local:')
             os.system(cmd)
             return
-        conn.ssh_remote([cmd])
+        ssh_remote(conn, [cmd])
     except Exception as e:
         print("timeout in create_vm {}".format(e))
         pass
-    return
+    return"""
 
 
-def create_namespace(name, primary=True):
+def create_namespace(name, conn=None, primary=True):
     cmd = 'sudo ip netns add {}'.format(name)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd) 
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def create_vethpair(name1, name2, primary=True):
+def create_vethpair(name1, name2, conn=None, primary=True):
     cmd = 'sudo ip link add {} type veth peer name {}'.format(name1, name2)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def set_link_up(interface_name,primary=True):
+def set_link_up(interface_name, conn=None, primary=True):
     cmd= 'sudo ip link set dev {} up'.format(interface_name)
     print(cmd)
     if primary == True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def set_link_up_in_namespace(name_space, interface, primary=True):
+def set_link_up_in_namespace(name_space, interface, conn=None, primary=True):
     global prefix
     cmd= prefix + name_space + ' ip link set dev {} up'.format(interface)
     print(cmd)
@@ -96,11 +91,11 @@ def set_link_up_in_namespace(name_space, interface, primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def assign_ip_address_namespace(name_space, interface, ip_address, primary=True):
+def assign_ip_address_namespace(name_space, interface, ip_address, conn=None, primary=True):
     global prefix
     cmd = prefix + name_space + ' ip addr add '+ ip_address + ' dev {}'.format(interface)
     print(cmd)
@@ -108,42 +103,44 @@ def assign_ip_address_namespace(name_space, interface, ip_address, primary=True)
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def assign_ip_address(interface, ip_address, primary=True):
+
+def assign_ip_address(interface, ip_address, conn=None, primary=True):
     cmd = 'sudo ip addr add {} dev {}'.format(ip_address,interface)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def move_veth_to_namespace(vethname, name_space, primary=True):
+def move_veth_to_namespace(vethname, name_space, conn=None, primary=True):
     cmd = 'sudo ip link set {} netns {}'.format(vethname, name_space)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def move_veth_to_bridge(vethname, bridge_name, primary=True):
+def move_veth_to_bridge(vethname, bridge_name, conn=None, primary=True):
     cmd = 'sudo brctl addif {} {}'.format(bridge_name, vethname)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
+
+def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, conn=None, primary=True):
     cmd = 'sudo ip tunnel add {} mode gre remote {} local {} ttl 255'.format(
           gre_tunnel_name, remote_ip, local_ip)
     print(cmd)
@@ -151,10 +148,11 @@ def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def add_default_route_in_namespace(ip_address, interface_name, name_space, primary=True):
+
+def add_default_route_in_namespace(ip_address, interface_name, name_space, conn=None, primary=True):
     ip_address=ip_address.split('/')[0]
     global prefix
     cmd = prefix + '{} ip route add default via {} dev {}'.format(name_space, ip_address, interface_name)
@@ -163,11 +161,11 @@ def add_default_route_in_namespace(ip_address, interface_name, name_space, prima
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
+def add_route_for_gre(ip_address, gre_tunnel_name, conn=None, primary=True):
     ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add {} dev {}'.format(ip_address, gre_tunnel_name)
     print(cmd)
@@ -175,20 +173,22 @@ def add_route_for_gre(ip_address, gre_tunnel_name,primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def add_route_for_gre_cidr(cidr, gre_tunnel_name,primary=True):
+
+def add_route_for_gre_cidr(cidr, gre_tunnel_name, conn=None, primary=True):
     cmd = 'sudo ip route add {} dev {}'.format(cidr, gre_tunnel_name)
     print(cmd)
     if primary==True:
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def add_route_in_hypervisor(ip_address, interface, primary=True):
+
+def add_route_in_hypervisor(ip_address, interface, conn=None, primary=True):
     ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add default via {} dev {}'.format(ip_address, interface)
     print(cmd)
@@ -196,10 +196,11 @@ def add_route_in_hypervisor(ip_address, interface, primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def add_route_in_hypervisor_non_default(ip_address,subnet, primary=True):
+
+def add_route_in_hypervisor_non_default(ip_address, subnet, conn=None, primary=True):
     ip_address=ip_address.split('/')[0]
     cmd = 'sudo ip route add {} via {} '.format(subnet, ip_address)
     print(cmd)
@@ -207,11 +208,11 @@ def add_route_in_hypervisor_non_default(ip_address,subnet, primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
 
-def add_route_in_namespace_non_default(name_space, ip_address, subnet, primary=True):
+def add_route_in_namespace_non_default(name_space, ip_address, subnet, conn=None, primary=True):
     global prefix
     ip_address = ip_address.split('/')[0]
     cmd = prefix+'{} ip route add {} via {} '.format(name_space, subnet, ip_address)
@@ -220,10 +221,10 @@ def add_route_in_namespace_non_default(name_space, ip_address, subnet, primary=T
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def add_route_in_namespace(name_space,ip_address, primary=True):
+def add_route_in_namespace(name_space,ip_address,conn=None, primary=True):
     global prefix
     ip_address=ip_address.split('/')[0]
     cmd = prefix+ 'sudo ip route add default via {}'.format(ip_address)
@@ -232,10 +233,10 @@ def add_route_in_namespace(name_space,ip_address, primary=True):
         print('local:')
         os.system(cmd)
         return
-    conn.ssh_remote([cmd])
+    ssh_remote(conn, [cmd])
     return
 
-def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface, primary=True):
+def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface,conn=None, primary=True):
     cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
           vxlan_tunnel_name, id, remote_ip, interface)
     cmd_1 = 'sudo brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
@@ -250,3 +251,6 @@ def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface, pr
         return
     conn.ssh_remote(cmd_list)
     return
+
+def create_container(image_name='atandon70/test:latest2'):
+    pass
