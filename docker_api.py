@@ -1,6 +1,10 @@
+import os
 import docker
-
 from docker import client
+
+# TAKE veth0 & veth1 INPUT FROM USER
+veth0 = "veth0"
+veth1 = "veth1"
 cli = client.APIClient(base_url='unix://var/run/docker.sock')
 cli = client.APIClient(base_url="tcp://0.0.0.0:2375")
 host_c = cli.create_host_config(privileged=True)
@@ -9,7 +13,14 @@ c_id = cli.create_container(image='atandon70/test:latest2',
                             host_config=host_c)
 cli.start(c_id['Id'])
 #docker inspect --format '{{.State.Pid}}' c_id['Id']
-cli.inspect_container(c_id['Id'])['Pid']
+c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
+os.system("ip link add {0} type veth peer name {1}".format(veth0, veth1))
+os.system("ifconfig {0} up\nifconfig {1} up".format(veth0,veth1))
+os.system("ip link set veth0 netns {}".format(c_pid))
+os.system("docker exec -it --privileged {0} ifconfig {1} up".format(c_id['Id'],veth0))
+os.system("docker exec -it %s ifconfig %s | grep HWaddr | awk '{print $5}'" %(c_id['Id'],veth0))
+
+
 
 
 
