@@ -5,8 +5,12 @@ import unicodedata
 
 import creation
 import functions
+import values
 import vmManagement as vmm
 from connection import Connection
+
+
+primary_data, secondary_data, tertiary_data = values.get_value()
 
 #conn = Connection(remote_ip='152.46.18.27', username='ckogant', pkey_path='/root/.ssh/id_rsa')
 #functions.get_connection()
@@ -16,11 +20,7 @@ from connection import Connection
 # Example @TODO: Please uncomment them.
 # creation.create_tenant(5)
 
-username='atandon'
-primary_ip_l3='152.46.20.80'
-secondary_ip_l3='152.46.19.47'
-primary_ip_l2='10.25.7.241'
-secondary_ip_l2='10.25.8.44'
+
 isPrimaryGreCreated=False
 isSecondaryGreCreated = False
 
@@ -30,17 +30,18 @@ prefix_veth = "Y"
 
 def _check_need_to_create_vxlan(data):
     """
-    returns list of cidrs that are common in primary and secondary
+    returns list of cidrs that are common in primary and secondary and tertiary
     """
-    p_cidrs, s_cidrs = _give_cidr_ps(data)
+    p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
     common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
     return list(common_cidrs)
 
 
 def _give_cidr_ps(data):
     primary = data.get("primary")
-    tenant_id = data.get("id")
     secondary = data.get("secondary")
+    tertiary = data.get("tertiary")
+
     primary_subnet = primary.get('subnets')
     p_cidrs = []
     for s in primary_subnet:
@@ -52,7 +53,14 @@ def _give_cidr_ps(data):
     for s in secondary_subnet:
         sub = s.get('cidr')
         s_cidrs.append(sub)
-    return p_cidrs, s_cidrs
+    
+    tertiary_subnet = tertiary.get('subnets')
+    t_cidrs = []
+    for s in tertiary_subnet:
+        sub = s.get('cidr')
+        t_cidrs.append(sub)
+
+    return p_cidrs, s_cidrs, t_cidrs
 
 
 def _check_need_to_create_gre(data):
