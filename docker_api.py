@@ -2,7 +2,7 @@ import docker
 
 from docker import client
 cli = client.APIClient(base_url='unix://var/run/docker.sock')
-cli = client.APIClient(base_url="tcp://152.46.17.221:2375")
+cli = client.APIClient(base_url="tcp://0.0.0.0:2375")
 h0st_c = cli.create_host_config(privileged=True)
 c_id = cli.create_container(image='atandon70/test:latest2',
                             command='/bin/sleep 3000000',
