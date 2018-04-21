@@ -3,31 +3,37 @@ import sys
 import libvirt
 import sys
 import paramiko
+import docker
+from docker import client
 
 class Connection:
-    def __init__(self, remote_ip, username, pkey_path='/root/.ssh/id_rsa'):
+    def __init__(self, secondary_data, tertiary_data, pkey_path='/root/.ssh/id_rsa'):
         try:
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh.connect(remote_ip, username=username, pkey=privkey)
+            self.seconday_ssh = self.ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
+            self.tertiary_ssh = self.ssh.connect(
+                tertiary_data['ip'], username=tertiary_data['username'], pkey=privkey)
 
             self.primary_conn=libvirt.open('qemu:///system')
-            cmd = ["sudo usermod -G libvirtd -a {}".format(username)]
-            cmd.append("sudo sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf")
-            cmd.append("sudo sed -i -e 's/#group/group/g' /etc/libvirt/qemu.conf")
-            cmd.append("sudo service libvirtd restart")
-            print(cmd)
-            self.ssh_remote(cmd)
-            
-            self.secondary_con=libvirt.open('qemu+ssh://{}@{}/system'.format(username,remote_ip))
+            self.secondary_con = libvirt.open(
+                'qemu+ssh://{}@{}/system'.format(secondary_data['username'], secondary_data['ip']))
+            self.tertiary_con = libvirt.open(
+                'qemu+ssh://{}@{}/system'.format(tertiary_data['username'], tertiary_data['ip']))
+
+            self.primary_docker = client.APIClient(base_url='unix://var/run/docker.sock')
+            self.secondary_docker = client.APIClient(
+                base_url="tcp://{}:2375".format(secondary_data['ip']))
+            self.tertiary_docker = client.APIClient(
+                base_url="tcp://{}:2375".format(tertiary_data['ip']))
         except Exception as e:
             print("Error while initiating connection to remote hypervisor: ", e)
 
-    def ssh_remote(self, cmd_list):
+    def ssh_remote(self, conn, cmd_list):
         res =[]
         for cmd in cmd_list:
-            ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd, timeout=60)
+            ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(cmd, timeout=60)
             #print(type(ssh_stdout.read())
             if ssh_stdout is '':
                 #print("test1")
