@@ -18,6 +18,8 @@ os.system("ip link add {0} type veth peer name {1}".format(veth0, veth1))
 os.system("ifconfig {0} up\nifconfig {1} up".format(veth0,veth1))
 os.system("ip link set veth0 netns {}".format(c_pid))
 os.system("docker exec -it --privileged {0} ifconfig {1} up".format(c_id['Id'],veth0))
+
+# MAC parsing of veth inside docker
 os.system("docker exec -it %s ifconfig %s | grep HWaddr | awk '{print $5}'" %(c_id['Id'],veth0))
 
 
