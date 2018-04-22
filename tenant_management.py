@@ -28,13 +28,69 @@ interface_primary="eth0"
 interface_secondary="eth0"
 prefix_veth = "Y"
 
-def _check_need_to_create_vxlan(data):
+def _check_need_to_create_vxlan_primary(data):
     """
     returns list of cidrs that are common in primary and secondary and tertiary
     """
-    p_cidrs, s_cidrs = _give_cidr_ps(data)
-    common_cidrs = set(p_cidrs).intersection(set(s_cidrs))
-    return list(common_cidrs)
+    ret = []
+    flag_s = False
+    flag_t = False
+    p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+    #Between Primary and Secondary
+    common_cidrs_ps = set(p_cidrs).intersection(set(s_cidrs))
+    ret.append(list(common_cidrs_ps))
+    #Between Primary and Tertiary
+    common_cidrs_pt = set(p_cidrs).intersection(set(t_cidrs))
+    ret.append(list(common_cidrs_pt))
+
+    if len(common_cidrs_ps)>0:
+        flag_s = True
+    if len(common_cidrs_pt)>0:
+        flag_t=True
+    return flag_s, flag_t
+
+def _check_need_to_create_vxlan_secondary(data):
+    """
+    returns list of cidrs that are common in primary and secondary and tertiary
+    """
+    ret = []
+    flag_p = False
+    flag_t = False
+    p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+    #Between Primary and Secondary
+    common_cidrs_ps = set(p_cidrs).intersection(set(s_cidrs))
+    ret.append(list(common_cidrs_ps))
+    #Between Secondary and Tertiary
+    common_cidrs_st = set(s_cidrs).intersection(set(t_cidrs))
+    ret.append(list(common_cidrs_st))
+
+    if len(common_cidrs_ps) > 0:
+        flag_p = T
+    if len(common_cidrs_st) > 0:
+        flag_t = True
+    return flag_p, flag_t
+
+
+def _check_need_to_create_vxlan_tertiary(data):
+    """
+    returns list of cidrs that are common in primary and secondary and tertiary
+    """
+    ret = []
+    flag_s = False
+    flag_t = False
+    p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+    #Between Primary and Secondary
+    common_cidrs_ts = set(t_cidrs).intersection(set(s_cidrs))
+    ret.append(list(common_cidrs_ts))
+    #Between Primary and Tertiary
+    common_cidrs_pt = set(p_cidrs).intersection(set(t_cidrs))
+    ret.append(list(common_cidrs_pt))
+
+    if len(common_cidrs_ts) > 0:
+        flag_s = True
+    if len(common_cidrs_pt) > 0:
+        flag_p = True
+    return flag_p, flag_s
 
 
 def _give_cidr_ps(data):
@@ -90,6 +146,111 @@ def _get_subnets_for_gre_secondary(data):
         p_cidrs.remove(i)
     return p_cidrs
 
+def run_primary(data, conn):
+    primary = data.get("primary")
+    tenant_id = data.get("id")
+    secondary = data.get("secondary")
+    tertiary = data.get("tertiary")
+
+    # Create Tenant
+    # functions.get_connection()
+    tenant_name = 'T' + str(tenant_id)
+    pgw_name = 'PGW-' + tenant_name
+
+    veth_hyp = prefix_veth+'hyp-t' + str(tenant_id) + '-pgw'
+    veth_hyp_ip = '99.1.' + str(tenant_id) + '.1/24'
+    veth_ns = prefix_veth+'pgw-hyp-t' + str(tenant_id)
+    veth_ns_ip = '99.1.' + str(tenant_id) + '.2/24'
+    # create a namespace for tenant PGW-T1
+    functions.create_namespace(pgw_name, primary=True)
+    # Create veth pair in hypervisor  (pgw-hypt1)(1.1.1.1)(<1.1.tenant-id.1>)
+    functions.create_vethpair(veth_hyp, veth_ns, primary=True)
+
+    functions.move_veth_to_namespace(veth_ns, pgw_name, primary=True)
+    functions.assign_ip_address_namespace(
+        pgw_name, veth_ns, veth_ns_ip, primary=True)
+    functions.set_link_up_in_namespace(pgw_name, veth_ns, primary=True)
+    functions.assign_ip_address(veth_hyp, veth_hyp_ip, primary=True)
+    functions.set_link_up(veth_hyp, primary=True)
+
+    # Creating IGW 
+    igw_name = 'IGW-' + tenant_name
+
+    veth_hyp = prefix_veth+'hyp-t' + str(tenant_id) + '-igw'
+    veth_hyp_ip = '55.1.' + str(tenant_id) + '.1/24'
+    veth_ns = prefix_veth+'igw-hyp-t' + str(tenant_id)
+    veth_ns_ip = '55.1.' + str(tenant_id) + '.2/24'
+    # create a namespace for tenant PGW-T1
+    functions.create_namespace(igw_name, primary=True)
+    # Create veth pair in hypervisor  (pgw-hypt1)(1.1.1.1)(<1.1.tenant-id.1>)
+    functions.create_vethpair(veth_hyp, veth_ns, primary=True)
+
+    functions.move_veth_to_namespace(veth_ns, igw_name, primary=True)
+    functions.assign_ip_address_namespace(
+        igw_name, veth_ns, veth_ns_ip, primary=True)
+    functions.set_link_up_in_namespace(igw_name, veth_ns, primary=True)
+    functions.assign_ip_address(veth_hyp, veth_hyp_ip, primary=True)
+    functions.set_link_up(veth_hyp, primary=True)
+
+    # create veth pair between IGW and PGW
+
+    veth_pgw = prefix_veth+'pgw-t' + str(tenant_id) + '-igw'
+    veth_pgw_ip = '56.1.' + str(tenant_id) + '.1/24'
+    veth_igw = prefix_veth+'igw-pgw-t' + str(tenant_id)
+    veth_igw_ip = '56.1.' + str(tenant_id) + '.2/24'
+    
+    # Create veth pair in hypervisor  (pgw-hypt1)(1.1.1.1)(<1.1.tenant-id.1>)
+    functions.create_vethpair(veth_pgw, veth_igw, primary=True)
+
+    functions.move_veth_to_namespace(veth_igw, igw_name, primary=True)
+    functions.assign_ip_address_namespace(
+        igw_name, veth_igw, veth_igw_ip, primary=True)
+    functions.set_link_up_in_namespace(igw_name, veth_igw, primary=True)
+
+    functions.move_veth_to_namespace(veth_pgw, pgw_name, primary=True)
+    functions.assign_ip_address_namespace(
+        pgw_name, veth_pgw, veth_pgw_ip, primary=True)
+    functions.set_link_up_in_namespace(pgw_name, veth_pgw, primary=True)
+
+    # check if vxlan is reqd
+    flag_s, flag_t = _check_need_to_create_vxlan_primary(data)
+
+    if flag_s or flag_t:
+        # create bridge inside IGW
+        bridge_name = 'vx-igw-'+tenant_name
+        functions.create_bridge_namespace(igw_name, bridge_name, primary=True)
+        vx_device_name = 'vx-igw-'+tenant_name+'-dev'
+        
+
+        
+        
+
+
+    
+    
+    
+
+    veth_br_t = prefix_veth+tenant_name+'-t'
+    veth_t_br = prefix_veth+tenant_name+'t-'
+    ip_u = unicode(ip, 'utf-8')
+    veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
+
+    #add routes for all the primary subnets in primary hypervisor
+    functions.add_route_in_hypervisor_non_default(
+        veth_ns_ip, cidr, primary=True)
+
+    functions.add_route_in_namespace_non_default(
+        ns_name, veth_t_pgw_ip, cidr, primary=True)
+
+    vmm.defineNetwork(conn.primary_conn, bridge_name)
+
+
+    
+
+
+
+
+
 def run(data):
     run_primary(data)
     run_secondary(data)
@@ -97,8 +258,7 @@ def run(data):
 
 
 def primary(data):
-    global isPrimaryGreCreated
-    conn=functions.get_connection()
+    
     primary = data.get("primary")
     tenant_id = data.get("id")
     secondary = data.get("secondary")
