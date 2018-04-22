@@ -84,7 +84,7 @@ def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
     ssh_remote(conn, cmd_list)
     return container_id
 
-def get_mac_dockerContainer(container_id, conn, primary=True):
+def get_mac_dockerContainer(container_id, conn=None, primary=True):
     """
     This parses the veth1 in the container for its MAC address
     :param container_id: Container ID for which veth1's MAC is required
