@@ -18,10 +18,11 @@ def get_value():
     }
     return primary_data, secondary_data, tertiary_data
 def get_user_data():
+    user_data = None
     with open("user_data.json", 'r') as f:
         user_data = json.load(f)
-        #print(user_data)
-        return user_data
+    #print(user_data)
+    return user_data
     #
     # user_data = {
     #     'data': {
