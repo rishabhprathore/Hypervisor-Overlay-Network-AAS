@@ -153,6 +153,10 @@ def _give_cidr_ps(data):
 
     return p_cidrs, s_cidrs, t_cidrs
 
+def _is_subnet_in_list(subnet, s_list):
+    if subnet in s_list:
+        return True
+    return False
 
 def run_primary(data, conn):
     primary = data.get("primary")
@@ -233,11 +237,12 @@ def run_primary(data, conn):
             vx_device_name, vxlan_id, vx_bridge_name, veth_igw_hyp, primary=True)
         if flag_s:
             remote_ip = '55.2.1.2'
-            functions.add_fdb_entry_in_vxlan_default_namespace(igw_name, remote_ip, vx_device_name)
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip, vx_device_name)
 
         if flag_t:
             remote_ip = '55.3.1.2'
-            functions.add_fdb_entry_in_vxlan_default_namespace(
+            functions.add_fdb_entry_in_vxlan_namespace(
                 igw_name, remote_ip, vx_device_name)
     
     # creating GRE 
@@ -248,40 +253,125 @@ def run_primary(data, conn):
         remote_ip = '55.2.1.2'
         gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip
         functions.create_gre_tunnel_namespace(igw_name, remote_ip, local_ip, gre_tunnel_name)
+        gre_tunnel_ip_p_s = '33.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_s = '33.2.'+str(tenant_id)+'.1/32'
+
+        #to create a GRE tunnel in primary
+        functions.set_link_up_in_namespace(igw_name, gre_tunnel_name, primary=True)
+        functions.assign_ip_address_namespace(
+            igw_name, gre_tunnel_name, gre_tunnel_ip_p_s, primary=True)
+        # adding default routes
+        functions.add_route_for_gre_cidr_namespace(
+            igw_name, gre_tunnel_ip_p_s, gre_tunnel_name, primary=True)
+        functions.add_route_for_gre_cidr_namespace(
+            igw_name, gre_tunnel_ip_s, gre_tunnel_name, primary=True)
         for subnet in s_cidrs:
             functions.add_route_for_gre_cidr_namespace(igw_name, subnet, gre_tunnel_name)
+    
+    if flag_t:
+        local_ip = veth_igw_hyp_ip
+        remote_ip = '55.3.1.2'
+        gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip
+        functions.create_gre_tunnel_namespace(
+            igw_name, remote_ip, local_ip, gre_tunnel_name)
+        gre_tunnel_ip_p_t = '34.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '34.2.'+str(tenant_id)+'.1/32'
+
+        #to create a GRE tunnel in primary
+        functions.set_link_up_in_namespace(
+            igw_name, gre_tunnel_name, primary=True)
+        functions.assign_ip_address_namespace(
+            igw_name, gre_tunnel_name, gre_tunnel_ip_p_t, primary=True)
+        # adding default routes
+        functions.add_route_for_gre_cidr_namespace(
+            igw_name, gre_tunnel_ip_p_t, gre_tunnel_name, primary=True)
+        functions.add_route_for_gre_cidr_namespace(
+            igw_name, gre_tunnel_ip_t, gre_tunnel_name, primary=True)
+
+        for subnet in t_cidrs:
+            functions.add_route_for_gre_cidr_namespace(
+                igw_name, subnet, gre_tunnel_name)
+        
+    #create bridge for each subnet in Primary
+    primary_subnets = data.get('primary').get('subnets')
+    secondary_subnets = data.get('secondary').get('subnets')
+    tertiary_subnets = data.get('tertiary').get('subnets')
+
+    i = 0
+    for subnet in primary_subnets:
+        cidr = subnet["cidr"]
+        vm_ips = subnet["vm_ips"]
+        ip = cidr.split('/')[0]
+
+        bridge_name = tenant_name + '-br' + ip
+        veth_br_t = prefix_veth+tenant_name+'-' + ip.replace('.', '')
+        veth_t_br = prefix_veth+tenant_name+'-' + ip.replace('.', '')
+        ip_u = unicode(ip, 'utf-8')
+        veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
+
+        vmm.defineNetwork(bridge_name, conn.primary_conn, primary=True)
+        p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+
+        if _is_subnet_in_list(cidr, s_cidrs.extend(t_cidrs)):
+            functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
+            functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=True)
+            functions.set_link_up(veth_br_t, primary=True)
+
+            functions.move_veth_to_namespace(veth_t_br, igw_name, primary=True)
+            functions.move_veth_to_bridge_namespace(igw_name, veth_t_br, bridge_name, primary=True)
+        
+        #create a veth pair for conatiners default
+        veth_br_igw_default = prefix_veth+tenant_name+'-g-' + ip.replace('.', '')
+        veth_igw_br_default = prefix_veth+tenant_name+'-g-' + ip.replace('.', '')
+        ip_u = unicode(ip, 'utf-8')
+        veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
+        functions.create_vethpair(
+            veth_br_igw_default, veth_igw_br_default, primary=True)
+        functions.move_veth_to_bridge(
+            veth_br_igw_default, bridge_name, primary=True)
+        functions.set_link_up(veth_br_igw_default, primary=True)
+
+        functions.assign_ip_address_namespace(
+            igw_name, veth_igw_br_default, veth_igw_br_default_ip, primary=True)
+        functions.set_link_up_in_namespace(
+            igw_name, veth_igw_br_default, primary=True)
+        
+        num_vms = len(vm_ips)
+        for vm_ip in vm_ips:
+            vm_name = "vm-"+tenant_name+'-'+vm_ip
+            veth_c_br = prefix_veth+'-cbr-'tenant_name+vm_ip.replace('.','')
+            veth_br_c = prefix_veth+'-brc-'tenant_name+vm_ip.replace('.', '')
+
+            functions.create_vethpair(
+                veth_c_br, veth_br_c, primary=True)
+            functions.move_veth_to_bridge(
+                veth_br_c, bridge_name, primary=True)
+            functions.set_link_up(veth_br_c, primary=True)
+
+            cidr = vm_ip+'/24'
+            functions.create_docker_container(
+                vm_name, veth_c_br, cidr, conn.primary_docker, primary=True)
+        
+        
+
+
         
 
 
 
 
 
+    
+
+        
         
 
-
-    
-    
-    
-
-    veth_br_t = prefix_veth+tenant_name+'-t'
-    veth_t_br = prefix_veth+tenant_name+'t-'
-    ip_u = unicode(ip, 'utf-8')
-    veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
-
-    #add routes for all the primary subnets in primary hypervisor
-    functions.add_route_in_hypervisor_non_default(
-        veth_ns_ip, cidr, primary=True)
-
-    functions.add_route_in_namespace_non_default(
-        ns_name, veth_t_pgw_ip, cidr, primary=True)
-
-    vmm.defineNetwork(conn.primary_conn, bridge_name)
-
-
-    
-
-
-
+        num_vms = len(vm_ips)
+        for vm_ip in vm_ips:
+            vm_name = "vm_" + vm_ip
+            functions.create_vm(vm_name, "512", bridge_name,
+                                "/root/TinyCore.iso", True)
+        # spawn vms and connect to bridge
 
 
 def run(data):

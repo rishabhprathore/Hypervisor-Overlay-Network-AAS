@@ -51,7 +51,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
         pass
     return"""
 
-def create_docker_container(c_name, veth0, veth1, c_cidr, conn, primary=True):
+def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
     """
     Creates a Docker Container, veth pair, assigns IP and moves veth1 to container
     :param c_name: Name for the container
@@ -71,12 +71,10 @@ def create_docker_container(c_name, veth0, veth1, c_cidr, conn, primary=True):
     conn.start(container_id)
     c_pid = conn.inspect_container(c_id['Id'])['State']['Pid']
 
-    cmd1 = "sudo ip link add {0} type veth peer name {1}".format(veth0, veth1)
-    cmd2 = "sudo ifconfig {0} up\nifconfig {1} up".format(veth0, veth1)
-    cmd3 = "sudo ip link set {0} netns {1}".format(veth1, c_pid)
-    cmd4 = "sudo docker exec -it --privileged {0} ifconfig {1} {2} up".format(
+    cmd1 = "ip link set {0} netns {1}".format(veth1, c_pid)
+    cmd2 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(
         c_id['Id'], veth1, c_cidr)
-    cmd_list = [cmd1, cmd2, cmd3, cmd4]
+    cmd_list = [cmd1, cmd2]
 
     if primary==True:
         print('local:')
@@ -183,6 +181,18 @@ def move_veth_to_bridge(vethname, bridge_name, conn=None, primary=True):
     cmd = 'sudo brctl addif {} {}'.format(bridge_name, vethname)
     print(cmd)
     if primary==True:
+        print('local:')
+        os.system(cmd)
+        return
+    ssh_remote(conn, [cmd])
+    return
+
+
+def move_veth_to_bridge_namespace(name_space, vethname, bridge_name, conn=None, primary=True):
+    global prefix
+    cmd = prefix+ '{} sudo brctl addif {} {}'.format(name_space, bridge_name, vethname)
+    print(cmd)
+    if primary == True:
         print('local:')
         os.system(cmd)
         return
@@ -305,11 +315,12 @@ def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,c
     conn.ssh_remote(cmd_list)
     return
 
-def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_name, conn=None, primary=True):
+
+def add_fdb_entry_in_vxlan_namespace(name_space, remote_ip, vxlan_dev_name,mac='00:00:00:00:00:00', conn=None, primary=True):
     global prefix
     cmd = prefix + \
-        '{} bridge fdb append to 00:00:00:00:00:00 dst {} dev {} '.format(
-            name_space, remote_ip, vxlan_dev_name)
+        '{} bridge fdb append to {} dst {} dev {} '.format(
+            name_space, mac, remote_ip, vxlan_dev_name)
     print(cmd)
     if primary == True:
         print('local:')

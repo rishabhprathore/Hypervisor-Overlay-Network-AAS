@@ -7,6 +7,7 @@ import jinja2
 import yaml
 import commands
 import functions
+from connection import ssh_remote
 
 def getConnection():
     """
@@ -38,14 +39,12 @@ def listDomInfo(conn):
         print(' ')
 
 
-def defineNetwork(conn, networkName, primary=True):
+def defineNetwork(networkName, conn_libvirt, conn_ssh=None, primary=True):
     """
     Creates a linux-bridge and then activates a persistent VIRSH Network
     :param conn: connection pointer
     :param networkName: name of the Network
     """
-    conn = functions.get_connection()
-
     # create a persistent virtual network
 
     #create the bridge using brctl command
@@ -57,7 +56,7 @@ def defineNetwork(conn, networkName, primary=True):
         for cmd in cmd_list:
             os.system(cmd)
     else:
-        conn.ssh_remote(cmd_list)
+        ssh_remote(conn_ssh, cmd_list)
 
     JINJA_ENVIRONMENT = jinja2.Environment(
         loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -77,9 +76,7 @@ def defineNetwork(conn, networkName, primary=True):
     f = open(filename)
     xmlconfig = f.read()
     if primary==True:
-        network = conn.primary_conn.networkDefineXML(xmlconfig)
-    else:
-        network = conn.secondary_con.networkDefineXML(xmlconfig)
+        network = conn_libvirt.networkDefineXML(xmlconfig)
     if network == None:
         print('Failed to create a virtual network', file=sys.stderr)
         return
