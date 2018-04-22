@@ -51,7 +51,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
         pass
     return"""
 
-def create_docker_container(c_name, veth0, veth1, c_cidr, conn=None, primary=True):
+def create_docker_container(c_name, veth0, veth1, c_cidr, conn, primary=True):
     """
     Creates a Docker Container on primary or secondary hypervisor
     :param c_name: Name for the container
@@ -60,40 +60,31 @@ def create_docker_container(c_name, veth0, veth1, c_cidr, conn=None, primary=Tru
     :param c_cidr: X.X.X.X/24 for veth1 (docker veth Interface)
     :param conn:
     :param primary:
-    :return: None
+    :return: container_id
     """
-    cmd1 = "ip link add {0} type veth peer name {1}".format(veth0, veth1)
-    cmd2 = "ifconfig {0} up\nifconfig {1} up".format(veth0, veth1)
-    if primary==True:
-        print('local:')
-        cli = client.APIClient(base_url='unix://var/run/docker.sock')
-        host_c = cli.create_host_config(privileged=True)
-        c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
-                                    command='/bin/sleep 3000000',
-                                    host_config=host_c,
-                                    name=c_name)
-        cli.start(c_id['Id'])
-        c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
-        cmd3 = "ip link set {0} netns {1}".format(veth1, c_pid)
-        cmd4 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(c_id['Id'], veth1, c_cidr)
-        cmds = [cmd1, cmd2, cmd3, cmd4]
-        for cmd in cmds:
-            os.system(cmd)
-        return
-    # For Secondary Hypervisor
-    cli = client.APIClient(base_url="tcp://0.0.0.0:2375")
-    host_c = cli.create_host_config(privileged=True)
-    c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
+    host_c = conn.create_host_config(privileged=True)
+    c_id = conn.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                 command='/bin/sleep 3000000',
                                 host_config=host_c,
                                 name=c_name)
-    cli.start(c_id['Id'])
-    c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
+    container_id = c_id['Id']
+    conn.start(container_id)
+    c_pid = conn.inspect_container(c_id['Id'])['State']['Pid']
+
+    cmd1 = "ip link add {0} type veth peer name {1}".format(veth0, veth1)
+    cmd2 = "ifconfig {0} up\nifconfig {1} up".format(veth0, veth1)
     cmd3 = "ip link set {0} netns {1}".format(veth1, c_pid)
-    cmd4 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(c_id['Id'], veth1, c_cidr)
-    cmds = [cmd1, cmd2, cmd3, cmd4]
-    ssh_remote(conn, cmds)
-    return
+    cmd4 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(
+        c_id['Id'], veth1, c_cidr)
+    cmd_list = [cmd1, cmd2, cmd3, cmd4]
+
+    if primary==True:
+        print('local:')
+        for cmd in cmd_list:
+            os.system(cmd)
+        return container_id
+    ssh_remote(conn, cmd_list)
+    return container_id
 
 
 def create_namespace(name, conn=None, primary=True):
