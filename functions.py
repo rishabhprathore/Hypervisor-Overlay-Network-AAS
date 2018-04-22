@@ -51,6 +51,50 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
         pass
     return"""
 
+def create_docker_container(c_name, veth0, veth1, c_cidr, conn=None, primary=True):
+    """
+    Creates a Docker Container on primary or secondary hypervisor
+    :param c_name: Name for the container
+    :param veth0: Name for the veth interface which stays in the bridge/hypervisor
+    :param veth1: Name for the veth interface which goes into the docker container
+    :param c_cidr: X.X.X.X/24 for veth1 (docker veth Interface)
+    :param conn:
+    :param primary:
+    :return: None
+    """
+    cmd1 = "ip link add {0} type veth peer name {1}".format(veth0, veth1)
+    cmd2 = "ifconfig {0} up\nifconfig {1} up".format(veth0, veth1)
+    if primary==True:
+        print('local:')
+        cli = client.APIClient(base_url='unix://var/run/docker.sock')
+        host_c = cli.create_host_config(privileged=True)
+        c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
+                                    command='/bin/sleep 3000000',
+                                    host_config=host_c,
+                                    name=c_name)
+        cli.start(c_id['Id'])
+        c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
+        cmd3 = "ip link set {0} netns {1}".format(veth1, c_pid)
+        cmd4 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(c_id['Id'], veth1, c_cidr)
+        cmds = [cmd1, cmd2, cmd3, cmd4]
+        for cmd in cmds:
+            os.system(cmd)
+        return
+    # For Secondary Hypervisor
+    cli = client.APIClient(base_url="tcp://0.0.0.0:2375")
+    host_c = cli.create_host_config(privileged=True)
+    c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
+                                command='/bin/sleep 3000000',
+                                host_config=host_c,
+                                name=c_name)
+    cli.start(c_id['Id'])
+    c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
+    cmd3 = "ip link set {0} netns {1}".format(veth1, c_pid)
+    cmd4 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(c_id['Id'], veth1, c_cidr)
+    cmds = [cmd1, cmd2, cmd3, cmd4]
+    ssh_remote(conn, cmds)
+    return
+
 
 def create_namespace(name, conn=None, primary=True):
     cmd = 'sudo ip netns add {}'.format(name)
@@ -255,6 +299,7 @@ def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,c
     conn.ssh_remote(cmd_list)
     return
 
+<<<<<<< HEAD
 def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_name, conn=None, primary=True):
     global prefix
     cmd = prefix + \
@@ -272,6 +317,8 @@ def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_na
 def create_container(image_name='atandon70/test:latest2'):
     pass
 
+=======
+>>>>>>> b86cd429792535d9660c68a919eccf7633ed958c
 
 def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
     global prefix
