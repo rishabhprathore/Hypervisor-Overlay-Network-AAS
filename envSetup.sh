@@ -26,8 +26,8 @@ sleep 2
 sudo apt-get install python-jinja2 -y
 sleep 2
 sudo apt-get install python-yaml -y
-sleep 2
-sudo wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /root/TinyCore.iso
+#sleep 2
+#sudo wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /root/TinyCore.iso
 
 sudo sed -i -e 's/#user/user/g' /etc/libvirt/qemu.conf
 sudo sed -i -e 's/#group/group/g' /etc/libvirt/qemu.conf
