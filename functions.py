@@ -140,9 +140,10 @@ def move_veth_to_bridge(vethname, bridge_name, conn=None, primary=True):
     return
 
 
-def create_gre_tunnel(remote_ip, local_ip, gre_tunnel_name, conn=None, primary=True):
-    cmd = 'sudo ip tunnel add {} mode gre remote {} local {} ttl 255'.format(
-          gre_tunnel_name, remote_ip, local_ip)
+def create_gre_tunnel_namespace(name_space, remote_ip, local_ip, gre_tunnel_name, conn=None, primary=True):
+    global prefix
+    cmd = prefix+ '{} sudo ip tunnel add {} mode gre remote {} local {} ttl 255'.format(
+          name_space, gre_tunnel_name, remote_ip, local_ip)
     print(cmd)
     if primary==True:
         print('local:')
@@ -177,8 +178,9 @@ def add_route_for_gre(ip_address, gre_tunnel_name, conn=None, primary=True):
     return
 
 
-def add_route_for_gre_cidr(cidr, gre_tunnel_name, conn=None, primary=True):
-    cmd = 'sudo ip route add {} dev {}'.format(cidr, gre_tunnel_name)
+def add_route_for_gre_cidr_namespace(name_space, cidr, gre_tunnel_name, conn=None, primary=True):
+    global prefix    
+    cmd = prefix+'{} sudo ip route add {} dev {}'.format(name_space, cidr, gre_tunnel_name)
     print(cmd)
     if primary==True:
         print('local:')
@@ -227,7 +229,7 @@ def add_route_in_namespace_non_default(name_space, ip_address, subnet, conn=None
 def add_route_in_namespace(name_space,ip_address,conn=None, primary=True):
     global prefix
     ip_address=ip_address.split('/')[0]
-    cmd = prefix+ 'sudo ip route add default via {}'.format(ip_address)
+    cmd = prefix+ '{} sudo ip route add default via {}'.format(name_space, ip_address)
     print(cmd)
     if primary==True:
         print('local:')
@@ -236,11 +238,12 @@ def add_route_in_namespace(name_space,ip_address,conn=None, primary=True):
     ssh_remote(conn, [cmd])
     return
 
-def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface,conn=None, primary=True):
-    cmd = 'sudo ip link add {} type vxlan id {} remote {} dstport 4789 dev {}'.format(
-          vxlan_tunnel_name, id, remote_ip, interface)
-    cmd_1 = 'sudo brctl addif {} {}'.format(bridge_name, vxlan_tunnel_name)
-    cmd_2 = 'sudo ip link set {} up'.format(vxlan_tunnel_name)
+def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,conn=None, primary=True):
+    global prefix
+    cmd = prefix+ '{} sudo ip link add {} type vxlan id {}  dstport 4789 dev {}'.format(
+          name_space, vxlan_tunnel_name, id, interface)
+    cmd_1 = prefix + '{} sudo brctl addif {} {}'.format(name_space, bridge_name, vxlan_tunnel_name)
+    cmd_2 = prefix + '{} sudo ip link set {} up'.format(name_space, vxlan_tunnel_name)
 
     cmd_list=[cmd,cmd_1,cmd_2]
     print(cmd_list)
@@ -251,6 +254,20 @@ def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface,con
         return
     conn.ssh_remote(cmd_list)
     return
+
+def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_name, conn=None, primary=True):
+    global prefix
+    cmd = prefix + \
+        '{} bridge fdb append to 00:00:00:00:00:00 dst {} dev {} '.format(
+            name_space, remote_ip, vxlan_dev_name)
+    print(cmd)
+    if primary == True:
+        print('local:')
+        os.system(cmd)
+        return
+    ssh_remote(conn, [cmd])
+    return
+
 
 def create_container(image_name='atandon70/test:latest2'):
     pass
