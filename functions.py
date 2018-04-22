@@ -254,3 +254,15 @@ def create_vxlan_tunnel(remote_ip,vxlan_tunnel_name,id,bridge_name,interface,con
 
 def create_container(image_name='atandon70/test:latest2'):
     pass
+
+
+def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
+    global prefix
+    cmd = prefix + name_space + ' ip link add name {} type bridge'.format(bridge_name)
+    print(cmd)
+    if primary == True:
+        print('local:')
+        os.system(cmd)
+        return
+    ssh_remote(conn, [cmd])
+    return
