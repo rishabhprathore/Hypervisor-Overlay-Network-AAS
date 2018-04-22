@@ -9,7 +9,7 @@ veth1 = "veth1"
 cli = client.APIClient(base_url='unix://var/run/docker.sock')
 cli = client.APIClient(base_url="tcp://0.0.0.0:2375")
 host_c = cli.create_host_config(privileged=True)
-c_id = cli.create_container(image='atandon70/test:latest2',
+c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                             command='/bin/sleep 3000000',
                             host_config=host_c)
 cli.start(c_id['Id'])
