@@ -313,10 +313,6 @@ def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_na
     return
 
 
-def create_container(image_name='atandon70/test:latest2'):
-    pass
-
-
 def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
     global prefix
     cmd = prefix + name_space + ' ip link add name {} type bridge'.format(bridge_name)
