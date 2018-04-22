@@ -299,7 +299,6 @@ def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,c
     conn.ssh_remote(cmd_list)
     return
 
-<<<<<<< HEAD
 def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_name, conn=None, primary=True):
     global prefix
     cmd = prefix + \
@@ -317,8 +316,6 @@ def add_fdb_entry_in_vxlan_default_namespace(name_space, remote_ip, vxlan_dev_na
 def create_container(image_name='atandon70/test:latest2'):
     pass
 
-=======
->>>>>>> b86cd429792535d9660c68a919eccf7633ed958c
 
 def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
     global prefix
