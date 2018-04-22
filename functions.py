@@ -53,7 +53,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
 
 def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
     """
-    Creates a Docker Container on primary or secondary hypervisor
+    Creates a Docker Container, veth pair, assigns IP and moves veth1 to container
     :param c_name: Name for the container
     :param veth0: Name for the veth interface which stays in the bridge/hypervisor
     :param veth1: Name for the veth interface which goes into the docker container
@@ -84,6 +84,21 @@ def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
     ssh_remote(conn, cmd_list)
     return container_id
 
+def get_mac_dockerContainer(container_id, conn, primary=True):
+    """
+    This parses the veth1 in the container for its MAC address
+    :param container_id: Container ID for which veth1's MAC is required
+    :param conn:
+    :param primary:
+    :return: returns the MAC address of the container veth1 interface
+    """
+    cmd = "sudo docker exec -it %s ifconfig | grep -A7 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
+    if primary == True:
+        print('local:')
+        c_mac = os.system(cmd)
+        return c_mac
+    c_mac = ssh_remote(conn, cmd)[0]
+    return c_mac
 
 def create_namespace(name, conn=None, primary=True):
     cmd = 'sudo ip netns add {}'.format(name)
