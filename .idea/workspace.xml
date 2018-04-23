@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="68f9754e-75b5-46dd-8d3c-96eb065cf8d5" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/user_data.json" afterPath="$PROJECT_DIR$/user_data.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -251,7 +250,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524453661686</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="new test3">
+      <created>1524453705772</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1524453705772</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -286,7 +292,8 @@
     <MESSAGE value="new test" />
     <MESSAGE value="new test1" />
     <MESSAGE value="new test2" />
-    <option name="LAST_COMMIT_MESSAGE" value="new test2" />
+    <MESSAGE value="new test3" />
+    <option name="LAST_COMMIT_MESSAGE" value="new test3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
