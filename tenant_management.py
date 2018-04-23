@@ -288,6 +288,8 @@ def _is_subnet_in_list(subnet, s_list):
     return False
 
 def run_primary(data, conn):
+    import pdb
+    pdb.set_trace()
     primary = data.get("primary")
     tenant_id = data.get("id")
     secondary = data.get("secondary")
@@ -674,8 +676,8 @@ def run_secondary(data, conn):
         data['secondary']['subnets'][i]['vm_data'] = dict()
         for vm_ip in vm_ips:
             vm_name = "vm-"+tenant_name+'-'+vm_ip
-            veth_c_br = prefix_veth+'-cbr-'tenant_name+vm_ip.replace('.', '')
-            veth_br_c = prefix_veth+'-brc-'tenant_name+vm_ip.replace('.', '')
+            veth_c_br = prefix_veth+'-cbr-'+tenant_name+vm_ip.replace('.', '')
+            veth_br_c = prefix_veth+'-brc-'+tenant_name+vm_ip.replace('.', '')
 
             functions.create_vethpair(
                 veth_c_br, veth_br_c, conn.seconday_ssh, primary=False)
@@ -880,8 +882,8 @@ def run_tertiary(data, conn):
         data['tertiary']['subnets'][i]['vm_data'] = dict()
         for vm_ip in vm_ips:
             vm_name = "vm-"+tenant_name+'-'+vm_ip
-            veth_c_br = prefix_veth+'-cbr-'tenant_name+vm_ip.replace('.', '')
-            veth_br_c = prefix_veth+'-brc-'tenant_name+vm_ip.replace('.', '')
+            veth_c_br = prefix_veth+'-cbr-'+tenant_name+vm_ip.replace('.', '')
+            veth_br_c = prefix_veth+'-brc-'+tenant_name+vm_ip.replace('.', '')
 
             functions.create_vethpair(
                 veth_c_br, veth_br_c, conn.tertiary_ssh, primary=False)
@@ -934,8 +936,8 @@ def get_macs(hypervisor, data):
 
     res = []
     for i in range(len(subnets)):
-        for vm_ip, vm_mac = in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
-            res.append(vm_mac)
+        for vm_ip in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
+            res.append(data[hypervisor]['subnets'][i]['vm_data'][vm_ip])
     print("List of MACS on {} hypervisor: {}".format(hypervisor, res))
     return res
         
@@ -943,6 +945,7 @@ def get_macs(hypervisor, data):
 def add_fdb_tenant(data, conn):
 
     tenant_id = data.get("id")
+    tenant_name = 'T' + str(tenant_id)
     igw_name = 'IGW-' + tenant_name
     vx_device_name = 'vx-igw-'+tenant_name+'-dev'
 
@@ -983,9 +986,10 @@ def add_fdb_tenant(data, conn):
 
         
     
-def run(data):
-    run_primary(data)
-    run_secondary(data)
-    run_tertiary(data)
+def run(data, conn):
+    run_primary(data,conn)
+    run_secondary(data, conn)
+    run_tertiary(data, conn)
+    add_fdb_tenant(data, conn)
 
 
