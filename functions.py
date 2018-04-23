@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import signal
+import commands
 from time import sleep
 
 import docker
@@ -97,7 +98,7 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
     cmd = "sudo docker exec -it %s ifconfig | grep -A7 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
     if primary == True:
         print('local:')
-        c_mac = os.system(cmd)
+        status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
     c_mac = ssh_remote(conn, cmd)[0]
     return c_mac

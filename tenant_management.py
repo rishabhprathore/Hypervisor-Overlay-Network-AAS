@@ -495,9 +495,9 @@ def run_primary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
-    remote_ip_s_igw = '55.2.{}.2/24'.format(tenant_id)
+    remote_ip_s_igw = '55.2.{}.2/32'.format(tenant_id)
     remote_ip_s_l2 = secondary_data.get('l2_ip')
-    remote_ip_t_igw = '55.3.{}.2/24'.format(tenant_id)
+    remote_ip_t_igw = '55.3.{}.2/32'.format(tenant_id)
     remote_ip_t_l2 = tertiary_data.get('l2_ip')
 
     functions.add_route_in_hypervisor_non_default(
@@ -705,9 +705,9 @@ def run_secondary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
-    remote_ip_p_igw = '55.1.{}.2/24'.format(tenant_id)
+    remote_ip_p_igw = '55.1.{}.2/32'.format(tenant_id)
     remote_ip_p_l2 = primary_data.get('l2_ip')
-    remote_ip_t_igw = '55.3.{}.2/24'.format(tenant_id)
+    remote_ip_t_igw = '55.3.{}.2/32'.format(tenant_id)
     remote_ip_t_l2 = tertiary_data.get('l2_ip')
 
     functions.add_route_in_hypervisor_non_default(
@@ -913,9 +913,9 @@ def run_tertiary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
-    remote_ip_p_igw = '55.1.{}.2/24'.format(tenant_id)
+    remote_ip_p_igw = '55.1.{}.2/32'.format(tenant_id)
     remote_ip_p_l2 = primary_data.get('l2_ip')
-    remote_ip_s_igw = '55.2.{}.2/24'.format(tenant_id)
+    remote_ip_s_igw = '55.2.{}.2/32'.format(tenant_id)
     remote_ip_s_l2 = secondary_data.get('l2_ip')
 
     functions.add_route_in_hypervisor_non_default(
