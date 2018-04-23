@@ -32,6 +32,8 @@ sleep 2
 sudo apt-get install bridge-utils
 sleep 1
 sudo sysctl -w net.ipv4.ip_forward=1
+sleep 1
+sudo usermod -a -G libvirtd $USER
 
 #sleep 2
 #sudo wget http://distro.ibiblio.org/tinycorelinux/9.x/x86/release/TinyCore-current.iso -O /root/TinyCore.iso
