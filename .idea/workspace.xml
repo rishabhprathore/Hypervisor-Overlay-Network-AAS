@@ -4,7 +4,6 @@
     <list default="true" id="68f9754e-75b5-46dd-8d3c-96eb065cf8d5" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/connection.py" afterPath="$PROJECT_DIR$/connection.py" />
-      <change beforePath="$PROJECT_DIR$/user_data.json" afterPath="$PROJECT_DIR$/user_data.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,8 +85,8 @@
       <file leaf-file-name="connection.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/connection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="431">
+              <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -137,8 +136,8 @@
         <option value="$PROJECT_DIR$/envSetup.sh" />
         <option value="$PROJECT_DIR$/functions.py" />
         <option value="$PROJECT_DIR$/tenant_management.py" />
-        <option value="$PROJECT_DIR$/connection.py" />
         <option value="$PROJECT_DIR$/user_data.json" />
+        <option value="$PROJECT_DIR$/connection.py" />
       </list>
     </option>
   </component>
@@ -317,7 +316,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524461339173</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="update">
+      <created>1524462692027</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1524462692027</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -347,7 +353,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update" />
     <MESSAGE value="added default gw" />
     <MESSAGE value="new test" />
     <MESSAGE value="new test1" />
@@ -356,7 +361,8 @@
     <MESSAGE value="updated envSetup with &quot;sudo usermod -a -G libvirtd $USER&quot;" />
     <MESSAGE value="changes mades" />
     <MESSAGE value="seconday --&gt; secondary change made" />
-    <option name="LAST_COMMIT_MESSAGE" value="seconday --&gt; secondary change made" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -601,8 +607,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/connection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="431">
+          <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
