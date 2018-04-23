@@ -525,7 +525,7 @@ def run_secondary(data, conn):
     tenant_id = data.get("id")
     secondary = data.get("secondary")
     tertiary = data.get("tertiary")
-
+    import pdb; pdb.set_trace()
     # Create Tenant
     # functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
