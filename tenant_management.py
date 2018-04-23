@@ -437,7 +437,7 @@ def run_primary(data, conn):
         subnet_bridge_name = tenant_name + '-br' + ip.replace('.', '')
         veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
         veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
         vmm.defineNetwork(subnet_bridge_name, conn.primary_conn, primary=True)
@@ -454,7 +454,7 @@ def run_primary(data, conn):
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth+tenant_name+'-igw-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, primary=True)
@@ -634,7 +634,7 @@ def run_secondary(data, conn):
         subnet_bridge_name = tenant_name + '-br' + ip.replace('.','')
         veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
         veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
         vmm.defineNetwork(subnet_bridge_name, conn.secondary_con,
@@ -658,7 +658,7 @@ def run_secondary(data, conn):
             tenant_name+'-br-' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
             tenant_name+'-igw-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, conn.seconday_ssh, primary=False)
@@ -840,7 +840,7 @@ def run_tertiary(data, conn):
         subnet_bridge_name = tenant_name + '-br' + ip.replace('.','')
         veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
         veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
         vmm.defineNetwork(subnet_bridge_name, conn.tertiary_con,
@@ -864,7 +864,7 @@ def run_tertiary(data, conn):
             tenant_name+'-br-' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
             tenant_name+'-igw-' + ip.replace('.', '')
-        ip_u = unicode(ip, 'utf-8')
+        ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, conn.tertiary_ssh, primary=False)
