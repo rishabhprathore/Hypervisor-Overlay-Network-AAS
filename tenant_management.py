@@ -288,6 +288,8 @@ def _is_subnet_in_list(subnet, s_list):
     return False
 
 def run_primary(data, conn):
+    import pdb
+    pdb.set_trace()
     primary = data.get("primary")
     tenant_id = data.get("id")
     secondary = data.get("secondary")
