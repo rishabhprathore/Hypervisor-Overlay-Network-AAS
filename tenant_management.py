@@ -936,7 +936,7 @@ def get_macs(hypervisor, data):
 
     res = []
     for i in range(len(subnets)):
-        for vm_ip, vm_mac = in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
+        for vm_ip, vm_mac = data[hypervisor]['subnets'][i]['vm_data'].iteritems():
             res.append(vm_mac)
     print("List of MACS on {} hypervisor: {}".format(hypervisor, res))
     return res
