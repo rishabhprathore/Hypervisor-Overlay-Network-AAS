@@ -1,4 +1,7 @@
 import json
+        
+        
+        
 
 def get_value():
     primary_data = {
@@ -31,7 +34,9 @@ def get_user_data():
     #             'primary': {
     #                 "subnets": [{
     #                     "cidr": "1.2.2.0/24",
-    #                     "vm_ips": ["1.2.2.3"],      
+    #                     "vm_ips": ["1.2.2.3", "1.2.2.4"],
+    #                     "vm_data":{'1.2.2.3':'aa',
+    #                                '1.2.2.4':'bb'},
     #                 }, {
     #                     "cidr": "1.5.5.0/24",
     #                     "vm_ips": ["1.5.5.2"],

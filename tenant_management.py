@@ -20,12 +20,6 @@ primary_data, secondary_data, tertiary_data = values.get_value()
 # Example @TODO: Please uncomment them.
 # creation.create_tenant(5)
 
-vm_data = {
-    'primary':[],
-    'secondary':[],
-    'tertiary':[],
-}
-
 isPrimaryGreCreated=False
 isSecondaryGreCreated = False
 
@@ -361,10 +355,10 @@ def run_primary(data, conn):
 
     # check if vxlan is reqd
     flag_s, flag_t = _check_need_to_create_vxlan_primary(data)
-
+    vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_s or flag_t:
         # create bridge inside IGW
-        vx_bridge_name = 'vx-igw-'+tenant_name
+        
         functions.create_bridge_namespace(igw_name, vx_bridge_name, primary=True)
         vx_device_name = 'vx-igw-'+tenant_name+'-dev'
         vxlan_id = tenant_id
@@ -386,7 +380,7 @@ def run_primary(data, conn):
     if flag_s:
         local_ip = veth_igw_hyp_ip
         remote_ip = '55.2.{}.2'.format(tenant_id)
-        gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip
+        gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.','')
         functions.create_gre_tunnel_namespace(igw_name, remote_ip, local_ip, gre_tunnel_name)
         gre_tunnel_ip_p_s = '33.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_s = '33.2.'+str(tenant_id)+'.1/32'
@@ -438,32 +432,32 @@ def run_primary(data, conn):
         vm_ips = subnet["vm_ips"]
         ip = cidr.split('/')[0]
 
-        bridge_name = tenant_name + '-br' + ip
-        veth_br_t = prefix_veth+tenant_name+'-' + ip.replace('.', '')
-        veth_t_br = prefix_veth+tenant_name+'-' + ip.replace('.', '')
+        subnet_bridge_name = tenant_name + '-br' + ip.replace('.', '')
+        veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
+        veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
-        vmm.defineNetwork(bridge_name, conn.primary_conn, primary=True)
+        vmm.defineNetwork(subnet_bridge_name, conn.primary_conn, primary=True)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
 
         if _is_subnet_in_list(cidr, s_cidrs.extend(t_cidrs)):
             functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
-            functions.move_veth_to_bridge(veth_br_t, bridge_name, primary=True)
+            functions.move_veth_to_bridge(veth_br_t, subnet_bridge_name, primary=True)
             functions.set_link_up(veth_br_t, primary=True)
 
             functions.move_veth_to_namespace(veth_t_br, igw_name, primary=True)
-            functions.move_veth_to_bridge_namespace(igw_name, veth_t_br, bridge_name, primary=True)
+            functions.move_veth_to_bridge_namespace(igw_name, veth_t_br, vx_bridge_name, primary=True)
         
         #create a veth pair for conatiners default
-        veth_br_igw_default = prefix_veth+tenant_name+'-g-' + ip.replace('.', '')
-        veth_igw_br_default = prefix_veth+tenant_name+'-g-' + ip.replace('.', '')
+        veth_br_igw_default = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
+        veth_igw_br_default = prefix_veth+tenant_name+'-igw-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, primary=True)
         functions.move_veth_to_bridge(
-            veth_br_igw_default, bridge_name, primary=True)
+            veth_br_igw_default, subnet_bridge_name, primary=True)
         functions.set_link_up(veth_br_igw_default, primary=True)
 
         functions.assign_ip_address_namespace(
@@ -475,13 +469,12 @@ def run_primary(data, conn):
         data['primary']['subnets'][i]['vm_data']=dict()
         for vm_ip in vm_ips:
             vm_name = "vm-"+tenant_name+'-'+vm_ip
-            veth_c_br = prefix_veth+'-cbr-'tenant_name+vm_ip.replace('.','')
-            veth_br_c = prefix_veth+'-brc-'tenant_name+vm_ip.replace('.', '')
-
+            veth_c_br = prefix_veth+'-cbr-'+tenant_name+vm_ip.replace('.','')
+            veth_br_c = prefix_veth+'-brc-'+tenant_name+vm_ip.replace('.', '')
             functions.create_vethpair(
                 veth_c_br, veth_br_c, primary=True)
             functions.move_veth_to_bridge(
-                veth_br_c, bridge_name, primary=True)
+                veth_br_c, subnet_bridge_name, primary=True)
             functions.set_link_up(veth_br_c, primary=True)
 
             cidr = vm_ip+'/24'
@@ -514,10 +507,10 @@ def run_primary(data, conn):
     
     #adding routes for GRE subnets in IGW namespace
     s_cidrs, t_cidrs  = _get_gre_subnets_for_primary(data)
-
+    '''
     for s in s_cidrs.extend(t_cidrs):
         functions.add_route_for_gre_cidr_namespace(igw_name, s, gre_tunnel_name)
-    
+    '''
 
 def run_secondary(data, conn):
     primary = data.get("primary")
@@ -553,10 +546,10 @@ def run_secondary(data, conn):
 
     # check if vxlan is reqd
     flag_p, flag_t = _check_need_to_create_vxlan_secondary(data)
-
+    vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_p or flag_t:
         # create bridge inside IGW
-        vx_bridge_name = 'vx-igw-'+tenant_name
+        
         functions.create_bridge_namespace(
             igw_name, vx_bridge_name, conn.seconday_ssh, primary=False)
         vx_device_name = 'vx-igw-'+tenant_name+'-dev'
@@ -636,13 +629,13 @@ def run_secondary(data, conn):
         vm_ips = subnet["vm_ips"]
         ip = cidr.split('/')[0]
 
-        bridge_name = tenant_name + '-br' + ip
-        veth_br_t = prefix_veth+tenant_name+'-' + ip.replace('.', '')
-        veth_t_br = prefix_veth+tenant_name+'-' + ip.replace('.', '')
+        subnet_bridge_name = tenant_name + '-br' + ip.replace('.','')
+        veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
+        veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
-        vmm.defineNetwork(bridge_name, conn.secondary_con,
+        vmm.defineNetwork(subnet_bridge_name, conn.secondary_con,
                           conn.seconday_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
 
@@ -650,25 +643,25 @@ def run_secondary(data, conn):
             functions.create_vethpair(
                 veth_br_t, veth_t_br, conn.seconday_ssh, primary=False)
             functions.move_veth_to_bridge(
-                veth_br_t, bridge_name, conn.seconday_ssh, primary=False)
+                veth_br_t, subnet_bridge_name, conn.seconday_ssh, primary=False)
             functions.set_link_up(veth_br_t, conn.seconday_ssh, primary=False)
 
             functions.move_veth_to_namespace(
                 veth_t_br, igw_name, conn.seconday_ssh, primary=False)
             functions.move_veth_to_bridge_namespace(
-                igw_name, veth_t_br, bridge_name, conn.seconday_ssh, primary=False)
+                igw_name, veth_t_br, vx_bridge_name, conn.seconday_ssh, primary=False)
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
-            tenant_name+'-g-' + ip.replace('.', '')
+            tenant_name+'-br-' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
-            tenant_name+'-g-' + ip.replace('.', '')
+            tenant_name+'-igw-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, conn.seconday_ssh, primary=False)
         functions.move_veth_to_bridge(
-            veth_br_igw_default, bridge_name, conn.seconday_ssh, primary=False)
+            veth_br_igw_default, subnet_bridge_name, conn.seconday_ssh, primary=False)
         functions.set_link_up(veth_br_igw_default,
                               conn.seconday_ssh, primary=False)
 
@@ -687,7 +680,7 @@ def run_secondary(data, conn):
             functions.create_vethpair(
                 veth_c_br, veth_br_c, conn.seconday_ssh, primary=False)
             functions.move_veth_to_bridge(
-                veth_br_c, bridge_name, conn.seconday_ssh, primary=False)
+                veth_br_c, subnet_bridge_name, conn.seconday_ssh, primary=False)
             functions.set_link_up(veth_br_c, conn.seconday_ssh, primary=False)
 
             cidr = vm_ip+'/24'
@@ -759,10 +752,10 @@ def run_tertiary(data, conn):
 
     # check if vxlan is reqd
     flag_p, flag_s = _check_need_to_create_vxlan_tertiary(data)
-
+    vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_p or flag_s:
         # create bridge inside IGW
-        vx_bridge_name = 'vx-igw-'+tenant_name
+        
         functions.create_bridge_namespace(
             igw_name, vx_bridge_name, conn.tertiary_ssh, primary=False)
         vx_device_name = 'vx-igw-'+tenant_name+'-dev'
@@ -842,13 +835,13 @@ def run_tertiary(data, conn):
         vm_ips = subnet["vm_ips"]
         ip = cidr.split('/')[0]
 
-        bridge_name = tenant_name + '-br' + ip
-        veth_br_t = prefix_veth+tenant_name+'-' + ip.replace('.', '')
-        veth_t_br = prefix_veth+tenant_name+'-' + ip.replace('.', '')
+        subnet_bridge_name = tenant_name + '-br' + ip.replace('.','')
+        veth_br_t = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
+        veth_t_br = prefix_veth+tenant_name+'-t-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
-        vmm.defineNetwork(bridge_name, conn.tertiary_con,
+        vmm.defineNetwork(subnet_bridge_name, conn.tertiary_con,
                           conn.seconday_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
 
@@ -856,25 +849,25 @@ def run_tertiary(data, conn):
             functions.create_vethpair(
                 veth_br_t, veth_t_br, conn.tertiary_ssh, primary=False)
             functions.move_veth_to_bridge(
-                veth_br_t, bridge_name, conn.tertiary_ssh, primary=False)
+                veth_br_t, subnet_bridge_name, conn.tertiary_ssh, primary=False)
             functions.set_link_up(veth_br_t, conn.tertiary_ssh, primary=False)
 
             functions.move_veth_to_namespace(
                 veth_t_br, igw_name, conn.tertiary_ssh, primary=False)
             functions.move_veth_to_bridge_namespace(
-                igw_name, veth_t_br, bridge_name, conn.tertiary_ssh, primary=False)
+                igw_name, veth_t_br, vx_bridge_name, conn.tertiary_ssh, primary=False)
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
-            tenant_name+'-g-' + ip.replace('.', '')
+            tenant_name+'-br-' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
-            tenant_name+'-g-' + ip.replace('.', '')
+            tenant_name+'-igw-' + ip.replace('.', '')
         ip_u = unicode(ip, 'utf-8')
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
             veth_br_igw_default, veth_igw_br_default, conn.tertiary_ssh, primary=False)
         functions.move_veth_to_bridge(
-            veth_br_igw_default, bridge_name, conn.tertiary_ssh, primary=False)
+            veth_br_igw_default, subnet_bridge_name, conn.tertiary_ssh, primary=False)
         functions.set_link_up(veth_br_igw_default,
                               conn.tertiary_ssh, primary=False)
 
@@ -893,7 +886,7 @@ def run_tertiary(data, conn):
             functions.create_vethpair(
                 veth_c_br, veth_br_c, conn.tertiary_ssh, primary=False)
             functions.move_veth_to_bridge(
-                veth_br_c, bridge_name, conn.tertiary_ssh, primary=False)
+                veth_br_c,subnet_bridge_name, conn.tertiary_ssh, primary=False)
             functions.set_link_up(veth_br_c, conn.tertiary_ssh, primary=False)
 
             cidr = vm_ip+'/24'
@@ -930,6 +923,66 @@ def run_tertiary(data, conn):
         functions.add_route_for_gre_cidr_namespace(
             igw_name, s, gre_tunnel_name, conn.tertiary_ssh, primary=False)
 
+def get_macs(hypervisor, data):
+    
+    if hypervisor == 'primary':
+        subnets = data.get('primary').get('subnets')
+    elif hypervisor == 'secondary':
+        subnets = data.get('secondary').get('subnets')
+    else:
+        subnets = data.get('tertiary').get('subnets')
+
+    res = []
+    for i in range(len(subnets)):
+        for vm_ip, vm_mac = in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
+            res.append(vm_mac)
+    print("List of MACS on {} hypervisor: {}".format(hypervisor, res))
+    return res
+        
+
+def add_fdb_tenant(data, conn):
+
+    tenant_id = data.get("id")
+    igw_name = 'IGW-' + tenant_name
+    vx_device_name = 'vx-igw-'+tenant_name+'-dev'
+
+    remote_ip_p = '55.1.{}.2'.format(tenant_id)
+    remote_ip_s = '55.2.{}.2'.format(tenant_id)
+    remote_ip_t = '55.3.{}.2'.format(tenant_id)
+
+    # for primary:
+    list_macs_s = get_macs('secondary', data)
+    for mac in list_macs_s:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_s, vx_device_name, mac, primary=True)
+    list_macs_t = get_macs('tertiary', data)
+    for mac in list_macs_t:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_t, vx_device_name, mac, primary=True)
+    
+    # for secondary:
+    list_macs_p = get_macs('primary', data)
+    for mac in list_macs_p:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_p, vx_device_name, mac, conn.secondary_ssh, primary=False)
+    list_macs_t = get_macs('tertiary', data)
+    for mac in list_macs_t:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_t, vx_device_name, mac, conn.secondary_ssh, primary=False)
+
+    # for tertiary:s
+    list_macs_p = get_macs('primary', data)
+    for mac in list_macs_p:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_p, vx_device_name, mac, conn.tertiary_ssh, primary=False)
+    list_macs_s = get_macs('secondary', data)
+    for mac in list_macs_s:
+        functions.add_fdb_entry_in_vxlan_namespace(
+            igw_name, remote_ip_s, vx_device_name, mac, conn.tertiary_ssh, primary=False)
+
+
+        
+    
 def run(data):
     run_primary(data)
     run_secondary(data)
