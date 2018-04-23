@@ -936,8 +936,8 @@ def get_macs(hypervisor, data):
 
     res = []
     for i in range(len(subnets)):
-        for vm_ip, vm_mac = data[hypervisor]['subnets'][i]['vm_data'].iteritems():
-            res.append(vm_mac)
+        for vm_ip in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
+            res.append(data[hypervisor]['subnets'][i]['vm_data'][vm_ip])
     print("List of MACS on {} hypervisor: {}".format(hypervisor, res))
     return res
         
@@ -945,6 +945,7 @@ def get_macs(hypervisor, data):
 def add_fdb_tenant(data, conn):
 
     tenant_id = data.get("id")
+    tenant_name = 'T' + str(tenant_id)
     igw_name = 'IGW-' + tenant_name
     vx_device_name = 'vx-igw-'+tenant_name+'-dev'
 
