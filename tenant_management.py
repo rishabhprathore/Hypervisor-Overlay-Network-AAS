@@ -983,9 +983,10 @@ def add_fdb_tenant(data, conn):
 
         
     
-def run(data):
-    run_primary(data)
-    run_secondary(data)
-    run_tertiary(data)
+def run(data, conn):
+    run_primary(data,conn)
+    run_secondary(data, conn)
+    run_tertiary(data, conn)
+    add_fdb_tenant(data, conn)
 
 
