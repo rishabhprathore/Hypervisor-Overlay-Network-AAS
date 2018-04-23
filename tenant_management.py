@@ -882,8 +882,8 @@ def run_tertiary(data, conn):
         data['tertiary']['subnets'][i]['vm_data'] = dict()
         for vm_ip in vm_ips:
             vm_name = "vm-"+tenant_name+'-'+vm_ip
-            veth_c_br = prefix_veth+'-cbr-'tenant_name+vm_ip.replace('.', '')
-            veth_br_c = prefix_veth+'-brc-'tenant_name+vm_ip.replace('.', '')
+            veth_c_br = prefix_veth+'-cbr-'+tenant_name+vm_ip.replace('.', '')
+            veth_br_c = prefix_veth+'-brc-'+tenant_name+vm_ip.replace('.', '')
 
             functions.create_vethpair(
                 veth_c_br, veth_br_c, conn.tertiary_ssh, primary=False)
