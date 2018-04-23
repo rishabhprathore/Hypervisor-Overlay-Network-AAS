@@ -447,8 +447,6 @@ def run_primary(data, conn):
         total_cdr = []
         total_cdr = s_cidrs + t_cidrs
 
-        import pdb;pdb.set_trace()
-
         if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
             functions.move_veth_to_bridge(veth_br_t, subnet_bridge_name, primary=True)
@@ -473,7 +471,8 @@ def run_primary(data, conn):
             igw_name, veth_igw_br_default, veth_igw_br_default_ip, primary=True)
         functions.set_link_up_in_namespace(
             igw_name, veth_igw_br_default, primary=True)
-        
+
+        import pdb; pdb.set_trace()
         num_vms = len(vm_ips)
         data['primary']['subnets'][i]['vm_data']=dict()
         for vm_ip in vm_ips:
@@ -1000,7 +999,7 @@ def add_fdb_tenant(data, conn):
         
     
 def run(data, conn):
-    run_primary(data,conn)
+    run_primary(data, conn)
     run_secondary(data, conn)
     run_tertiary(data, conn)
     add_fdb_tenant(data, conn)
