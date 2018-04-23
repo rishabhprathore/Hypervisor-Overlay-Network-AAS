@@ -442,8 +442,15 @@ def run_primary(data, conn):
 
         vmm.defineNetwork(subnet_bridge_name, conn.primary_conn, primary=True)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+        total_cdr = []
+        if s_cidrs is None and t_cidrs:
+            total_cdr = t_cidrs
+        if t_cidrs  is None and s_cidrs:
+            total_cdr = s_cidrs
+        if s_cidrs and t_cidrs:
+            total_cdr = s_cidrs.extend(t_cidrs)
 
-        if _is_subnet_in_list(cidr, s_cidrs.extend(t_cidrs)):
+        if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
             functions.move_veth_to_bridge(veth_br_t, subnet_bridge_name, primary=True)
             functions.set_link_up(veth_br_t, primary=True)
@@ -641,7 +648,16 @@ def run_secondary(data, conn):
                           conn.seconday_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
 
-        if _is_subnet_in_list(cidr, p_cidrs.extend(t_cidrs)):
+        total_cdr = []
+        if p_cidrs is None and t_cidrs:
+            total_cdr = t_cidrs
+        if t_cidrs  is None and p_cidrs:
+            total_cdr = p_cidrs
+        if p_cidrs and t_cidrs:
+            total_cdr = p_cidrs.extend(t_cidrs)
+
+        if _is_subnet_in_list(cidr, total_cdr):
+
             functions.create_vethpair(
                 veth_br_t, veth_t_br, conn.seconday_ssh, primary=False)
             functions.move_veth_to_bridge(
@@ -846,8 +862,15 @@ def run_tertiary(data, conn):
         vmm.defineNetwork(subnet_bridge_name, conn.tertiary_con,
                           conn.seconday_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
+        total_cdr = []
+        if p_cidrs is None and s_cidrs:
+            total_cdr = s_cidrs
+        if s_cidrs is None and p_cidrs:
+            total_cdr = p_cidrs
+        if p_cidrs and s_cidrs:
+            total_cdr = p_cidrs.extend(s_cidrs)
 
-        if _is_subnet_in_list(cidr, p_cidrs.extend(s_cidrs)):
+        if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(
                 veth_br_t, veth_t_br, conn.tertiary_ssh, primary=False)
             functions.move_veth_to_bridge(
