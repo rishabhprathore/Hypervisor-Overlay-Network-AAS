@@ -51,7 +51,7 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
         pass
     return"""
 
-def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
+def create_docker_container(c_name, veth1, c_cidr, gw, conn, primary=True):
     """
     Creates a Docker Container, veth pair, assigns IP and moves veth1 to container
     :param c_name: Name for the container
@@ -74,6 +74,8 @@ def create_docker_container(c_name, veth1, c_cidr, conn, primary=True):
     cmd1 = "ip link set {0} netns {1}".format(veth1, c_pid)
     cmd2 = "docker exec -it --privileged {0} ifconfig {1} {2} up".format(
         c_id['Id'], veth1, c_cidr)
+    cmd3 = "docker exec -it --privileged {0} ip route add default via {1}".format(
+        c_id['Id'], gw)
     cmd_list = [cmd1, cmd2]
 
     if primary==True:
