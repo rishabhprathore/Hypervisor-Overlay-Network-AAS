@@ -20,6 +20,8 @@ sudo apt install -y python-pip
 sleep 2
 sudo pip install --upgrade pip
 sleep 2
+sudo pip install docker
+sleep 2
 sudo apt-get install python-paramiko -y
 sleep 2
 #sudo python -m easy_install --upgrade pyOpenSSL
