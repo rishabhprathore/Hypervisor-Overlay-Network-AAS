@@ -31,6 +31,7 @@ class Connection:
                 base_url="tcp://{}:2375".format(tertiary_data['ip']))
         except Exception as e:
             print("Error while initiating connection to remote hypervisor: ", e)
+            raise
 
 
 def ssh_remote(conn, cmd_list):
