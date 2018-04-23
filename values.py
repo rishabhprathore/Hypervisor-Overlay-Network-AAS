@@ -5,19 +5,19 @@ import json
 
 def get_value():
     primary_data = {
-        'username': 'rirathor',
-        'ip': '152.46.20.80',
-        'l2_ip': '10.25.7.241'
+        'username': 'ckogant',
+        'ip': '152.46.19.135',
+        'l2_ip': '10.25.7.94'
     }
     secondary_data = {
-        'username': 'rirathor',
-        'ip': '152.46.20.80',
-        'l2_ip': '10.25.7.241'
+        'username': 'atandon',
+        'ip': '152.46.19.47',
+        'l2_ip': '10.25.8.44'
     }
     tertiary_data = {
-        'username': 'rirathor',
-        'ip': '152.46.20.80',
-        'l2_ip': '10.25.7.241'
+        'username': 'atandon',
+        'ip': '152.46.20.220',
+        'l2_ip': '10.25.11.176'
     }
     return primary_data, secondary_data, tertiary_data
 def get_user_data():
