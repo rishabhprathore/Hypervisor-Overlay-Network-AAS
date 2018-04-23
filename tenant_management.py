@@ -447,6 +447,8 @@ def run_primary(data, conn):
         total_cdr = []
         total_cdr = s_cidrs + t_cidrs
 
+        import pdb;pdb.set_trace()
+
         if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
             functions.move_veth_to_bridge(veth_br_t, subnet_bridge_name, primary=True)
@@ -456,8 +458,8 @@ def run_primary(data, conn):
             functions.move_veth_to_bridge_namespace(igw_name, veth_t_br, vx_bridge_name, primary=True)
         
         #create a veth pair for conatiners default
-        veth_br_igw_default = prefix_veth+tenant_name+'-br-' + ip.replace('.', '')
-        veth_igw_br_default = prefix_veth+tenant_name+'-igw-' + ip.replace('.', '')
+        veth_br_igw_default = prefix_veth+tenant_name+'-br-d' + ip.replace('.', '')
+        veth_igw_br_default = prefix_veth+tenant_name+'-igw-d' + ip.replace('.', '')
         ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
@@ -466,6 +468,7 @@ def run_primary(data, conn):
             veth_br_igw_default, subnet_bridge_name, primary=True)
         functions.set_link_up(veth_br_igw_default, primary=True)
 
+        functions.move_veth_to_namespace(veth_igw_br_default, igw_name, primary=True)
         functions.assign_ip_address_namespace(
             igw_name, veth_igw_br_default, veth_igw_br_default_ip, primary=True)
         functions.set_link_up_in_namespace(
@@ -663,9 +666,9 @@ def run_secondary(data, conn):
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
-            tenant_name+'-br-' + ip.replace('.', '')
+            tenant_name+'-br-d' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
-            tenant_name+'-igw-' + ip.replace('.', '')
+            tenant_name+'-igw-d' + ip.replace('.', '')
         ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
@@ -674,7 +677,7 @@ def run_secondary(data, conn):
             veth_br_igw_default, subnet_bridge_name, conn.seconday_ssh, primary=False)
         functions.set_link_up(veth_br_igw_default,
                               conn.seconday_ssh, primary=False)
-
+        functions.move_veth_to_namespace(veth_igw_br_default, igw_name, conn.seconday_ssh, primary=False)
         functions.assign_ip_address_namespace(
             igw_name, veth_igw_br_default, veth_igw_br_default_ip, conn.seconday_ssh, primary=False)
         functions.set_link_up_in_namespace(
@@ -871,9 +874,9 @@ def run_tertiary(data, conn):
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
-            tenant_name+'-br-' + ip.replace('.', '')
+            tenant_name+'-br-d' + ip.replace('.', '')
         veth_igw_br_default = prefix_veth + \
-            tenant_name+'-igw-' + ip.replace('.', '')
+            tenant_name+'-igw-d' + ip.replace('.', '')
         ip_u = ip
         veth_igw_br_default_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
         functions.create_vethpair(
@@ -882,7 +885,7 @@ def run_tertiary(data, conn):
             veth_br_igw_default, subnet_bridge_name, conn.tertiary_ssh, primary=False)
         functions.set_link_up(veth_br_igw_default,
                               conn.tertiary_ssh, primary=False)
-
+        functions.move_veth_to_namespace(veth_igw_br_default, igw_name, conn.tertiary_ssh, primary=False)
         functions.assign_ip_address_namespace(
             igw_name, veth_igw_br_default, veth_igw_br_default_ip, conn.tertiary_ssh, primary=False)
         functions.set_link_up_in_namespace(
