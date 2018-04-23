@@ -14,7 +14,7 @@ class Connection:
             self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.seconday_ssh = self.ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
+            self.secondary_ssh = self.ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
             self.tertiary_ssh = self.ssh.connect(
                 tertiary_data['ip'], username=tertiary_data['username'], pkey=privkey)
 
