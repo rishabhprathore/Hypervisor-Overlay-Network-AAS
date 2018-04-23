@@ -283,6 +283,8 @@ def _give_cidr_ps(data):
     return p_cidrs, s_cidrs, t_cidrs
 
 def _is_subnet_in_list(subnet, s_list):
+    if s_list is None:
+        return False
     if subnet in s_list:
         return True
     return False
@@ -443,12 +445,7 @@ def run_primary(data, conn):
         vmm.defineNetwork(subnet_bridge_name, conn.primary_conn, primary=True)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
         total_cdr = []
-        if s_cidrs is None and t_cidrs:
-            total_cdr = t_cidrs
-        if t_cidrs  is None and s_cidrs:
-            total_cdr = s_cidrs
-        if s_cidrs and t_cidrs:
-            total_cdr = s_cidrs.extend(t_cidrs)
+        total_cdr = s_cidrs + t_cidrs
 
         if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(veth_br_t, veth_t_br, primary=True)
@@ -649,12 +646,7 @@ def run_secondary(data, conn):
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
 
         total_cdr = []
-        if p_cidrs is None and t_cidrs:
-            total_cdr = t_cidrs
-        if t_cidrs  is None and p_cidrs:
-            total_cdr = p_cidrs
-        if p_cidrs and t_cidrs:
-            total_cdr = p_cidrs.extend(t_cidrs)
+        total_cdr = p_cidrs + t_cidrs
 
         if _is_subnet_in_list(cidr, total_cdr):
 
@@ -863,12 +855,7 @@ def run_tertiary(data, conn):
                           conn.seconday_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
         total_cdr = []
-        if p_cidrs is None and s_cidrs:
-            total_cdr = s_cidrs
-        if s_cidrs is None and p_cidrs:
-            total_cdr = p_cidrs
-        if p_cidrs and s_cidrs:
-            total_cdr = p_cidrs.extend(s_cidrs)
+        total_cdr = p_cidrs + s_cidrs
 
         if _is_subnet_in_list(cidr, total_cdr):
             functions.create_vethpair(
