@@ -64,6 +64,19 @@ def convert_data():
         for item in list_subnets:
             subnets[item['cidr']] = item['vm_ips']
         print(subnets)
+        max_len = 0
+        max_len_subnet = None
+        max_subnet = {}
+        for subnet in subnets:
+            len_ = len(subnets[subnet])
+            if len_>max_len:
+                max_len = len_
+                max_len_subnet = subnet
+        max_subnet[max_len_subnet] = subnet[max_len_subnet]
+        import pdb; pdb.set_trace()
+        print(max_len_subnet)
+        
+             
 
         
 
