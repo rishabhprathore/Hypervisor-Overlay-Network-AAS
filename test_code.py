@@ -11,6 +11,7 @@ from pprint import pprint
 
 
 def main():
+    """
     primary_data, secondary_data, tertiary_data = values.get_value()
     conn = Connection(secondary_data, tertiary_data)
     #for a in values.get_user_data()['data']['tenants']:
@@ -19,6 +20,9 @@ def main():
     pprint(tenant)
     import pdb; pdb.set_trace()
     tm.run(tenant, conn)
+    """
+    import pdb; pdb.set_trace()
+    values.convert_data()
 
 
 

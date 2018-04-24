@@ -820,7 +820,6 @@ def run_tertiary(data, conn):
             igw_name, remote_ip, local_ip, gre_tunnel_name)
         gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
-
         #to create a GRE tunnel in secondary
         functions.set_link_up_in_namespace(
             igw_name, gre_tunnel_name, conn.tertiary_ssh, primary=False)

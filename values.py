@@ -1,5 +1,5 @@
 import json
-        
+from pprint import pprint
         
         
 
@@ -20,12 +20,25 @@ def get_value():
         'l2_ip': '10.25.11.176'
     }
     return primary_data, secondary_data, tertiary_data
+
 def get_user_data():
     user_data = None
     with open("user_data.json", 'r') as f:
         user_data = json.load(f)
     #print(user_data)
     return user_data
+
+def convert_data():
+    user_input = None
+    with open("user_input.json", 'r') as f:
+        user_input = json.load(f)
+    pprint(user_input)
+    
+    
+
+
+
+
     #
     # user_data = {
     #     'data': {
