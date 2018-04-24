@@ -25,7 +25,7 @@ def get_user_data():
     user_data = None
     with open("user_data.json", 'r') as f:
         user_data = json.load(f)
-    print(user_data)
+    pprint(user_data)
     return user_data
 
 def convert_data():
