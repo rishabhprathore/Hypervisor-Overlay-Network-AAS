@@ -58,7 +58,7 @@ def convert_data():
     list_tenants = user_input["data"]["tenants"]
     for tenant in list_tenants:
         list_subnets = tenant['subnets']
-        print("tenant_id: {}".format(tenant['id'])
+        print("tenant_id: {}".format(tenant['id']))
         pprint(list_subnets)
         subnets = {}
         for item in list_subnets:
