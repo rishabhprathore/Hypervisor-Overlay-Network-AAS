@@ -33,6 +33,8 @@ def convert_data():
     with open("user_input.json", 'r') as f:
         user_input = json.load(f)
     pprint(user_input)
+    type(user_input)
+    return user_input
     
     
 
