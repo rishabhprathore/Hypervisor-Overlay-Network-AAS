@@ -22,6 +22,7 @@ def main():
     tm.run(tenant, conn)
     """
     import pdb; pdb.set_trace()
+    values.get_user_data()
     values.convert_data()
 
 

@@ -56,7 +56,8 @@ def convert_data():
                                                        {u'cidr': u'40.1.1.0/24',
                                                         u'vm_ips': [u'40.1.1.5']}]}]}}
     list_tenants = user_input["data"]["tenants"]
-    for tenant in list_tenants:
+    user_data = None
+    for tenant in list_tenants: 
         list_subnets = tenant['subnets']
         print("tenant_id: {}".format(tenant['id']))
         pprint(list_subnets)
@@ -75,6 +76,7 @@ def convert_data():
         max_subnet[max_len_subnet] = subnets[max_len_subnet]
         import pdb; pdb.set_trace()
         print(max_subnet)
+
         
              
 
