@@ -105,21 +105,20 @@ def convert_data():
             data = dict()
             data[cidr] = vm_ips            
             if i%3 == 0:
-                copy_tenant_data['primary']['subnets'].append(data)
-                if flag1 == 0:
-                    copy_tenant_data['primary']['subnets'].append(max_data_p)
-                    flag1 = 1 
-                    
+                copy_tenant_data['primary']['subnets'].append(data)      
             elif i % 3 == 1:
                 copy_tenant_data['secondary']['subnets'].append(data)
-                if flag2 == 0:
-                    copy_tenant_data['secondary']['subnets'].append(max_data_s)
-                    flag2 = 1
             else:
                 copy_tenant_data['tertiary']['subnets'].append(data)
-                if flag3 == 0:
-                    copy_tenant_data['tertiary']['subnets'].append(max_data_t)
-                    flag3 = 1
+            if flag1 == 0:
+                    copy_tenant_data['primary']['subnets'].append(max_data_p)
+                    flag1 = 1 
+            if flag2 == 0:
+                    copy_tenant_data['secondary']['subnets'].append(max_data_s)
+                    flag2 = 1
+            if flag3 == 0:
+                copy_tenant_data['tertiary']['subnets'].append(max_data_t)
+                flag3 = 1
         import pdb
         pdb.set_trace()
         user_data['data']['tenants'].append(copy_tenant_data)
