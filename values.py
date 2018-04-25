@@ -23,10 +23,12 @@ def get_value():
 
 def get_user_data():
     user_data = None
+    """
     with open("user_data.json", 'r') as f:
         user_data = json.load(f)
     pprint(user_data)
-    return user_data
+    """
+    return convert_data()
 
 def convert_data():
     user_input = None
@@ -42,18 +44,17 @@ def convert_data():
     user_data = {u'data': {u'tenants': [] 
                             }
                 }
-    
 
     for tenant in list_tenants: 
         list_subnets = tenant['subnets']
-        print("tenant_id: {}".format(tenant['id']))
+        #print("tenant_id: {}".format(tenant['id']))
         copy_tenant_data = copy.deepcopy(tenant_blank)
         copy_tenant_data['id'] = tenant['id']
-        pprint(list_subnets)
+        #pprint(list_subnets)
         subnets = {}
         for item in list_subnets:
             subnets[item['cidr']] = item['vm_ips']
-        print(subnets)
+        #print(subnets)
         max_len = 0
         max_len_subnet = None
         max_subnet = {}
@@ -63,10 +64,10 @@ def convert_data():
                 max_len = len_
                 max_len_subnet = subnet
         max_subnet[max_len_subnet] = subnets[max_len_subnet]
-        import pdb; pdb.set_trace()
-        print(max_subnet)
+        #import pdb; pdb.set_trace()
+        #print(max_subnet)
         del subnets[max_len_subnet]
-        pprint(subnets)
+        #pprint(subnets)
         flag = 0
         max_data_p = dict()
         max_data_p[max_len_subnet] = max_subnet[max_len_subnet][0::3]
@@ -74,9 +75,9 @@ def convert_data():
         max_data_s[max_len_subnet] = max_subnet[max_len_subnet][1::3]
         max_data_t = dict()
         max_data_t[max_len_subnet] = max_subnet[max_len_subnet][2::3]
-        print(max_data_p)
-        print(max_data_s)
-        print(max_data_t)
+        #print(max_data_p)
+        #print(max_data_s)
+        #print(max_data_t)
         for i, subnet in enumerate(subnets):
             cidr = subnet
             vm_ips = subnets[subnet]
@@ -93,10 +94,8 @@ def convert_data():
                 copy_tenant_data['secondary']['subnets'].append(max_data_s)
                 copy_tenant_data['tertiary']['subnets'].append(max_data_t)
                 flag = 1
-        import pdb
-        pdb.set_trace()
         user_data['data']['tenants'].append(copy_tenant_data)
-        pprint(copy_tenant_data)
+        #pprint(copy_tenant_data)
     
     import pdb
     pdb.set_trace()
