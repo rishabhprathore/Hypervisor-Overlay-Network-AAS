@@ -120,8 +120,15 @@ def convert_data():
                 if flag3 == 0:
                     copy_tenant_data['tertiary']['subnets'].append(max_data_t)
                     flag3 = 1
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
+        user_data['data']['tenants'].append(copy_tenant_data)
         pprint(copy_tenant_data)
+    
+    import pdb
+    pdb.set_trace()
+    print(user_data)
+
 
             
         
