@@ -430,6 +430,7 @@ def run_primary(data, conn):
     secondary_subnets = data.get('secondary').get('subnets')
     tertiary_subnets = data.get('tertiary').get('subnets')
 
+    import pdb; pdb.set_trace()
     i = 0
     for i, subnet in enumerate(primary_subnets):
         cidr = subnet["cidr"]
