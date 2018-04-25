@@ -39,16 +39,14 @@ def ssh_remote(conn, cmd_list):
         ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
             cmd, timeout=60)
         #print(type(ssh_stdout.read())
-        res.append(ssh_stdout.read())
-        """
-        if ssh_stdout is '':
-            #print("test1")
-            if ssh_stderr is not None:
+        
+        if ssh_stdout is not '':
+            print("stdout empty")
+            """if ssh_stderr is not None:
                 res.append('error:', ssh_stderr.read())
                 print(res[-1])
-                continue
-        res.append(ssh_stdout.read())
-        """
+                continue"""
+            res.append(ssh_stdout.read())
         print(res[-1])
     return res
 
