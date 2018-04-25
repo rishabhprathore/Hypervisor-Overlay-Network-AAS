@@ -33,28 +33,6 @@ def convert_data():
     with open("user_input.json", 'r') as f:
         user_input = json.load(f)
     pprint(user_input)
-    user_input = {u'data': {u'tenants': [{u'id': u'12',
-                                          u'subnets': [{u'cidr': u'30.1.1.0/24',
-                                                        u'vm_ips': [u'30.1.1.3',
-                                                                    u'30.1.1.4',
-                                                                    u'30.1.1.5']},
-                                                       {u'cidr': u'20.1.1.0/24',
-                                                        u'vm_ips': [u'20.1.1.3']},
-                                                       {u'cidr': u'10.1.1.0/24',
-                                                        u'vm_ips': [u'10.1.1.4']},
-                                                       {u'cidr': u'40.1.1.0/24',
-                                                        u'vm_ips': [u'40.1.1.5']}]},
-                                         {u'id': u'11',
-                                          u'subnets': [{u'cidr': u'30.1.1.0/24',
-                                                        u'vm_ips': [u'30.1.1.3',
-                                                                    u'30.1.1.4',
-                                                                    u'30.1.1.5']},
-                                                       {u'cidr': u'20.1.1.0/24',
-                                                        u'vm_ips': [u'20.1.1.3']},
-                                                       {u'cidr': u'10.1.1.0/24',
-                                                        u'vm_ips': [u'10.1.1.4']},
-                                                       {u'cidr': u'40.1.1.0/24',
-                                                        u'vm_ips': [u'40.1.1.5']}]}]}}
     list_tenants = user_input["data"]["tenants"]
     tenant_blank = {u'id': u'',
                     u'primary': {u'subnets': []},
