@@ -569,12 +569,12 @@ def run_secondary(data, conn):
         if flag_p:
             remote_ip = '55.1.{}.2'.format(tenant_id)
             functions.add_fdb_entry_in_vxlan_namespace(
-                igw_name, remote_ip, vx_device_name, conn.secondary_ssh, primary=False)
+                igw_name, remote_ip, vx_device_name, conn=conn.secondary_ssh, primary=False)
 
         if flag_t:
             remote_ip = '55.3.{}.2'.format(tenant_id)
             functions.add_fdb_entry_in_vxlan_namespace(
-                igw_name, remote_ip, vx_device_name, conn.secondary_ssh, primary=False)
+                igw_name, remote_ip, vx_device_name, conn=conn.secondary_ssh, primary=False)
 
     # creating GRE
     flag_p, flag_t, p_cidrs, t_cidrs = _check_need_to_create_gre_secondary(
@@ -779,12 +779,12 @@ def run_tertiary(data, conn):
         if flag_p:
             remote_ip = '55.1.{}.2'.format(tenant_id)
             functions.add_fdb_entry_in_vxlan_namespace(
-                igw_name, remote_ip, vx_device_name, conn.tertiary_ssh, primary=False)
+                igw_name, remote_ip, vx_device_name, conn=conn.tertiary_ssh, primary=False)
 
         if flag_s:
             remote_ip = '55.2.{}.2'.format(tenant_id)
             functions.add_fdb_entry_in_vxlan_namespace(
-                igw_name, remote_ip, vx_device_name, conn.tertiary_ssh, primary=False)
+                igw_name, remote_ip, vx_device_name, conn=conn.tertiary_ssh, primary=False)
 
     # creating GRE
     flag_p, flag_s, p_cidrs, s_cidrs = _check_need_to_create_gre_tertiary(
