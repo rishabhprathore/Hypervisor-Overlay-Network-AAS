@@ -921,13 +921,13 @@ def run_tertiary(data, conn):
         remote_ip_p_l2, remote_ip_p_igw, conn.tertiary_ssh, primary=False)
 
     functions.add_route_in_hypervisor_non_default(
-        remote_ip_t_l2, remote_ip_t_igw, conn.tertiary_ssh, primary=False)
+        remote_ip_s_l2, remote_ip_s_igw, conn.tertiary_ssh, primary=False)
 
     functions.add_route_in_namespace_non_default(
         igw_name, veth_hyp_igw_ip, remote_ip_p_igw, conn.tertiary_ssh, primary=False)
 
     functions.add_route_in_namespace_non_default(
-        igw_name, veth_hyp_igw_ip, remote_ip_t_igw, conn.tertiary_ssh, primary=False)
+        igw_name, veth_hyp_igw_ip, remote_ip_s_igw, conn.tertiary_ssh, primary=False)
 
     #adding routes for GRE subnets in IGW namespace
     p_cidrs, s_cidrs = _get_gre_subnets_for_tertiary(data)
