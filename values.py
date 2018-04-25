@@ -100,7 +100,7 @@ def convert_data():
     
     import pdb
     pdb.set_trace()
-    print(user_data)
+    pprint(user_data)
 
 
             
