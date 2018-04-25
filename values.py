@@ -89,7 +89,7 @@ def convert_data():
         print(max_subnet)
         del subnets[max_len_subnet]
         pprint(subnets)
-        flag1 = flag2 = flag3 = 0
+        flag = 0
         max_data_p = dict()
         max_data_p[max_len_subnet] = max_subnet[max_len_subnet][0::3]
         max_data_s = dict()
@@ -110,15 +110,11 @@ def convert_data():
                 copy_tenant_data['secondary']['subnets'].append(data)
             else:
                 copy_tenant_data['tertiary']['subnets'].append(data)
-            if flag1 == 0:
-                    copy_tenant_data['primary']['subnets'].append(max_data_p)
-                    flag1 = 1 
-            if flag2 == 0:
-                    copy_tenant_data['secondary']['subnets'].append(max_data_s)
-                    flag2 = 1
-            if flag3 == 0:
+            if flag == 0:
+                copy_tenant_data['primary']['subnets'].append(max_data_p) 
+                copy_tenant_data['secondary']['subnets'].append(max_data_s)
                 copy_tenant_data['tertiary']['subnets'].append(max_data_t)
-                flag3 = 1
+                flag = 1
         import pdb
         pdb.set_trace()
         user_data['data']['tenants'].append(copy_tenant_data)
