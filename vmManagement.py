@@ -75,8 +75,9 @@ def defineNetwork(networkName, conn_libvirt, conn_ssh=None, primary=True):
 
     f = open(filename)
     xmlconfig = f.read()
-    if primary==True:
-        network = conn_libvirt.networkDefineXML(xmlconfig)
+    #if primary==True:
+    network = conn_libvirt.networkDefineXML(xmlconfig)
+        
     if network == None:
         print('Failed to create a virtual network', file=sys.stderr)
         return
