@@ -70,19 +70,23 @@ def convert_data():
         #pprint(subnets)
         flag = 0
         max_data_p = dict()
-        max_data_p[max_len_subnet] = max_subnet[max_len_subnet][0::3]
+        max_data_p['cidr'] = max_len_subnet
+        max_data_p['vm_ips'] = max_subnet[max_len_subnet][0::3]
         max_data_s = dict()
-        max_data_s[max_len_subnet] = max_subnet[max_len_subnet][1::3]
+        max_data_s['cidr'] = max_len_subnet
+        max_data_s['vm_ips'] = max_subnet[max_len_subnet][1::3]
         max_data_t = dict()
-        max_data_t[max_len_subnet] = max_subnet[max_len_subnet][2::3]
+        max_data_t['cidr'] = max_len_subnet
+        max_data_t['vm_ips'] = max_subnet[max_len_subnet][2::3]
         #print(max_data_p)
         #print(max_data_s)
         #print(max_data_t)
         for i, subnet in enumerate(subnets):
             cidr = subnet
             vm_ips = subnets[subnet]
-            data = dict()
-            data[cidr] = vm_ips            
+            data = dict() 
+            data['cidr'] = cidr
+            data['vm_ips'] = vm_ips
             if i%3 == 0:
                 copy_tenant_data['primary']['subnets'].append(data)      
             elif i % 3 == 1:
