@@ -64,8 +64,7 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     :param primary:
     :return: container_id
     """
-    import pdb;
-    pdb.set_trace()
+    
     host_c = conn.create_host_config(privileged=True)
     c_id = conn.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                 command='/bin/sleep 3000000',
@@ -104,6 +103,8 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
         status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
     c_mac = ssh_remote(conn, cmd)[0]
+    import pdb
+    pdb.set_trace()
     return c_mac
 
 def create_namespace(name, conn=None, primary=True):

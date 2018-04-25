@@ -947,7 +947,7 @@ def get_macs(hypervisor, data):
         subnets = data.get('secondary').get('subnets')
     else:
         subnets = data.get('tertiary').get('subnets')
-
+    import pdb; pdb.set_trace()
     res = []
     for i in range(len(subnets)):
         for vm_ip in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
