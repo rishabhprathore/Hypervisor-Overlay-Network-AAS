@@ -488,7 +488,7 @@ def run_primary(data, conn):
 
             cidr = vm_ip+'/24'
             c_id = functions.create_docker_container(
-                vm_name, veth_c_br, cidr, veth_igw_br_default_ip, conn, primary=True)
+                vm_name, veth_c_br, cidr, veth_igw_br_default_ip, conn.primary_docker, primary=True)
             c_mac = functions.get_mac_dockerContainer(
                 c_id, primary=True)
             data['primary']['subnets'][i]['vm_data'][vm_ip]=c_mac
