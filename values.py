@@ -107,18 +107,18 @@ def convert_data():
             if i%3 == 0:
                 copy_tenant_data['primary']['subnets'].append(data)
                 if flag1 == 0:
-                    copy_tenant_data['primary']['subnets'][max_len_subnet].extend(max_data_p)
+                    copy_tenant_data['primary']['subnets'].extend(max_data_p)
                     flag1 = 1 
                     
             elif i % 3 == 1:
                 copy_tenant_data['secondary']['subnets'].append(data)
                 if flag2 == 0:
-                    copy_tenant_data['secondary']['subnets'][max_len_subnet].extend(max_data_s)
+                    copy_tenant_data['secondary']['subnets'].extend(max_data_s)
                     flag2 = 1
             else:
                 copy_tenant_data['tertiary']['subnets'].append(data)
                 if flag3 == 0:
-                    copy_tenant_data['tertiary']['subnets'][max_len_subnet].extend(max_data_t)
+                    copy_tenant_data['tertiary']['subnets'].extend(max_data_t)
                     flag3 = 1
         pprint(copy_tenant_data)
 
