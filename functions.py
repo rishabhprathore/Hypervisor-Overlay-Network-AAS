@@ -64,6 +64,8 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     :param primary:
     :return: container_id
     """
+    import pdb;
+    pdb.set_trace()
     host_c = conn.create_host_config(privileged=True)
     c_id = conn.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                 command='/bin/sleep 3000000',
