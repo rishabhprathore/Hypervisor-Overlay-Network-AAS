@@ -90,29 +90,35 @@ def convert_data():
         del subnets[max_len_subnet]
         pprint(subnets)
         flag1 = flag2 = flag3 = 0
+        max_data_p = dict()
+        max_data_p[max_len_subnet] = max_subnet[max_len_subnet][0::3]
+        max_data_s = dict()
+        max_data_s[max_len_subnet] = max_subnet[max_len_subnet][1::3]
+        max_data_t = dict()
+        max_data_t[max_len_subnet] = max_subnet[max_len_subnet][2::3]
+        print(max_data_p)
+        print(max_data_s)
+        print(max_data_t)
         for i, subnet in enumerate(subnets):
             cidr = subnet
             vm_ips = subnets[subnet]
             data = dict()
-            data[cidr] = vm_ips
-            max_vm_ip_list = max_subnet[max_len_subnet]
+            data[cidr] = vm_ips            
             if i%3 == 0:
                 copy_tenant_data['primary']['subnets'].append(data)
                 if flag1 == 0:
-                    copy_tenant_data['primary']['subnets'][max_len_subnet].extend(max_vm_ip_list[0::3])
+                    copy_tenant_data['primary']['subnets'][max_len_subnet].extend(max_data_p)
                     flag1 = 1 
                     
             elif i % 3 == 1:
                 copy_tenant_data['secondary']['subnets'].append(data)
                 if flag2 == 0:
-                    copy_tenant_data['secondary']['subnets'][max_len_subnet].extend(
-                        max_vm_ip_list[1::3])
+                    copy_tenant_data['secondary']['subnets'][max_len_subnet].extend(max_data_s)
                     flag2 = 1
             else:
                 copy_tenant_data['tertiary']['subnets'].append(data)
                 if flag3 == 0:
-                    copy_tenant_data['tertiary']['subnets'][max_len_subnet].extend(
-                        max_vm_ip_list[2::3])
+                    copy_tenant_data['tertiary']['subnets'][max_len_subnet].extend(max_data_t)
                     flag3 = 1
         pprint(copy_tenant_data)
 
