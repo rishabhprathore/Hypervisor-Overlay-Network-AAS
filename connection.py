@@ -36,6 +36,7 @@ class Connection:
 def ssh_remote(conn, cmd_list):
     res = []
     for cmd in cmd_list:
+        import pdb; pdb.set_trace()
         ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
             cmd, timeout=60)
         #print(type(ssh_stdout.read())
