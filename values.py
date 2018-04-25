@@ -96,7 +96,7 @@ def convert_data():
             data[cidr] = vm_ips
             if i%3 == 0:
                 copy_tenant_data['primary']['subnets'].append(data)
-            if i % 3 == 1:
+            elif i % 3 == 1:
                 copy_tenant_data['secondary']['subnets'].append(data)
             else:
                 copy_tenant_data['tertiary']['subnets'].append(data)
