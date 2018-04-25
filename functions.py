@@ -102,9 +102,11 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
         print('local:')
         status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
-    c_mac = ssh_remote(conn, cmd)[0]
+    data = ssh_remote(conn, cmd)
     import pdb
     pdb.set_trace()
+    c_mac = data[0]
+    
     return c_mac
 
 def create_namespace(name, conn=None, primary=True):
