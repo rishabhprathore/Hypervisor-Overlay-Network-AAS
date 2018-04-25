@@ -89,7 +89,7 @@ def convert_data():
         print(max_subnet)
         del subnets[max_len_subnet]
         pprint(subnets)
-        flag1, flag2, flag3 = 0
+        flag1 = flag2 = flag3 = 0
         for i, subnet in enumerate(subnets):
             cidr = subnet
             vm_ips = subnets[subnet]
