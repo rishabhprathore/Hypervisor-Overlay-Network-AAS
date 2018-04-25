@@ -69,7 +69,7 @@ def convert_data():
     for tenant in list_tenants: 
         list_subnets = tenant['subnets']
         print("tenant_id: {}".format(tenant['id']))
-        copy_tenant_data = dict(tenant_blank)
+        copy_tenant_data = copy.deepcopy(tenant_blank)
         copy_tenant_data['id'] = tenant['id']
         pprint(list_subnets)
         subnets = {}
