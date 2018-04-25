@@ -52,7 +52,8 @@ def create_vm(vm_name, memory,bridge_name,iso_path,primary):
         pass
     return"""
 
-def create_docker_container(c_name, veth1, c_cidr, gw, conn, primary=True):
+
+def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, primary=True):
     """
     Creates a Docker Container, veth pair, assigns IP and moves veth1 to container
     :param c_name: Name for the container
@@ -77,14 +78,14 @@ def create_docker_container(c_name, veth1, c_cidr, gw, conn, primary=True):
         c_id['Id'], veth1, c_cidr)
     cmd3 = "docker exec -it --privileged {0} ip route add default via {1}".format(
         c_id['Id'], gw)
-    cmd_list = [cmd1, cmd2]
+    cmd_list = [cmd1, cmd2, cmd3]
 
     if primary==True:
         print('local:')
         for cmd in cmd_list:
             os.system(cmd)
         return container_id
-    ssh_remote(conn, cmd_list)
+    ssh_remote(ssh_conn, cmd_list)
     return container_id
 
 def get_mac_dockerContainer(container_id, conn=None, primary=True):
