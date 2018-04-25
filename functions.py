@@ -315,7 +315,7 @@ def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,c
         for cmd in cmd_list:
             os.system(cmd)
         return
-    conn.ssh_remote(cmd_list)
+    ssh_remote(conn, cmd_list)
     return
 
 
