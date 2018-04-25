@@ -11,17 +11,12 @@ class Connection:
         try:
             import pdb
             pdb.set_trace()
-            self.secondary_ssh = paramiko.SSHClient()
+            self.ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
-            self.secondary_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.secondary_ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
-
-            self.tertiary_ssh = paramiko.SSHClient()
-            privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
-            self.tertiary_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.tertiary_ssh.connect(
+            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.secondary_ssh = self.ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
+            self.tertiary_ssh = self.ssh.connect(
                 tertiary_data['ip'], username=tertiary_data['username'], pkey=privkey)
-
             self.primary_conn=libvirt.open('qemu:///system')
             self.secondary_con = libvirt.open(
                 'qemu+ssh://{}@{}/system'.format(secondary_data['username'], secondary_data['ip']))
@@ -44,6 +39,8 @@ def ssh_remote(conn, cmd_list):
         ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
             cmd, timeout=60)
         #print(type(ssh_stdout.read())
+        res.append(ssh_stdout.read())
+        """
         if ssh_stdout is '':
             #print("test1")
             if ssh_stderr is not None:
@@ -51,6 +48,7 @@ def ssh_remote(conn, cmd_list):
                 print(res[-1])
                 continue
         res.append(ssh_stdout.read())
+        """
         print(res[-1])
     return res
 
