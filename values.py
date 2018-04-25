@@ -56,10 +56,21 @@ def convert_data():
                                                        {u'cidr': u'40.1.1.0/24',
                                                         u'vm_ips': [u'40.1.1.5']}]}]}}
     list_tenants = user_input["data"]["tenants"]
-    user_data = None
+    tenant_blank = {u'id': u'',
+                    u'primary': {u'subnets': []},
+                    u'secondary': {u'subnets': []},
+                    u'tertiary': {u'subnets': []}
+                    }
+    user_data = {u'data': {u'tenants': [] 
+                            }
+                }
+    
+
     for tenant in list_tenants: 
         list_subnets = tenant['subnets']
         print("tenant_id: {}".format(tenant['id']))
+        copy_tenant_data = dict(tenant_blank)
+        copy_tenant_data['id'] = tenant['id']
         pprint(list_subnets)
         subnets = {}
         for item in list_subnets:
@@ -76,6 +87,9 @@ def convert_data():
         max_subnet[max_len_subnet] = subnets[max_len_subnet]
         import pdb; pdb.set_trace()
         print(max_subnet)
+        del subnets[max_len_subnet]
+        pprint(subnets)
+        
 
         
              
