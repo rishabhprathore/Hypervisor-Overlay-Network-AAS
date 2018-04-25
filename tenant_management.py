@@ -725,10 +725,11 @@ def run_secondary(data, conn):
 
     #adding routes for GRE subnets in IGW namespace
     p_cidrs, t_cidrs = _get_gre_subnets_for_secondary(data)
-
+    """
     for s in p_cidrs.extend(t_cidrs):
         functions.add_route_for_gre_cidr_namespace(
             igw_name, s, gre_tunnel_name, conn.secondary_ssh, primary=False)
+    """
 
 
 def run_tertiary(data, conn):
@@ -932,10 +933,11 @@ def run_tertiary(data, conn):
 
     #adding routes for GRE subnets in IGW namespace
     p_cidrs, s_cidrs = _get_gre_subnets_for_tertiary(data)
-
+    """
     for s in p_cidrs.extend(s_cidrs):
         functions.add_route_for_gre_cidr_namespace(
             igw_name, s, gre_tunnel_name, conn.tertiary_ssh, primary=False)
+            """
 
 def get_macs(hypervisor, data):
     
