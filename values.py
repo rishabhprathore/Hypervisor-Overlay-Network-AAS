@@ -5,9 +5,9 @@ import copy
 
 def get_value():
     primary_data = {
-        'username': 'ckogant',
-        'ip': '152.46.19.135',
-        'l2_ip': '10.25.7.94'
+        'username': 'rrathor',
+        'ip': '152.46.20.239',
+        'l2_ip': '10.25.11.208'
     }
     secondary_data = {
         'username': 'atandon',
