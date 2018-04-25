@@ -11,19 +11,28 @@ class Connection:
         try:
             import pdb
             pdb.set_trace()
-            self.ssh = paramiko.SSHClient()
+            self.secondary_ssh = paramiko.SSHClient()
             privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
-            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.secondary_ssh = self.ssh.connect(secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
-            self.tertiary_ssh = self.ssh.connect(
+            self.secondary_ssh.set_missing_host_key_policy(
+                paramiko.AutoAddPolicy())
+            self.secondary_ssh.connect(
+                secondary_data['ip'], username=secondary_data['username'], pkey=privkey)
+
+            self.tertiary_ssh = paramiko.SSHClient()
+            privkey = paramiko.RSAKey.from_private_key_file(pkey_path)
+            self.tertiary_ssh.set_missing_host_key_policy(
+                paramiko.AutoAddPolicy())
+            self.tertiary_ssh.connect(
                 tertiary_data['ip'], username=tertiary_data['username'], pkey=privkey)
-            self.primary_conn=libvirt.open('qemu:///system')
+
+            self.primary_conn = libvirt.open('qemu:///system')
             self.secondary_con = libvirt.open(
                 'qemu+ssh://{}@{}/system'.format(secondary_data['username'], secondary_data['ip']))
             self.tertiary_con = libvirt.open(
                 'qemu+ssh://{}@{}/system'.format(tertiary_data['username'], tertiary_data['ip']))
 
-            self.primary_docker = client.APIClient(base_url='unix://var/run/docker.sock')
+            self.primary_docker = client.APIClient(
+                base_url='unix://var/run/docker.sock')
             self.secondary_docker = client.APIClient(
                 base_url="tcp://{}:2375".format(secondary_data['ip']))
             self.tertiary_docker = client.APIClient(
