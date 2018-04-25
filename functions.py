@@ -73,7 +73,8 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     container_id = c_id['Id']
     conn.start(container_id)
     c_pid = conn.inspect_container(c_id['Id'])['State']['Pid']
-
+    import pdb
+    pdb.set_trace()
     cmd1 = "sudo ip link set {0} netns {1}".format(veth1, c_pid)
     cmd2 = "sudo docker exec -it --privileged {0} ifconfig {1} {2} up".format(
         c_id['Id'], veth1, c_cidr)
