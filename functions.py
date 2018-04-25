@@ -97,7 +97,10 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
     :param primary:
     :return: returns the MAC address of the container veth1 interface
     """
+    import pdb
+    pdb.set_trace()
     cmd = "sudo docker exec -it %s ifconfig | grep -A7 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
+    print(cmd)
     if primary == True:
         print('local:')
         status, c_mac = commands.getstatusoutput(cmd)
