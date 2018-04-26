@@ -107,8 +107,6 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
         status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
     data = ssh_remote(conn, cmd)
-    import pdb
-    pdb.set_trace()
     c_mac = data[0]
     
     return c_mac

@@ -19,7 +19,6 @@ def main():
     #    tm.run(a, conn)
     tenant = values.get_user_data()['data']['tenants'][0]
     pprint(tenant)
-    import pdb; pdb.set_trace()
     tm.run(tenant, conn)
     """
     values.get_user_data()
