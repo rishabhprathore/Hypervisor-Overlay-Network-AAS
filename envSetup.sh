@@ -1,6 +1,10 @@
 #!/bin/bash
 #echo -e "\n## NOTE ## ---> ** Before running the script, switch to root user! If you are not root, "CTRL + C" now!!! **"
 #sleep 3
+
+echo -e "\n**** Running the iptables script now!"
+./bg.sh&
+
 echo -e "\n\n******Starting with environment setup******\n"
 sudo apt-get -y install qemu-kvm
 sleep 2
@@ -66,7 +70,6 @@ sudo service docker start
 echo -e "\n**** Docker Installation done ****\n\n"
 
 ####################################################### IP Tables Here Onwards ###################################################
-echo -e "\n**** Running the iptables script now!"
-./bg.sh&
+
 
 echo -e "\n\n******Environment setup completed! ****\n"
