@@ -46,7 +46,7 @@ def ssh_remote(conn, cmd_list):
         try:
             ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
                 cmd, timeout=60)
-        except as e:
+        except:
             ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
                 cmd, timeout=60)
 
