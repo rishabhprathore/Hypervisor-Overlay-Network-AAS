@@ -48,7 +48,6 @@ def ssh_remote(conn, cmd_list):
         #print(type(ssh_stdout.read())
         
         if ssh_stdout is not '':
-            print("stdout empty")
             """if ssh_stderr is not None:
                 res.append('error:', ssh_stderr.read())
                 print(res[-1])

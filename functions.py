@@ -103,7 +103,7 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
     """
     import pdb
     pdb.set_trace()
-    cmd = "sudo docker exec -it %s ifconfig | grep -A7 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
+    cmd = "sudo docker exec -it %s ifconfig -a| grep -A2 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
     print(cmd)
     if primary == True:
         print('local:')
