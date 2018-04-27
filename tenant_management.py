@@ -957,6 +957,7 @@ def get_macs(hypervisor, data):
         
 
 def add_fdb_tenant(data, conn):
+    import pdb; pdb.set_trace()
 
     tenant_id = data.get("id")
     tenant_name = 'T' + str(tenant_id)
