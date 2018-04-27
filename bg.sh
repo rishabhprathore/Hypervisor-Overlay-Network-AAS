@@ -7,5 +7,5 @@ sudo iptables -t nat -F
 sudo iptables -t mangle -F
 sudo iptables -F
 sudo iptables -X
-sleep 3
+sleep 6
 done
