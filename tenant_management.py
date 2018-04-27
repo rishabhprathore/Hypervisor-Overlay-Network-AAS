@@ -858,7 +858,7 @@ def run_tertiary(data, conn):
         veth_t_br_ip = str(ipaddress.ip_address(ip_u) + 1)+'/24'
 
         vmm.defineNetwork(subnet_bridge_name, conn.tertiary_con,
-                          conn.secondary_ssh, primary=False)
+                          conn.tertiary_ssh, primary=False)
         p_cidrs, s_cidrs, t_cidrs = _give_cidr_ps(data)
         total_cdr = []
         total_cdr = p_cidrs + s_cidrs
