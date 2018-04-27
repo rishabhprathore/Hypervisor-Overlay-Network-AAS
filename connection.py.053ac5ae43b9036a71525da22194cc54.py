@@ -45,10 +45,10 @@ def ssh_remote(conn, cmd_list):
     for cmd in cmd_list:
         try:
             ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
-                cmd, timeout=60)
+                cmd, timeout=60,)
         except as e:
             ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
-                cmd, timeout=60)
+                cmd, timeout=60,)
 
         #print(type(ssh_stdout.read())
         
