@@ -78,15 +78,18 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     cmd1 = "sudo ip link set {0} netns {1}".format(veth1, c_pid)
     cmd2 = "sudo docker exec -it --privileged {0} ifconfig {1} {2} up".format(
         c_id['Id'], veth1, c_cidr)
-    cmd3 = "sudo docker exec -it --privileged {0} ip route add default via {1}".format(
+    cmd3 = "sudo docker exec -it --privileged {0} ip route del default".format(c_id['Id'])
+    cmd4 = "sudo docker exec -it --privileged {0} ip route add default via {1}".format(
         c_id['Id'], gw)
-    cmd_list = [cmd1, cmd2, cmd3]
+    cmd_list = [cmd1, cmd2, cmd3, cmd4]
 
     if primary==True:
         print('local:')
         for cmd in cmd_list:
+            print(cmd)
             os.system(cmd)
         return container_id
+    print(cmd_list)
     ssh_remote(ssh_conn, cmd_list)
     return container_id
 

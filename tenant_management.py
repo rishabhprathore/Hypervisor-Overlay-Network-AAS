@@ -488,7 +488,7 @@ def run_primary(data, conn):
 
             cidr = vm_ip+'/24'
             c_id = functions.create_docker_container(
-                vm_name, veth_c_br, cidr, veth_igw_br_default_ip, conn.primary_docker, primary=True)
+                vm_name, veth_c_br, cidr, veth_igw_br_default_ip.split('/')[0], conn.primary_docker, primary=True)
             c_mac = functions.get_mac_dockerContainer(
                 c_id, primary=True)
             data['primary']['subnets'][i]['vm_data'][vm_ip]=c_mac
@@ -698,7 +698,7 @@ def run_secondary(data, conn):
 
             cidr = vm_ip+'/24'
             c_id = functions.create_docker_container(
-                vm_name, veth_c_br, cidr, veth_igw_br_default_ip, conn.secondary_docker, conn.secondary_ssh, primary=False)
+                vm_name, veth_c_br, cidr, veth_igw_br_default_ip.split('/')[0], conn.secondary_docker, conn.secondary_ssh, primary=False)
             c_mac = functions.get_mac_dockerContainer(
                 c_id, conn.secondary_ssh, primary=False)
             data['secondary']['subnets'][i]['vm_data'][vm_ip] = c_mac
@@ -906,7 +906,7 @@ def run_tertiary(data, conn):
 
             cidr = vm_ip+'/24'
             c_id = functions.create_docker_container(
-                vm_name, veth_c_br, cidr, veth_igw_br_default_ip, conn.tertiary_docker, conn.tertiary_ssh, primary=False)
+                vm_name, veth_c_br, cidr, veth_igw_br_default_ip.split('/')[0], conn.tertiary_docker, conn.tertiary_ssh, primary=False)
             c_mac = functions.get_mac_dockerContainer(
                 c_id, conn.tertiary_ssh, primary=False)
             data['tertiary']['subnets'][i]['vm_data'][vm_ip] = c_mac
