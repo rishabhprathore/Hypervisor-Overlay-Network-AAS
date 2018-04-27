@@ -105,15 +105,14 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
     """
     import pdb
     pdb.set_trace()
-    cmd = "sudo docker exec -it %s ifconfig -a| grep -A2 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
+    cmd = "sudo docker exec -i %s ifconfig -a| grep -A2 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
     print(cmd)
     if primary == True:
         print('local:')
         status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
     data = ssh_remote(conn, cmd)
-    c_mac = data[0]
-    
+    c_mac = data[0].split('\n')[0]
     return c_mac
 
 def create_namespace(name, conn=None, primary=True):
