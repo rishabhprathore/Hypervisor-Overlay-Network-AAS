@@ -76,12 +76,12 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     import pdb
     pdb.set_trace()
     cmd1 = "sudo ip link set {0} netns {1}".format(veth1, c_pid)
-    cmd2 = "sudo docker exec -it --privileged {0} ip addr add {1} dev {2} ".format(
+    cmd2 = "sudo docker exec -i --privileged {0} ip addr add {1} dev {2} ".format(
         c_id['Id'], c_cidr, veth1)
-    cmd3 = "sudo docker exec -it --privileged {0} ip link set {1} up ".format(
+    cmd3 = "sudo docker exec -i --privileged {0} ip link set {1} up ".format(
         c_id['Id'], veth1)
-    cmd4 = "sudo docker exec -it --privileged {0} ip route del default".format(c_id['Id'])
-    cmd5 = "sudo docker exec -it --privileged {0} ip route add default via {1}".format(
+    cmd4 = "sudo docker exec -i --privileged {0} ip route del default".format(c_id['Id'])
+    cmd5 = "sudo docker exec -i --privileged {0} ip route add default via {1}".format(
         c_id['Id'], gw)
     cmd_list = [cmd1, cmd2, cmd3, cmd4, cmd5]
 
