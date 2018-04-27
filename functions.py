@@ -348,10 +348,13 @@ def add_fdb_entry_in_vxlan_namespace(name_space, remote_ip, vxlan_dev_name, mac=
 def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
     global prefix
     cmd = prefix + name_space + ' ip link add name {} type bridge'.format(bridge_name)
+    cmd1 = prefix + name_space + \
+        ' ip link set dev {} up'.format(bridge_name)
+    cmd_list = [cmd, cmd1]
     print(cmd)
     if primary == True:
         print('local:')
-        os.system(cmd)
+        os.system(cmd_list)
         return
-    ssh_remote(conn, [cmd])
+    ssh_remote(conn, cmd_list)
     return

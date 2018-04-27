@@ -455,6 +455,7 @@ def run_primary(data, conn):
 
             functions.move_veth_to_namespace(veth_t_br, igw_name, primary=True)
             functions.move_veth_to_bridge_namespace(igw_name, veth_t_br, vx_bridge_name, primary=True)
+            functions.set_link_up_in_namespace(igw_name, veth_t_br,primary=True)
         
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth+tenant_name+'-br-d' + ip.replace('.', '')
@@ -663,6 +664,8 @@ def run_secondary(data, conn):
                 veth_t_br, igw_name, conn.secondary_ssh, primary=False)
             functions.move_veth_to_bridge_namespace(
                 igw_name, veth_t_br, vx_bridge_name, conn.secondary_ssh, primary=False)
+            functions.set_link_up_in_namespace(
+                igw_name, veth_t_br, conn.secondary_ssh, primary=False)
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
@@ -871,6 +874,8 @@ def run_tertiary(data, conn):
                 veth_t_br, igw_name, conn.tertiary_ssh, primary=False)
             functions.move_veth_to_bridge_namespace(
                 igw_name, veth_t_br, vx_bridge_name, conn.tertiary_ssh, primary=False)
+            functions.set_link_up_in_namespace(
+                igw_name, veth_t_br, conn.tertiary_ssh, primary=False)
 
         #create a veth pair for conatiners default
         veth_br_igw_default = prefix_veth + \
