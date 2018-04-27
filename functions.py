@@ -111,7 +111,7 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
         print('local:')
         status, c_mac = commands.getstatusoutput(cmd)
         return c_mac
-    data = ssh_remote(conn, cmd)
+    data = ssh_remote(conn, [cmd])
     c_mac = data[0].split('\n')[0]
     return c_mac
 
