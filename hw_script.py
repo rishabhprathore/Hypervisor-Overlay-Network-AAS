@@ -280,6 +280,7 @@ def gre_tunnel():
 """
 
 def gre_tunnel(c1name, c2name):
+    import pdb; pdb.set_trace()
     global SC1_id, SC1_pid
     global LC1_id, LC1_pid
     global LC2_id, LC2_pid
