@@ -220,9 +220,10 @@ def create_bridge(bridge_name):
     os.system(cmd)
 
 
-def attach_bridge_to_container(bridge_name, container_list):
+def attach_bridge_to_container(bridge_name, container_list, create=True):
     # create a bridge
-    create_bridge(bridge_name)
+    if create:
+        create_bridge(bridge_name)
     
     for container in container_list:
         cid, pid = create_container(str(container))
