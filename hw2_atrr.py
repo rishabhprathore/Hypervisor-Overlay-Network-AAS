@@ -464,17 +464,15 @@ def main():
                     " the containers to connect them to each other\n"
                 sc = sc + "we create GRE tunnel between them using our Underlay"
                 print(sc)
-                c1_name = raw_input(
-                    "Enter container 1 IP  : \n")
-                c1name = unicode(c1_name, "utf-8")
+                c1_name = raw_input("Enter container 1 IP  : \n")
+                c1_name = unicode(c1_name, "utf-8")
                 try:
                     ip = ipaddress.ip_address(c1_name)
                 except:
                     print('address is invalid: %s' % c1_name)
                     c1name = ""
 
-                c2_name = raw_input(
-                    "Enter container 2 IP: \n")
+                c2_name = raw_input("Enter container 2 IP: \n")
                 c2_name = unicode(c2_name, "utf-8")
                 try:
                     ip = ipaddress.ip_address(c2_name)
