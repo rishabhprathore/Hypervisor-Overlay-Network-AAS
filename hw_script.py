@@ -31,7 +31,7 @@ def create_container(c_name):
         c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                     command='/bin/sleep 30000000',
                                     host_config=host_c,
-                                    name=c_names)
+                                    name=c_name)
         cli.start(c_id['Id'])
     c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
     return c_id['Id'], c_pid
