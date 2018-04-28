@@ -302,6 +302,8 @@ def gre_tunnel(c1name, c2name):
     create_namespace_and_bridge(ns1, bridge_ns_name1)
     create_namespace_and_bridge(ns2, bridge_ns_name2)
 
+    create_bridge(bridge1)
+    create_bridge(bridge2)
     cid1, pid1 = create_container(c1name)
     cid2, pid2 = create_container(c2name)
     # bridge1
@@ -323,14 +325,14 @@ def gre_tunnel(c1name, c2name):
     br_c_1 = "{}_c_1".format(bridge1)
 #    create_veth_pair(c_br_1, br_c_1)
     # c1name is list of containers
-    attach_bridge_to_container(bridge1, [c1name])
+    attach_bridge_to_container(bridge1, [c1name], create=False)
 #    os.system("sudo brctl addif {} {}".format(bridge1, br_c_1))
 #    assign_ip_container(cid, ip_cidr, dev)
 
     c_br_2 = "c_{}_2".format(bridge2)
     br_c_2 = "{}_c_2".format(bridge2)
 #    create_veth_pair(c_br_2, br_c_2)
-    attach_bridge_to_container(bridge2, [c2name])
+    attach_bridge_to_container(bridge2, [c2name], create=False)
 #    os.system("sudo brctl addif {} {}".format(bridge2, br_c_2))
 #   assign_ip_container()
 
