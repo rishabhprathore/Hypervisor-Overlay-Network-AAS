@@ -26,9 +26,8 @@ cli = client.APIClient(base_url='unix://var/run/docker.sock')
 
 def create_container(c_name):
     host_c = cli.create_host_config(privileged=True)
-    try:
-        c_id = cli.get(name=c_name)
-    except:
+    c_id = cli.list(filters={'name':c_name})
+    if not c_id:
         c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                     command='/bin/sleep 30000000',
                                     host_config=host_c,
