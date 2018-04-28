@@ -292,10 +292,10 @@ def gre_tunnel(c1name, c2name):
     veth1 = 'vethlc1'
     veth2 = 'vethB2'
     veth3 = 'vethlc2'
-    ns1 = "ns1-br1"
-    ns2 = "ns2-br2"
-    bridge_ns_name1 = 'br-ns-1'
-    bridge_ns_name2 = 'br-ns-2'
+    ns1 = "ns1-"+bridge1
+    ns2 = "ns2-"+bridge2
+    bridge_ns_name1 = 'br-ns-'+bridge1
+    bridge_ns_name2 = 'br-ns-'+bridge2
 
     create_namespace_and_bridge(ns1, bridge_ns_name1)
     create_namespace_and_bridge(ns2, bridge_ns_name2)
