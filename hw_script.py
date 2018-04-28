@@ -286,8 +286,8 @@ def gre_tunnel(c1name, c2name):
     global LC2_id, LC2_pid
     global SC2_id, SC2_pid
 
-    bridge1 = 'B1'+c1name
-    bridge2 = 'B2'+c2name
+    bridge1 = 'B1_'+c1name
+    bridge2 = 'B2_'+c2name
     veth0 = 'vethB1'
     veth1 = 'vethlc1'
     veth2 = 'vethB2'
