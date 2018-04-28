@@ -439,10 +439,10 @@ def main():
                 containers = c2name.split(',')
                 container_list = []
 
-                for a in containers:
+                for con in containers:
                     try:
-                        a.strip()
-                        c = unicode(a, "utf-8")
+                        con = con.strip()
+                        c = unicode(con, "utf-8")
                         ip = ipaddress.ip_address(c)
                         container_list.append(c)
                         print('%s is a correct IP%s address.' % (ip, ip.version))
