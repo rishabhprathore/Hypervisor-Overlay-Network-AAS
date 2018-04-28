@@ -131,7 +131,7 @@ def create_bridge_in_namespace(ns_name, bridge_ns_name):
 
 
 def underlay():
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     global SC1_id, SC1_pid
     global LC1_id, LC1_pid
@@ -143,9 +143,9 @@ def underlay():
     SC2_id, SC2_pid = create_container('SC2')
 
     # SC1 and LC1
-    #create_veth_pair(veth0, veth1)
-    #move_veth_to_container(SC1_pid, veth0)
-    #move_veth_to_container(LC1_pid, veth1)
+    create_veth_pair(veth0, veth1)
+    move_veth_to_container(SC1_pid, veth0)
+    move_veth_to_container(LC1_pid, veth1)
     assign_ip_container(SC1_id, '192.168.1.2/24', veth0)
     assign_ip_container(LC1_id, '192.168.1.1/24', veth1)
 
@@ -187,9 +187,9 @@ def underlay():
     add_route_container(LC2_id, "192.168.1.0/24", "192.168.2.2")
 
     create_gre_tunnel(SC1_id, 'GRE1', '50.50.1.1',
-                      '192.168.3.2', '192.168.1.2')
-    create_gre_tunnel(SC2_id, 'GRE1', '60.60.1.1',
                       '192.168.1.2', '192.168.3.2')
+    create_gre_tunnel(SC2_id, 'GRE1', '60.60.1.1',
+                      '192.168.3.2', '192.168.1.2')
     add_route_container(SC1_id, '60.60.1.1', '192.168.1.1')
     add_route_container(SC2_id, '50.50.1.1', '192.168.3.1')
     prefix = "sudo docker exec -i --privileged "
@@ -383,7 +383,7 @@ def gre_tunnel(c1name, c2name):
 
 ##########################################################################
 def main():
-    underlay()
+    #underlay()
 
     while(True):
         cin = raw_input("What you want to do today? \n"
@@ -391,7 +391,8 @@ def main():
                         "Enter 1 for veth pair between containers \n"
                         "Enter 2 for bridge network \n"
                         "Enter 3 for VXLAN Tunnel \n"
-                        "Enter 4 for GRE Tunnel \n")
+                        "Enter 4 for GRE Tunnel \n"
+                        "Enter 5 to exit\n")
         if cin:
             print("User choose  %s " % cin)
             if str(cin) == '1':
@@ -439,6 +440,7 @@ def main():
 
                 for a in containers:
                     try:
+                        c.strip()
                         c = unicode(a, "utf-8")
                         ip = ipaddress.ip_address(c)
                         container_list.append(c)
