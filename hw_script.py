@@ -441,7 +441,7 @@ def main():
 
                 for a in containers:
                     try:
-                        c.strip()
+                        a.strip()
                         c = unicode(a, "utf-8")
                         ip = ipaddress.ip_address(c)
                         container_list.append(c)
