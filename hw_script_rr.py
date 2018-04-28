@@ -440,9 +440,8 @@ def main():
                     c2_name = None
                 if c1_name and c2_name:
                     # call the vxlan method
-                    create_gre_tunnel(c1_name, c2_name)
-                    print(" Done creating resouces and connected them")
-                else:
+                    create_gre(c1_name, c2_name)
+                    print("Infrastructure created")
                    
 
             if str(cin) == '4':
