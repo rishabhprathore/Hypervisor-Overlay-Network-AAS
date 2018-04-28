@@ -222,6 +222,7 @@ def create_bridge(bridge_name):
 
 def attach_bridge_to_container(bridge_name, container_list):
     # create a bridge
+    create_bridge(bridge_name)
     for container in container_list:
         cid, pid = create_container(str(container))
         cname = 'c' + str(container)
@@ -229,7 +230,7 @@ def attach_bridge_to_container(bridge_name, container_list):
         create_veth_pair(cname, bname)
         move_veth_to_container(pid, cname)
         assign_ip_container(cid, container + '/24', cname)
-        create_bridge(bridge_name)
+        
         os.system("sudo brctl addif {} {}".format(bridge_name, bname))
         os.system("sudo ip link set dev {} up".format(bridge_name))
         os.system("sudo ip link set dev {} up".format(bname))
