@@ -141,7 +141,7 @@ def underlay():
     LC1_id, LC1_pid = create_container('LC1')
     LC2_id, LC2_pid = create_container('LC2')
     SC2_id, SC2_pid = create_container('SC2')
-
+    return
     # SC1 and LC1
     create_veth_pair(veth0, veth1)
     move_veth_to_container(SC1_pid, veth0)
