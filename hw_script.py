@@ -308,15 +308,15 @@ def gre_tunnel(c1name, c2name):
     cid1, pid1 = create_container(c1name)
     cid2, pid2 = create_container(c2name)
     # bridge1
-    br_ns_br1 = "br_ns_{}".format(bridge1)
-    br_br1_ns = "br_{}_ns".format(bridge1)
+    br_ns_br1 = "b_n_{}".format(bridge1)
+    br_br1_ns = "b_{}_n".format(bridge1)
     create_veth_pair(br_ns_br1, br_br1_ns)
     attach_veth_pair_to_bridge_and_namespace_bridge(
         ns1, bridge1, bridge_ns_name1, br_ns_br1, br_br1_ns)
 
     # bridge2
-    br_ns_br2 = "br_ns_{}".format(bridge2)
-    br_br2_ns = "br_{}_ns".format(bridge2)
+    br_ns_br2 = "b_n_{}".format(bridge2)
+    br_br2_ns = "b_{}_n".format(bridge2)
     create_veth_pair(br_ns_br2, br_br2_ns)
     attach_veth_pair_to_bridge_and_namespace_bridge(
         ns2, bridge2, bridge_ns_name2, br_ns_br2, br_br2_ns)
