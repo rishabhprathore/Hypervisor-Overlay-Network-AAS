@@ -393,7 +393,7 @@ def main():
                 bridge_name = raw_input("Enter Bridge name:")
 
                 c_name = raw_input(
-                    "Enter the containers IPs (Eg: 12.0.0.3, 12.0.0.4) : \n")
+                    "Enter the containers IPs (Ex: 2.2.2.2, 2.2.2.3, 2.2.2.4) : \n")
                 import pdb
                 pdb.set_trace()
                 containers = c_name.split(',')
@@ -408,51 +408,42 @@ def main():
                         print('%s is a correct IP%s address.' %
                               (ip, ip.version))
                     except:
-                        print('address is invalid: %s' % c2name)
-                        print('Usage :  12.0.0.2')
-                        container_list = []
+                        print('address is invalid: %s' % c_name)
+                        container_list = list()
                 if container_list:
                     # call the bridge network function.
                     attach_bridge_to_container(bridge_name, container_list)
 
-                    print(" Done creating resouces and connected them")
-                else:
-                    print("invalid input")
-            if str(cin) == '3':
-                print("Demo VXLAN\n")
-                cmd = "In this method we will ask you what are containers IPs you want, we will create" \
-                    " the containers with same name as IP and connect them to each other\n"
-                cmd = cmd + "Then we create VXLAN tunnel between them using our Underlay" \
-                            "(which is already automated as well)"
-                print(cmd)
-                c1name = raw_input(
-                    "Enter the container 1 IP (Eg: 12.0.0.2) : \n")
-                c1name = unicode(c1name, "utf-8")
+                    print("Infrastructure created")
+            if str(choice) == '3':
+                sc = "Please provide the containers IPs" \
+                    "that you want to connect to each other\n"
+                sc = sc + " VXLAN tunnel will be created" 
+                print(sc)
+                c1_name = raw_input(
+                    "Enter the container 1 IP : \n")
+                c1_name = unicode(c1_name, "utf-8")
                 try:
-                    ip = ipaddress.ip_address(c1name)
-                    print('%s is a correct IP%s address.' % (ip, ip.version))
+                    ip = ipaddress.ip_address(c1_name)
                 except:
-                    print('address is invalid: %s' % c1name)
-                    print('Usage :  12.0.0.2')
-                    c1name = None
+                    print('address invalid: %s' % c1_name)
+                    c1_name = None
 
-                c2name = raw_input(
+                c2_name = raw_input(
                     "Enter the container 2 IP (Eg: 12.0.0.3) : \n")
-                c2name = unicode(c2name, "utf-8")
+                c2_name = unicode(c2_name, "utf-8")
                 try:
-                    ip = ipaddress.ip_address(c2name)
+                    ip = ipaddress.ip_address(c2_name)
                     print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
-                    print('address is invalid: %s' % c2name)
-                    print('Usage :  12.0.0.2')
-                    c2name = None
-                if c1name and c2name:
+                    print('address invalid: %s' % c2_name)
+                    c2_name = None
+                if c1_name and c2_name:
                     # call the vxlan method
-                    #vxlan_tunnel(c1name, c2name)
+                    create_gre_tunnel(c1_name, c2_name)
                     print(" Done creating resouces and connected them")
                 else:
-                    print("invalid input")
-                # call the connecting for VXLAN
+                   
 
             if str(cin) == '4':
                 print("Demo GRE Tunnel\n")
