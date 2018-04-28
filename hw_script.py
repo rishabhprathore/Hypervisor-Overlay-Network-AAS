@@ -31,7 +31,7 @@ def create_container(c_name):
         c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                     command='/bin/sleep 30000000',
                                     host_config=host_c,
-                                    name=c_name)
+                                    name=c_names)
         cli.start(c_id['Id'])
     c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
     return c_id['Id'], c_pid
@@ -43,7 +43,7 @@ def move_veth_to_container(c_pid, dev):
 
 def assign_ip_container(cid, ip_cidr, dev):
     prefix = "sudo docker exec -i --privileged "
-    cmd1 = prefix + "{} ip addr add {1} dev {2} ".format(
+    cmd1 = prefix + "{0} ip addr add {1} dev {2} ".format(
         cid, ip_cidr, dev)
     cmd2 = prefix + " {} ip link set dev {} up".format(cid, dev)
     cmd_list = [cmd1, cmd2]
