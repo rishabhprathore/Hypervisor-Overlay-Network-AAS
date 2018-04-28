@@ -41,7 +41,7 @@ def create_container(c_name):
 
 
 def move_veth_to_container(c_pid, dev):
-    os.system("ip link set dev {} netns {} name {}".format(dev, c_pid, dev))
+    os.system("ip link set dev {} netns {}".format(dev, c_pid))
 
 
 def assign_ip_container(cid, ip_cidr, dev):
