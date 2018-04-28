@@ -129,6 +129,7 @@ def create_bridge_in_namespace(ns_name, bridge_ns_name):
 
 def underlay():
     import pdb; pdb.set_trace()
+
     global SC1_id, SC1_pid
     global LC1_id, LC1_pid
     global LC2_id, LC2_pid
@@ -139,9 +140,9 @@ def underlay():
     SC2_id, SC2_pid = create_container('SC2')
 
     # SC1 and LC1
-    create_veth_pair(veth0, veth1)
-    move_veth_to_container(SC1_pid, veth0)
-    move_veth_to_container(LC1_pid, veth1)
+    #create_veth_pair(veth0, veth1)
+    #move_veth_to_container(SC1_pid, veth0)
+    #move_veth_to_container(LC1_pid, veth1)
     assign_ip_container(SC1_id, '192.168.1.2/24', veth0)
     assign_ip_container(LC1_id, '192.168.1.1/24', veth1)
 
