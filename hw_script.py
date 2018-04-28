@@ -301,11 +301,6 @@ def gre_tunnel(c1name, c2name):
     create_namespace_and_bridge(ns1, bridge_ns_name1)
     create_namespace_and_bridge(ns2, bridge_ns_name2)
 
-    #create_bridge(bridge1)
-    #os.system("sudo ip link set dev {} up".format(bridge1))
-    #create_bridge(bridge2)
-    os.system("sudo ip link set dev {} up".format(bridge2))
-
     cid1, pid1 = create_container(c1name)
     cid2, pid2 = create_container(c2name)
     # bridge1
