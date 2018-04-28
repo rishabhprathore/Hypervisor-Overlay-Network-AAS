@@ -129,6 +129,7 @@ def create_bridge_in_namespace(ns_name, bridge_ns_name):
 
 
 def underlay():
+    import pdb; pdb.set_trace()
     global SC1_id, SC1_pid
     global LC1_id, LC1_pid
     global LC2_id, LC2_pid
