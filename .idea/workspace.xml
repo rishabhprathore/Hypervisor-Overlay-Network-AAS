@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="68f9754e-75b5-46dd-8d3c-96eb065cf8d5" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/functions_hw.py" afterPath="$PROJECT_DIR$/functions_hw.py" />
-      <change beforePath="$PROJECT_DIR$/hw_script_rr.py" afterPath="$PROJECT_DIR$/hw2_atrr.py" />
+      <change beforePath="$PROJECT_DIR$/hw2_atrr.py" afterPath="$PROJECT_DIR$/hw2_atrr.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,8 +29,8 @@
       <file leaf-file-name="hw2_atrr.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hw2_atrr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-47">
-              <caret line="42" column="21" lean-forward="false" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+            <state relative-caret-position="376">
+              <caret line="479" column="54" lean-forward="false" selection-start-line="479" selection-start-column="54" selection-end-line="479" selection-end-column="54" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -54,6 +53,7 @@
       <find>veth_igw_br_default</find>
       <find>primary</find>
       <find>def run</find>
+      <find>correct</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -73,6 +73,7 @@
         <option value="$PROJECT_DIR$/user_data.json" />
         <option value="$PROJECT_DIR$/functions_hw.py" />
         <option value="$PROJECT_DIR$/hw_script_rr.py" />
+        <option value="$PROJECT_DIR$/hw2_atrr.py" />
       </list>
     </option>
   </component>
@@ -380,7 +381,21 @@
       <option name="project" value="LOCAL" />
       <updated>1524463025175</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="update">
+      <created>1524886122252</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1524886122252</updated>
+    </task>
+    <task id="LOCAL-00017" summary="update">
+      <created>1524886654815</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1524886654815</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -439,7 +454,7 @@
         <state relative-caret-position="1974">
           <caret line="105" column="4" lean-forward="false" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -523,7 +538,7 @@
         <state relative-caret-position="1974">
           <caret line="105" column="4" lean-forward="false" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -599,7 +614,7 @@
         <state relative-caret-position="1092">
           <caret line="62" column="25" lean-forward="false" selection-start-line="62" selection-start-column="25" selection-end-line="62" selection-end-column="25" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -665,7 +680,7 @@
         <state relative-caret-position="2625">
           <caret line="135" column="32" lean-forward="false" selection-start-line="135" selection-start-column="24" selection-end-line="135" selection-end-column="32" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -710,7 +725,7 @@
         <state relative-caret-position="4420">
           <caret line="135" column="32" lean-forward="false" selection-start-line="135" selection-start-column="24" selection-end-line="135" selection-end-column="32" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -852,7 +867,7 @@
         <state relative-caret-position="0">
           <caret line="117" column="4" lean-forward="false" selection-start-line="117" selection-start-column="4" selection-end-line="117" selection-end-column="4" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -879,8 +894,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hw2_atrr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-47">
-          <caret line="42" column="21" lean-forward="false" selection-start-line="42" selection-start-column="21" selection-end-line="42" selection-end-column="21" />
+        <state relative-caret-position="376">
+          <caret line="479" column="54" lean-forward="false" selection-start-line="479" selection-start-column="54" selection-end-line="479" selection-end-column="54" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>

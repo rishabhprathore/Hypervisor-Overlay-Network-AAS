@@ -422,8 +422,6 @@ def main():
                         c = unicode(con, "utf-8")
                         ip = ipaddress.ip_address(c)
                         container_list.append(c)
-                        print('%s is a correct IP%s address.' %
-                              (ip, ip.version))
                     except:
                         print('address is invalid: %s' % c_name)
                         container_list = list()
@@ -447,11 +445,10 @@ def main():
                     c1_name = None
 
                 c2_name = raw_input(
-                    "Enter the container 2 IP (Eg: 12.0.0.3) : \n")
+                    "Enter the container 2 IP : \n")
                 c2_name = unicode(c2_name, "utf-8")
                 try:
                     ip = ipaddress.ip_address(c2_name)
-                    print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
                     print('address invalid: %s' % c2_name)
                     c2_name = None
@@ -472,7 +469,6 @@ def main():
                 c1name = unicode(c1_name, "utf-8")
                 try:
                     ip = ipaddress.ip_address(c1_name)
-                    print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
                     print('address is invalid: %s' % c1_name)
                     c1name = ""
@@ -482,7 +478,6 @@ def main():
                 c2_name = unicode(c2_name, "utf-8")
                 try:
                     ip = ipaddress.ip_address(c2_name)
-                    print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
                     print('address is invalid: %s' % c2_name)
                     c2_name = None
