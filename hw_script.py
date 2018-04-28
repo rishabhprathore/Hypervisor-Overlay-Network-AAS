@@ -34,9 +34,10 @@ def create_container(c_name):
                                     command='/bin/sleep 30000000',
                                     host_config=host_c,
                                     name=c_name)
-        cli.start(c_id['Id'])
-    c_pid = cli.inspect_container(c_id['Id'])['State']['Pid']
-    return c_id['Id'], c_pid
+        cid = c_id['Id']
+        cli.start(cid)
+    c_pid = cli.inspect_container(cid)['State']['Pid']
+    return cid, c_pid
 
 
 def move_veth_to_container(c_pid, dev):
