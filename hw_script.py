@@ -345,14 +345,14 @@ def gre_tunnel(c1name, c2name):
     create_veth_pair(br_ns_lc1, lc1_ns_br)
     move_veth_to_namespace(ns1, br_ns_lc1)
     attach_veth_to_bridge_inside_namespace(ns1, bridge_ns_name1, br_ns_lc1)
-    move_veth_to_container(pid1, lc1_ns_br)
+    move_veth_to_container(LC1_pid, lc1_ns_br)
     lc1_cidr = ipcalc.IP(c1name+'/24').guess_network().host_first()
     assign_ip_container(LC1_id, lc1_cidr, lc1_ns_br)
 
     create_veth_pair(br_ns_lc2, lc2_ns_br)
     move_veth_to_namespace(ns2, br_ns_lc2)
     attach_veth_to_bridge_inside_namespace(ns2, bridge_ns_name2,br_ns_lc2)
-    move_veth_to_container(pid2, lc2_ns_br)
+    move_veth_to_container(LC2_pid, lc2_ns_br)
     lc2_cidr = ipcalc.IP(c2name + '/24').guess_network().host_first()
     assign_ip_container(LC2_id, lc2_cidr, lc2_ns_br)
 
