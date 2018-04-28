@@ -28,7 +28,7 @@ def create_container(c_name):
     host_c = cli.create_host_config(privileged=True)
     c_id_list = docker_con.containers.list(filters={'name':c_name})
     if c_id_list:
-        c_id = c_id_list[0].id
+        cid = c_id_list[0].id
     if not c_id_list:
         c_id = cli.create_container(image='atandon70/ubuntu_project:loadedUBUNTUimage',
                                     command='/bin/sleep 30000000',
