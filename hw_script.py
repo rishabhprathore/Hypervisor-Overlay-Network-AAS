@@ -223,6 +223,7 @@ def create_bridge(bridge_name):
 def attach_bridge_to_container(bridge_name, container_list):
     # create a bridge
     create_bridge(bridge_name)
+    
     for container in container_list:
         cid, pid = create_container(str(container))
         cname = 'c' + str(container)
@@ -300,9 +301,9 @@ def gre_tunnel(c1name, c2name):
     create_namespace_and_bridge(ns1, bridge_ns_name1)
     create_namespace_and_bridge(ns2, bridge_ns_name2)
 
-    create_bridge(bridge1)
-    os.system("sudo ip link set dev {} up".format(bridge1))
-    create_bridge(bridge2)
+    #create_bridge(bridge1)
+    #os.system("sudo ip link set dev {} up".format(bridge1))
+    #create_bridge(bridge2)
     os.system("sudo ip link set dev {} up".format(bridge2))
 
     cid1, pid1 = create_container(c1name)
