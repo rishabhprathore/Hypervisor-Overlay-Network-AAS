@@ -435,6 +435,7 @@ def main():
 
                 c2name = raw_input(
                     "Enter the containers IPs (Eg: 12.0.0.3, 12.0.0.4) : \n")
+                import pdb; pdb.set_trace()
                 containers = c2name.split(',')
                 container_list = []
 
