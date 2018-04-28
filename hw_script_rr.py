@@ -446,40 +446,34 @@ def main():
 
             if str(choice) == '4':
                 print("Demo GRE Tunnel\n")
-                cmd = "In this method we will ask you what are containers IPs you want, we will create" \
-                    " the containers with same name as IP and connect them to each other\n"
-                cmd = cmd + "Then we create GRE tunnel between them using our Underlay" \
-                            "(which is already automated as well)"
-                print(cmd)
-                c1name = raw_input(
-                    "Enter the container 1 IP (Eg: 12.0.0.2) : \n")
-                c1name = unicode(c1name, "utf-8")
+                sc = "Please provide containers IPs " \
+                    " the containers to connect them to each other\n"
+                sc = sc + "we create GRE tunnel between them using our Underlay"
+                print(sc)
+                c1_name = raw_input(
+                    "Enter container 1 IP  : \n")
+                c1name = unicode(c1_name, "utf-8")
                 try:
-                    ip = ipaddress.ip_address(c1name)
+                    ip = ipaddress.ip_address(c1_name)
                     print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
-                    print('address is invalid: %s' % c1name)
-                    print('Usage :  12.0.0.2')
-                    c1name = None
+                    print('address is invalid: %s' % c1_name)
+                    c1name = ""
 
-                c2name = raw_input(
-                    "Enter the container 2 IP (Eg: 12.0.0.3) : \n")
-                c2name = unicode(c2name, "utf-8")
+                c2_name = raw_input(
+                    "Enter container 2 IP: \n")
+                c2_name = unicode(c2_name, "utf-8")
                 try:
-                    ip = ipaddress.ip_address(c2name)
+                    ip = ipaddress.ip_address(c2_name)
                     print('%s is a correct IP%s address.' % (ip, ip.version))
                 except:
-                    print('address is invalid: %s' % c2name)
-                    print('Usage :  12.0.0.2')
-                    c2name = None
-                if c1name and c2name:
+                    print('address is invalid: %s' % c2_name)
+                    c2_name = None
+                if c1_name and c2_name:
                     # call the connecting for GRE Tunnel
-                    create_gre(c1name, c2name)
-                    print(" Done creating resouces and connected them")
-                else:
-                    print("invalid input")
-            if str(cin) == '5':
-                print("Exiting !!!!\n")
+                    create_gre(c1_name, c2_name)
+                    print(" Infrastructure created")
+            if str(choice) == '5':
                 sys.exit(0)
 
 
