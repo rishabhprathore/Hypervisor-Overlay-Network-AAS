@@ -347,14 +347,14 @@ def gre_tunnel(c1name, c2name):
     attach_veth_to_bridge_inside_namespace(ns1, bridge_ns_name1, br_ns_lc1)
     move_veth_to_container(LC1_pid, lc1_ns_br)
     lc1_cidr = ipcalc.IP(c1name+'/24').guess_network().host_first()
-    assign_ip_container(LC1_id, lc1_cidr, lc1_ns_br)
+    assign_ip_container(LC1_id, str(lc1_cidr)+'/24', lc1_ns_br)
 
     create_veth_pair(br_ns_lc2, lc2_ns_br)
     move_veth_to_namespace(ns2, br_ns_lc2)
     attach_veth_to_bridge_inside_namespace(ns2, bridge_ns_name2,br_ns_lc2)
     move_veth_to_container(LC2_pid, lc2_ns_br)
     lc2_cidr = ipcalc.IP(c2name + '/24').guess_network().host_first()
-    assign_ip_container(LC2_id, lc2_cidr, lc2_ns_br)
+    assign_ip_container(LC2_id, str(lc2_cidr)+'/24', lc2_ns_br)
 
 #   Adding routes for VXLAN setup
 ## c1 -> c2  data_path via VXLAN
