@@ -444,7 +444,7 @@ def main():
                     print("Infrastructure created")
                    
 
-            if str(cin) == '4':
+            if str(choice) == '4':
                 print("Demo GRE Tunnel\n")
                 cmd = "In this method we will ask you what are containers IPs you want, we will create" \
                     " the containers with same name as IP and connect them to each other\n"
