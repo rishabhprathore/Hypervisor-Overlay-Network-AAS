@@ -10,14 +10,14 @@ def get_value():
         'l2_ip': '10.25.11.208'
     }
     secondary_data = {
-        'username': 'atandon',
-        'ip': '152.46.19.47',
-        'l2_ip': '10.25.8.44'
+        'username': 'ckogant',
+        'ip': '152.46.18.27',
+        'l2_ip': '10.25.12.13'
     }
     tertiary_data = {
-        'username': 'atandon',
-        'ip': '152.46.20.220',
-        'l2_ip': '10.25.11.176'
+        'username': 'ckogant',
+        'ip': '152.46.19.135',
+        'l2_ip': '10.25.7.94'
     }
     return primary_data, secondary_data, tertiary_data
 
