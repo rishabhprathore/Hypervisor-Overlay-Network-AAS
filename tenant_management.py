@@ -8,6 +8,7 @@ import functions
 import values
 import vmManagement as vmm
 from connection import Connection
+from pprint import pprint
 
 
 primary_data, secondary_data, tertiary_data = values.get_value()
@@ -1022,6 +1023,7 @@ def run(data, conn):
     run_primary(data, conn)
     run_secondary(data, conn)
     run_tertiary(data, conn)
+    pprint(data)
     add_fdb_tenant(data, conn)
 
 
