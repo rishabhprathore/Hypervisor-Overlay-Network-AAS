@@ -975,7 +975,7 @@ def add_fdb_tenant(data, conn):
     remote_ip_t = '55.3.{}.2'.format(tenant_id)
 
     # for primary:
-   flag_s, flag_t, common_cidrs_ps, common_cidrs_pt = _check_need_to_create_vxlan_primary(data)
+    flag_s, flag_t, common_cidrs_ps, common_cidrs_pt = _check_need_to_create_vxlan_primary(data)
 
     if flag_s:
         list_macs_s = get_macs('secondary', data, common_cidrs_ps)
