@@ -46,7 +46,7 @@ def _check_need_to_create_vxlan_primary(data):
         flag_s = True
     if len(common_cidrs_pt)>0:
         flag_t=True
-    return flag_s, flag_t
+    return flag_s, flag_t, common_cidrs_ps, common_cidrs_pt
 
 def _check_need_to_create_vxlan_secondary(data):
     """
@@ -67,7 +67,7 @@ def _check_need_to_create_vxlan_secondary(data):
         flag_p = True
     if len(common_cidrs_st) > 0:
         flag_t = True
-    return flag_p, flag_t
+    return flag_p, flag_t, common_cidrs_ps, common_cidrs_st
 
 
 def _check_need_to_create_vxlan_tertiary(data):
@@ -89,7 +89,7 @@ def _check_need_to_create_vxlan_tertiary(data):
         flag_s = True
     if len(common_cidrs_pt) > 0:
         flag_p = True
-    return flag_p, flag_s
+    return flag_p, flag_s, common_cidrs_pt, common_cidrs_ts
 
 
 def _check_need_to_create_gre_primary(data):
@@ -358,7 +358,7 @@ def run_primary(data, conn):
     functions.set_link_up_in_namespace(pgw_name, veth_pgw, primary=True)
 
     # check if vxlan is reqd
-    flag_s, flag_t = _check_need_to_create_vxlan_primary(data)
+    flag_s, flag_t, _,_  = _check_need_to_create_vxlan_primary(data)
     vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_s or flag_t:
         # create bridge inside IGW
@@ -555,7 +555,7 @@ def run_secondary(data, conn):
     functions.set_link_up(veth_hyp_igw, conn.secondary_ssh, primary=False)
 
     # check if vxlan is reqd
-    flag_p, flag_t = _check_need_to_create_vxlan_secondary(data)
+    flag_p, flag_t, _,_ = _check_need_to_create_vxlan_secondary(data)
     vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_p or flag_t:
         # create bridge inside IGW
@@ -768,7 +768,7 @@ def run_tertiary(data, conn):
     functions.set_link_up(veth_hyp_igw, conn.tertiary_ssh, primary=False)
 
     # check if vxlan is reqd
-    flag_p, flag_s = _check_need_to_create_vxlan_tertiary(data)
+    flag_p, flag_s,_,_ = _check_need_to_create_vxlan_tertiary(data)
     vx_bridge_name = 'vx-igw-'+tenant_name
     if flag_p or flag_s:
         # create bridge inside IGW
@@ -944,7 +944,7 @@ def run_tertiary(data, conn):
             igw_name, s, gre_tunnel_name, conn.tertiary_ssh, primary=False)
             """
 
-def get_macs(hypervisor, data):
+def get_macs(hypervisor, data, common_cidrs):
     
     if hypervisor == 'primary':
         subnets = data.get('primary').get('subnets')
@@ -956,7 +956,8 @@ def get_macs(hypervisor, data):
     res = []
     for i in range(len(subnets)):
         for vm_ip, vm_mac in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
-            res.append(data[hypervisor]['subnets'][i]['vm_data'][vm_ip])
+            if data[hypervisor]['subnets'][i]['cidr'] in common_cidrs:
+                res.append(data[hypervisor]['subnets'][i]['vm_data'][vm_ip])
     print("List of MACS on {} hypervisor: {}".format(hypervisor, res))
     return res
         
@@ -974,34 +975,45 @@ def add_fdb_tenant(data, conn):
     remote_ip_t = '55.3.{}.2'.format(tenant_id)
 
     # for primary:
-    list_macs_s = get_macs('secondary', data)
-    for mac in list_macs_s:
-        functions.add_fdb_entry_in_vxlan_namespace(
+   flag_s, flag_t, common_cidrs_ps, common_cidrs_pt = _check_need_to_create_vxlan_primary(data)
+
+    if flag_s:
+        list_macs_s = get_macs('secondary', data, common_cidrs_ps)
+        for mac in list_macs_s:
+            functions.add_fdb_entry_in_vxlan_namespace(
             igw_name, remote_ip_s, vx_device_name, mac, primary=True)
-    list_macs_t = get_macs('tertiary', data)
-    for mac in list_macs_t:
-        functions.add_fdb_entry_in_vxlan_namespace(
-            igw_name, remote_ip_t, vx_device_name, mac, primary=True)
+
+    if flag_t:
+        list_macs_t = get_macs('tertiary', data, common_cidrs_pt)
+        for mac in list_macs_t:
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip_t, vx_device_name, mac, primary=True)
     
     # for secondary:
-    list_macs_p = get_macs('primary', data)
-    for mac in list_macs_p:
-        functions.add_fdb_entry_in_vxlan_namespace(
-            igw_name, remote_ip_p, vx_device_name, mac, conn.secondary_ssh, primary=False)
-    list_macs_t = get_macs('tertiary', data)
-    for mac in list_macs_t:
-        functions.add_fdb_entry_in_vxlan_namespace(
-            igw_name, remote_ip_t, vx_device_name, mac, conn.secondary_ssh, primary=False)
+    flag_p, flag_t, common_cidrs_ps, common_cidrs_st = _check_need_to_create_vxlan_secondary(data)
+    if flag_p:
+        list_macs_p = get_macs('primary', data, common_cidrs_ps)
+        for mac in list_macs_p:
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip_p, vx_device_name, mac, conn.secondary_ssh, primary=False)
+    if flag_t:
+        list_macs_t = get_macs('tertiary', data)
+        for mac in list_macs_t:
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip_t, vx_device_name, mac, conn.secondary_ssh, primary=False)
 
-    # for tertiary:s
-    list_macs_p = get_macs('primary', data)
-    for mac in list_macs_p:
-        functions.add_fdb_entry_in_vxlan_namespace(
-            igw_name, remote_ip_p, vx_device_name, mac, conn.tertiary_ssh, primary=False)
-    list_macs_s = get_macs('secondary', data)
-    for mac in list_macs_s:
-        functions.add_fdb_entry_in_vxlan_namespace(
-            igw_name, remote_ip_s, vx_device_name, mac, conn.tertiary_ssh, primary=False)
+    # for tertiary:
+    flag_p, flag_s, common_cidrs_pt, common_cidrs_ts = _check_need_to_create_gre_tertiary(data)
+    if flag_p:
+        list_macs_p = get_macs('primary', data, common_cidrs_pt)
+        for mac in list_macs_p:
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip_p, vx_device_name, mac, conn.tertiary_ssh, primary=False)
+    if flag_s:
+        list_macs_s = get_macs('secondary', data, common_cidrs_ts)
+        for mac in list_macs_s:
+            functions.add_fdb_entry_in_vxlan_namespace(
+                igw_name, remote_ip_s, vx_device_name, mac, conn.tertiary_ssh, primary=False)
 
 
         
