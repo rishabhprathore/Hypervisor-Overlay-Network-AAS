@@ -997,7 +997,7 @@ def add_fdb_tenant(data, conn):
             functions.add_fdb_entry_in_vxlan_namespace(
                 igw_name, remote_ip_p, vx_device_name, mac, conn.secondary_ssh, primary=False)
     if flag_t:
-        list_macs_t = get_macs('tertiary', data)
+        list_macs_t = get_macs('tertiary', data, common_cidrs_st)
         for mac in list_macs_t:
             functions.add_fdb_entry_in_vxlan_namespace(
                 igw_name, remote_ip_t, vx_device_name, mac, conn.secondary_ssh, primary=False)
