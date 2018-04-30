@@ -19,7 +19,7 @@ def main():
         print("**********************************************")
         pprint(a)
         print("**********************************************")
-        #tm.run(a, conn)
+        tm.run(a, conn)
     #tenant = values.get_user_data()['data']['tenants'][0]
     #pprint(tenant)
     #tm.run(tenant, conn)
