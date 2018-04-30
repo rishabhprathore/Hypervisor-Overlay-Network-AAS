@@ -327,7 +327,7 @@ def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,c
     return
 
 
-def add_fdb_entry_in_vxlan_namespace(name_space, remote_ip, vxlan_dev_name, mac='00:00:00:00:00:00', conn=None, primary=True):
+def add_fdb_entry_in_vxlan_namespace(name_space, remote_ip, vxlan_dev_name, mac='ff:ff:ff:ff:ff:ff', conn=None, primary=True):
     global prefix
     cmd = prefix + \
         '{} bridge fdb append to {} dst {} dev {} '.format(
