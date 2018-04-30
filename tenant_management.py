@@ -291,8 +291,6 @@ def _is_subnet_in_list(subnet, s_list):
     return False
 
 def run_primary(data, conn):
-    import pdb
-    pdb.set_trace()
     primary = data.get("primary")
     tenant_id = data.get("id")
     secondary = data.get("secondary")
@@ -397,8 +395,8 @@ def run_primary(data, conn):
         # adding default routes
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_p_s, gre_tunnel_name, primary=True)
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_s, gre_tunnel_name, primary=True)
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_s, conn=None, primary=True)
         for subnet in s_cidrs:
             functions.add_route_for_gre_cidr_namespace(igw_name, subnet, gre_tunnel_name)
     
@@ -406,7 +404,7 @@ def run_primary(data, conn):
         local_ip = veth_igw_hyp_ip.split('/')[0]
         remote_ip = '55.3.{}.2'.format(tenant_id)
         gre_tunnel_name = 'gre-igw-'+tenant_name + \
-            '-'+remote_ip.replace('.', '')s
+            '-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name)
         gre_tunnel_ip_p_t = '34.1.'+str(tenant_id)+'.1/32'
@@ -420,8 +418,8 @@ def run_primary(data, conn):
         # adding default routes
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_p_t, gre_tunnel_name, primary=True)
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_t, gre_tunnel_name, primary=True)
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_t, conn=None, primary=True)
 
         for subnet in t_cidrs:
             functions.add_route_for_gre_cidr_namespace(
@@ -432,7 +430,6 @@ def run_primary(data, conn):
     secondary_subnets = data.get('secondary').get('subnets')
     tertiary_subnets = data.get('tertiary').get('subnets')
 
-    import pdb; pdb.set_trace()
     i = 0
     for i, subnet in enumerate(primary_subnets):
         cidr = subnet["cidr"]
@@ -476,7 +473,6 @@ def run_primary(data, conn):
         functions.set_link_up_in_namespace(
             igw_name, veth_igw_br_default, primary=True)
 
-        import pdb; pdb.set_trace()
         num_vms = len(vm_ips)
         data['primary']['subnets'][i]['vm_data']=dict()
         for vm_ip in vm_ips:
@@ -499,10 +495,26 @@ def run_primary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
+    remote_ip_p_igw = '55.1.{}.2/32'.format(tenant_id)
     remote_ip_s_igw = '55.2.{}.2/32'.format(tenant_id)
     remote_ip_s_l2 = secondary_data.get('l2_ip')
     remote_ip_t_igw = '55.3.{}.2/32'.format(tenant_id)
     remote_ip_t_l2 = tertiary_data.get('l2_ip')
+
+    if flag_s:
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_s_l2, gre_tunnel_ip_s, primary=True)
+        
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_p_igw, gre_tunnel_ip_p_s, primary=True)
+
+
+    if flag_t:
+        functions.add_route_in_hypervisor_non_default(
+        remote_ip_t_l2, gre_tunnel_ip_t, primary=True)
+
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_p_igw, gre_tunnel_ip_p_t, primary=True)
 
     functions.add_route_in_hypervisor_non_default(
         remote_ip_s_l2, remote_ip_s_igw, primary=True)
@@ -529,7 +541,6 @@ def run_secondary(data, conn):
     tenant_id = data.get("id")
     secondary = data.get("secondary")
     tertiary = data.get("tertiary")
-    import pdb; pdb.set_trace()
     # Create Tenant
     # functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
@@ -601,8 +612,10 @@ def run_secondary(data, conn):
         # adding default routes
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_s_p, gre_tunnel_name, conn.secondary_ssh, primary=False)
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_p, gre_tunnel_name, conn.secondary_ssh, primary=False)
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_p, conn.secondary_ssh, primary=False)
+        """functions.add_route_for_gre_cidr_namespace(
+            igw_name, gre_tunnel_ip_p, gre_tunnel_name, conn.secondary_ssh, primary=False)"""
         for subnet in p_cidrs:
             functions.add_route_for_gre_cidr_namespace(
                 igw_name, subnet, gre_tunnel_name, conn.secondary_ssh, primary=False)
@@ -619,13 +632,14 @@ def run_secondary(data, conn):
         #to create a GRE tunnel in secondary
         functions.set_link_up_in_namespace(
             igw_name, gre_tunnel_name, conn.secondary_ssh, primary=False)
+
         functions.assign_ip_address_namespace(
             igw_name, gre_tunnel_name, gre_tunnel_ip_s_t, conn.secondary_ssh, primary=False)
         # adding default routes
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_s_t, gre_tunnel_name, conn.secondary_ssh, primary=False)
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_t, gre_tunnel_name, conn.secondary_ssh, primary=False)
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_t, conn.secondary_ssh, primary=False)
 
         for subnet in t_cidrs:
             functions.add_route_for_gre_cidr_namespace(
@@ -712,10 +726,27 @@ def run_secondary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
+    remote_ip_s_igw = '55.2.{}.2/32'.format(tenant_id)
     remote_ip_p_igw = '55.1.{}.2/32'.format(tenant_id)
     remote_ip_p_l2 = primary_data.get('l2_ip')
     remote_ip_t_igw = '55.3.{}.2/32'.format(tenant_id)
     remote_ip_t_l2 = tertiary_data.get('l2_ip')
+
+    if flag_p:        
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_p_l2, gre_tunnel_ip_p, conn.secondary_ssh, primary=False)
+        
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_s_igw, gre_tunnel_ip_s_p, conn.secondary_ssh, primary=False)
+
+
+    if flag_t:
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_t_l2, gre_tunnel_ip_t, conn.secondary_ssh, primary=False)
+        
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_s_igw, gre_tunnel_ip_s_t, conn.secondary_ssh, primary=False)
+
 
     functions.add_route_in_hypervisor_non_default(
         remote_ip_p_l2, remote_ip_p_igw, conn.secondary_ssh, primary=False)
@@ -811,11 +842,14 @@ def run_tertiary(data, conn):
             igw_name, gre_tunnel_name, conn.tertiary_ssh, primary=False)
         functions.assign_ip_address_namespace(
             igw_name, gre_tunnel_name, gre_tunnel_ip_t_p, conn.tertiary_ssh, primary=False)
+        
+        
         # adding default routes
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_t_p, gre_tunnel_name, conn.tertiary_ssh, primary=False)
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_p, gre_tunnel_name, conn.tertiary_ssh, primary=False)
+
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_p, conn.tertiary_ssh, primary=False)        
         for subnet in p_cidrs:
             functions.add_route_for_gre_cidr_namespace(
                 igw_name, subnet, gre_tunnel_name, conn.tertiary_ssh, primary=False)
@@ -833,9 +867,10 @@ def run_tertiary(data, conn):
             igw_name, gre_tunnel_name, conn.tertiary_ssh, primary=False)
         functions.assign_ip_address_namespace(
             igw_name, gre_tunnel_name, gre_tunnel_ip_s_t, conn.tertiary_ssh, primary=False)
+
         # adding default routes
-        functions.add_route_for_gre_cidr_namespace(
-            igw_name, gre_tunnel_ip_s_t, gre_tunnel_name, conn.tertiary_ssh, primary=False)
+        functions.add_route_in_namespace_non_default(
+            igw_name, veth_hyp_igw_ip, gre_tunnel_ip_s_t, conn.tertiary_ssh, primary=False)
         functions.add_route_for_gre_cidr_namespace(
             igw_name, gre_tunnel_ip_t, gre_tunnel_name, conn.tertiary_ssh, primary=False)
 
@@ -922,10 +957,25 @@ def run_tertiary(data, conn):
     # add route for all other IGWs endpoint in primary
     primary_data, secondary_data, tertiary_data = values.get_value()
 
+    remote_ip_t_igw = '55.3.{}.2/32'.format(tenant_id)
     remote_ip_p_igw = '55.1.{}.2/32'.format(tenant_id)
     remote_ip_p_l2 = primary_data.get('l2_ip')
     remote_ip_s_igw = '55.2.{}.2/32'.format(tenant_id)
     remote_ip_s_l2 = secondary_data.get('l2_ip')
+
+    if flag_p:
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_p_l2, gre_tunnel_ip_p, conn.tertiary_ssh, primary=False)
+
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_t_igw, gre_tunnel_ip_t_p, conn.tertiary_ssh, primary=False)
+
+    if flag_s:
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_s_l2, gre_tunnel_ip_s_t, conn.tertiary_ssh, primary=False)
+
+        functions.add_route_in_hypervisor_non_default(
+            remote_ip_t_igw, gre_tunnel_ip_t, conn.tertiary_ssh, primary=False)
 
     functions.add_route_in_hypervisor_non_default(
         remote_ip_p_l2, remote_ip_p_igw, conn.tertiary_ssh, primary=False)
@@ -955,7 +1005,6 @@ def get_macs(hypervisor, data, common_cidrs):
         subnets = data.get('secondary').get('subnets')
     else:
         subnets = data.get('tertiary').get('subnets')
-    import pdb; pdb.set_trace()
     res = []
     for i in range(len(subnets)):
         for vm_ip, vm_mac in data[hypervisor]['subnets'][i]['vm_data'].iteritems():
@@ -966,7 +1015,6 @@ def get_macs(hypervisor, data, common_cidrs):
         
 
 def add_fdb_tenant(data, conn):
-    import pdb; pdb.set_trace()
 
     tenant_id = data.get("id")
     tenant_name = 'T' + str(tenant_id)

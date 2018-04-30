@@ -64,7 +64,6 @@ def convert_data():
                 max_len = len_
                 max_len_subnet = subnet
         max_subnet[max_len_subnet] = subnets[max_len_subnet]
-        #import pdb; pdb.set_trace()
         #print(max_subnet)
         del subnets[max_len_subnet]
         #pprint(subnets)
