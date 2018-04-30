@@ -1081,6 +1081,7 @@ def add_rules_tenant(data, conn):
 
     flag_s, flag_t, s_cidrs, t_cidrs = _check_need_to_create_gre_primary(data)
 
+    print("Adding rules in primary:")
     if flag_s:
         gre_tunnel_ip_p_s = '33.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_s = '33.2.'+str(tenant_id)+'.1/32'
@@ -1111,7 +1112,7 @@ def add_rules_tenant(data, conn):
                 functions.add_route_for_gre_cidr_namespace(
                     igw_name, vm_ip, gre_tunnel_t_name, conn=None, primary=True)
 
-
+    print("Adding rules in secondary:")
     # secondary code
     flag_p, flag_t, p_cidrs, t_cidrs = _check_need_to_create_gre_secondary(
         data)
@@ -1146,6 +1147,7 @@ def add_rules_tenant(data, conn):
                 functions.add_route_for_gre_cidr_namespace(
                     igw_name, vm_ip, gre_tunnel_t_name, conn.secondary_ssh, primary=False)
 
+    print("Adding rules in tertiary:")
     # tertiary code
     flag_p, flag_s, p_cidrs, s_cidrs = _check_need_to_create_gre_tertiary(
         data)
