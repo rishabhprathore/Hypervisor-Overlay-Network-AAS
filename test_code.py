@@ -17,7 +17,7 @@ def main():
     for a in values.get_user_data()['data']['tenants']:
         print("**********************************************")
         print(a)
-        #tm.run(a, conn)
+        tm.run(a, conn)
     #tenant = values.get_user_data()['data']['tenants'][0]
     #pprint(tenant)
     #tm.run(tenant, conn)
