@@ -100,8 +100,6 @@ def convert_data():
         user_data['data']['tenants'].append(copy_tenant_data)
         #pprint(copy_tenant_data)
     
-    import pdb
-    pdb.set_trace()
     pprint(user_data)
     return user_data
 

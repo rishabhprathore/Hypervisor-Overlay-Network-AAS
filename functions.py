@@ -73,8 +73,6 @@ def create_docker_container(c_name, veth1, c_cidr, gw,  conn, ssh_conn=None, pri
     container_id = c_id['Id']
     conn.start(container_id)
     c_pid = conn.inspect_container(c_id['Id'])['State']['Pid']
-    import pdb
-    pdb.set_trace()
     cmd1 = "sudo ip link set {0} netns {1}".format(veth1, c_pid)
     cmd2 = "sudo docker exec -i --privileged {0} ip addr add {1} dev {2} ".format(
         c_id['Id'], c_cidr, veth1)
@@ -103,8 +101,6 @@ def get_mac_dockerContainer(container_id, conn=None, primary=True):
     :param primary:
     :return: returns the MAC address of the container veth1 interface
     """
-    import pdb
-    pdb.set_trace()
     cmd = "sudo docker exec -i %s ifconfig -a| grep -A2 --no-group-separator 'Y'| grep HWaddr | awk '{print $5}'" % container_id
     print(cmd)
     if primary == True:
