@@ -1021,7 +1021,6 @@ def get_macs(hypervisor, data, common_cidrs):
         
 
 def add_fdb_tenant(data, conn):
-
     tenant_id = data.get("id")
     tenant_name = 'T' + str(tenant_id)
     igw_name = 'IGW-' + tenant_name
