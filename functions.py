@@ -354,7 +354,8 @@ def create_bridge_namespace(name_space, bridge_name, conn=None, primary=True):
     print(cmd)
     if primary == True:
         print('local:')
-        os.system(cmd_list)
+        for cmd in cmd_list:
+            os.system(cmd)
         return
     ssh_remote(conn, cmd_list)
     return
