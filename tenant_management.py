@@ -1004,7 +1004,7 @@ def add_fdb_tenant(data, conn):
                 igw_name, remote_ip_t, vx_device_name, mac, conn.secondary_ssh, primary=False)
 
     # for tertiary:
-    flag_p, flag_s, common_cidrs_pt, common_cidrs_ts = _check_need_to_create_gre_tertiary(data)
+    flag_p, flag_s, common_cidrs_pt, common_cidrs_ts = _check_need_to_create_vxlan_tertiary(data)
     if flag_p:
         list_macs_p = get_macs('primary', data, common_cidrs_pt)
         for mac in list_macs_p:
