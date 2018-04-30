@@ -381,12 +381,12 @@ def run_primary(data, conn):
     flag_s, flag_t, s_cidrs, t_cidrs = _check_need_to_create_gre_primary(data)
 
     if flag_s:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.2.{}.2'.format(tenant_id)
-        gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.','')
-        functions.create_gre_tunnel_namespace(igw_name, remote_ip, local_ip, gre_tunnel_name)
         gre_tunnel_ip_p_s = '33.1.'+str(tenant_id)+'.1/32'
         gre_tunnel_ip_s = '33.2.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_p_s.split('/')[0]
+        remote_ip = gre_tunnel_ip_s.split('/')[0]
+        gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.','')
+        functions.create_gre_tunnel_namespace(igw_name, remote_ip, local_ip, gre_tunnel_name)
 
         #to create a GRE tunnel in primary
         functions.set_link_up_in_namespace(igw_name, gre_tunnel_name, primary=True)
@@ -401,14 +401,16 @@ def run_primary(data, conn):
             functions.add_route_for_gre_cidr_namespace(igw_name, subnet, gre_tunnel_name)
     
     if flag_t:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.3.{}.2'.format(tenant_id)
+        gre_tunnel_ip_p_t = '34.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '34.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_p_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_t.split('/')[0]
+
         gre_tunnel_name = 'gre-igw-'+tenant_name + \
             '-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name)
-        gre_tunnel_ip_p_t = '34.1.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_t = '34.2.'+str(tenant_id)+'.1/32'
+        
 
         #to create a GRE tunnel in primary
         functions.set_link_up_in_namespace(
@@ -595,14 +597,15 @@ def run_secondary(data, conn):
         data)
 
     if flag_p:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.1.{}.2'.format(tenant_id)
+        gre_tunnel_ip_s_p = '33.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_p = '33.1.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_s_p.split('/')[0]
+        remote_ip = gre_tunnel_ip_p.split('/')[0]
+
         gre_tunnel_name = 'gre-igw-'+tenant_name + \
             '-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name, conn.secondary_ssh, primary=False)
-        gre_tunnel_ip_s_p = '33.2.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_p = '33.1.'+str(tenant_id)+'.1/32'
 
         #to create a GRE tunnel in primary
         functions.set_link_up_in_namespace(
@@ -621,13 +624,14 @@ def run_secondary(data, conn):
                 igw_name, subnet, gre_tunnel_name, conn.secondary_ssh, primary=False)
 
     if flag_t:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.3.{}.2'.format(tenant_id)
+        gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_s_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_t.split('/')[0]
         gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.','')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name, conn.secondary_ssh, primary=False)
-        gre_tunnel_ip_s_t = '35.1.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_t = '35.2.'+str(tenant_id)+'.1/32'
+        
 
         #to create a GRE tunnel in secondary
         functions.set_link_up_in_namespace(
@@ -829,13 +833,14 @@ def run_tertiary(data, conn):
         data)
 
     if flag_p:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.1.{}.2'.format(tenant_id)
+        gre_tunnel_ip_t_p = '34.3.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_p = '34.1.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_t_p.split('/')[0]
+        remote_ip = gre_tunnel_ip_p.split('/')[0]
         gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name, conn.tertiary_ssh, primary=False)
-        gre_tunnel_ip_t_p = '34.3.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_p = '34.1.'+str(tenant_id)+'.1/32'
+       
 
         #to create a GRE tunnel in primary
         functions.set_link_up_in_namespace(
@@ -855,13 +860,14 @@ def run_tertiary(data, conn):
                 igw_name, subnet, gre_tunnel_name, conn.tertiary_ssh, primary=False)
 
     if flag_s:
-        local_ip = veth_igw_hyp_ip.split('/')[0]
-        remote_ip = '55.2.{}.2'.format(tenant_id)
+        gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_s_t.split('/')[0]
         gre_tunnel_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name, conn.tertiary_ssh, primary=False)
-        gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
-        gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
+        
         #to create a GRE tunnel in secondary
         functions.set_link_up_in_namespace(
             igw_name, gre_tunnel_name, conn.tertiary_ssh, primary=False)
