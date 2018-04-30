@@ -32,7 +32,7 @@ def get_user_data():
 
 def convert_data():
     user_input = None
-    with open("user_input.json", 'r') as f:
+    with open("user_input3.json", 'r') as f:
         user_input = json.load(f)
     pprint(user_input)
     list_tenants = user_input["data"]["tenants"]
