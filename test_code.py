@@ -15,8 +15,9 @@ def main():
     conn = None
     conn = Connection(secondary_data, tertiary_data)
     pprint(values.get_user_data())
+    print("**********************************************")
     for a in values.get_user_data()['data']['tenants']:
-        print("**********************************************")
+        
         print(a)
         #tm.run(a, conn)
     #tenant = values.get_user_data()['data']['tenants'][0]
