@@ -296,6 +296,8 @@ def run_primary(data, conn):
     secondary = data.get("secondary")
     tertiary = data.get("tertiary")
 
+    print("Running for tenant id: {}".format(tenant_id))
+
     # Create Tenant
     # functions.get_connection()
     tenant_name = 'T' + str(tenant_id)
@@ -1181,25 +1183,18 @@ def add_rules_tenant(data, conn):
                 # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
                 functions.add_route_for_gre_cidr_namespace(
                     igw_name, vm_ip, gre_tunnel_s_name, conn.tertiary_ssh, primary=False)
-
-
-
-        
-
-
-    
-
-
-
-
-        
+       
     
 def run(data, conn):
     run_primary(data, conn)
     run_secondary(data, conn)
     run_tertiary(data, conn)
     pprint(data)
+    import pdb
+    pdb.set_trace()
     add_fdb_tenant(data, conn)
     add_rules_tenant(data, conn)
+    import pdb
+    pdb.set_trace()
 
 
