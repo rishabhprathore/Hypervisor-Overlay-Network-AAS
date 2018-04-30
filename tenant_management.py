@@ -1072,6 +1072,124 @@ def add_fdb_tenant(data, conn):
                 igw_name, remote_ip_s, vx_device_name, mac, conn.tertiary_ssh, primary=False)
 
 
+def add_rules_tenant(data, conn):
+    tenant_id = data.get("id")
+    tenant_name = 'T' + str(tenant_id)
+    igw_name = 'IGW-' + tenant_name
+    vx_device_name = 'vx-igw-'+tenant_name+'-dev'
+
+
+    flag_s, flag_t, s_cidrs, t_cidrs = _check_need_to_create_gre_primary(data)
+
+    if flag_s:
+        gre_tunnel_ip_p_s = '33.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_s = '33.2.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_p_s.split('/')[0]
+        remote_ip = gre_tunnel_ip_s.split('/')[0]
+        gre_tunnel_s_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
+
+        secondary_subnets = data.get('primary').get('subnets')
+        for item in secondary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_s_name, conn=None, primary=True)
+
+    if flag_t:
+        gre_tunnel_ip_p_t = '34.1.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '34.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_p_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_t.split('/')[0]
+
+        gre_tunnel_t_name = 'gre-igw-'+tenant_name + \
+            '-'+remote_ip.replace('.', '')
+        
+        tertiary_subnets = data.get('tertiary').get('subnets')
+        for item in tertiary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to tertiary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_t_name, conn=None, primary=True)
+
+
+    # secondary code
+    flag_p, flag_t, p_cidrs, t_cidrs = _check_need_to_create_gre_secondary(
+        data)
+
+    if flag_p:
+        gre_tunnel_ip_s_p = '33.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_p = '33.1.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_s_p.split('/')[0]
+        remote_ip = gre_tunnel_ip_p.split('/')[0]
+
+        gre_tunnel_p_name = 'gre-igw-'+tenant_name + \
+            '-'+remote_ip.replace('.', '')
+        
+        primary_subnets = data.get('primary').get('subnets')
+        for item in primary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to tertiary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_p_name, conn.secondary_ssh, primary=False)
+
+    if flag_t:
+        gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_s_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_t.split('/')[0]
+        gre_tunnel_t_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
+
+        tertiary_subnets = data.get('tertiary').get('subnets')
+        for item in tertiary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to tertiary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_t_name, conn.secondary_ssh, primary=False)
+
+    # tertiary code
+    flag_p, flag_s, p_cidrs, s_cidrs = _check_need_to_create_gre_tertiary(
+        data)
+
+    if flag_p:
+        gre_tunnel_ip_t_p = '34.3.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_p = '34.1.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_t_p.split('/')[0]
+        remote_ip = gre_tunnel_ip_p.split('/')[0]
+        gre_tunnel_p_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
+
+        primary_subnets = data.get('primary').get('subnets')
+        for item in primary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to tertiary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_p_name, conn.tertiary_ssh, primary=False)
+        
+
+
+    if flag_s:
+        gre_tunnel_ip_s_t = '35.2.'+str(tenant_id)+'.1/32'
+        gre_tunnel_ip_t = '35.3.'+str(tenant_id)+'.1/32'
+        local_ip = gre_tunnel_ip_t.split('/')[0]
+        remote_ip = gre_tunnel_ip_s_t.split('/')[0]
+        gre_tunnel_s_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
+
+        secondary_subnets = data.get('primary').get('subnets')
+        for item in secondary_subnets:
+            for vm_ip in item['vm_ips']:
+                # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
+                functions.add_route_for_gre_cidr_namespace(
+                    igw_name, vm_ip, gre_tunnel_s_name, conn.tertiary_ssh, primary=False)
+
+
+
+        
+
+
+    
+
+
+
+
         
     
 def run(data, conn):
