@@ -1089,7 +1089,7 @@ def add_rules_tenant(data, conn):
         remote_ip = gre_tunnel_ip_s.split('/')[0]
         gre_tunnel_s_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
 
-        secondary_subnets = data.get('primary').get('subnets')
+        secondary_subnets = data.get('secondary').get('subnets')
         for item in secondary_subnets:
             for vm_ip in item['vm_ips']:
                 # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
@@ -1175,7 +1175,7 @@ def add_rules_tenant(data, conn):
         remote_ip = gre_tunnel_ip_s_t.split('/')[0]
         gre_tunnel_s_name = 'gre-igw-'+tenant_name+'-'+remote_ip.replace('.', '')
 
-        secondary_subnets = data.get('primary').get('subnets')
+        secondary_subnets = data.get('secondary').get('subnets')
         for item in secondary_subnets:
             for vm_ip in item['vm_ips']:
                 # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
