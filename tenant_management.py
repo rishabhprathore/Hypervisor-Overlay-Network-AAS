@@ -872,7 +872,7 @@ def run_tertiary(data, conn):
         functions.set_link_up_in_namespace(
             igw_name, gre_tunnel_name, conn.tertiary_ssh, primary=False)
         functions.assign_ip_address_namespace(
-            igw_name, gre_tunnel_name, gre_tunnel_ip_s_t, conn.tertiary_ssh, primary=False)
+            igw_name, gre_tunnel_name, gre_tunnel_ip_t, conn.tertiary_ssh, primary=False)
 
         # adding default routes
         functions.add_route_in_namespace_non_default(
