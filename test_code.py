@@ -14,9 +14,10 @@ from multiprocessing import Process
 def main():
     primary_data, secondary_data, tertiary_data = values.get_value()
     conn = None
-    conn = Connection(secondary_data, tertiary_data)
+    
     list_p = []
     for a in values.get_user_data()['data']['tenants']:
+        conn = Connection(secondary_data, tertiary_data)
         print("**********************************************")
         pprint(a)
         print("**********************************************")
