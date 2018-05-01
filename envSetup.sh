@@ -67,6 +67,8 @@ sleep 2
 sudo systemctl daemon-reload
 sleep 2
 sudo service docker start
+sleep 2
+pip install ipcalc
 echo -e "\n**** Docker Installation done ****\n\n"
 
 ####################################################### IP Tables Here Onwards ###################################################
