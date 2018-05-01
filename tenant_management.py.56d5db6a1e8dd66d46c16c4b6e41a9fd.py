@@ -539,8 +539,8 @@ def run_primary(data, conn):
         veth_igw)
     os.system(rule)
     
-    functions.add_default_route_in_namespace(
-        veth_pgw_ip, veth_igw, igw_name, conn=None, primary=True)
+    add_default_route_in_namespace(
+        veth_pgw_ip, veth_igw, name_space, conn=None, primary=True)
     #adding routes for GRE subnets in IGW namespace
     s_cidrs, t_cidrs  = _get_gre_subnets_for_primary(data)
     '''
