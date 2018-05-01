@@ -1220,11 +1220,7 @@ def run(data, conn):
     run_secondary(data, conn)
     run_tertiary(data, conn)
     pprint(data)
-    import pdb
-    pdb.set_trace()
     add_fdb_tenant(data, conn)
     add_rules_tenant(data, conn)
-    import pdb
-    pdb.set_trace()
 
 
