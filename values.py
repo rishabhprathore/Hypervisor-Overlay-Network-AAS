@@ -2,6 +2,8 @@ import json
 from pprint import pprint
 import copy
         
+#ssh-copy-id ckogant@152.46.18.27
+#ssh-copy-id ckogant@152.46.19.135
 
 def get_value():
     primary_data = {
