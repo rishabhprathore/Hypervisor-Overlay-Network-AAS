@@ -8,18 +8,24 @@ import vmManagement as vmm
 import tenant_management as tm
 import values
 from pprint import pprint
+from multiprocessing import Process
 
 
 def main():
     primary_data, secondary_data, tertiary_data = values.get_value()
     conn = None
     conn = Connection(secondary_data, tertiary_data)
-    
+    list_p = []
     for a in values.get_user_data()['data']['tenants']:
         print("**********************************************")
         pprint(a)
         print("**********************************************")
-        tm.run(a, conn)
+        list_p.append(Process(target=tm.run, args=(a, conn)))
+    for p in list_p:
+        p.start()
+    for p in list_p:
+        p.join()
+        #tm.run(a, conn)
     #tenant = values.get_user_data()['data']['tenants'][0]
     #pprint(tenant)
     #tm.run(tenant, conn)
