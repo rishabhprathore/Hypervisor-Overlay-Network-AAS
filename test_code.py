@@ -21,7 +21,7 @@ def main():
         print("**********************************************")
         pprint(a)
         print("**********************************************")
-        list_p.append(Process(target=tm.run_p, args=(a)))
+        list_p.append(Process(target=tm.run_p, args=a)
     for p in list_p:
         p.start()
     for p in list_p:
