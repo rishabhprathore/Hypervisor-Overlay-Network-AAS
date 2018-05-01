@@ -44,7 +44,7 @@ def ssh_remote(conn, cmd_list):
     res = []
     for cmd in cmd_list:
         ssh_stdin, ssh_stdout, ssh_stderr = conn.exec_command(
-            cmd, timeout=60)
+            cmd, timeout=300)
 
         #print(type(ssh_stdout.read())
         
