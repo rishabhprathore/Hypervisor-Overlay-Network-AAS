@@ -2,23 +2,23 @@ import json
 from pprint import pprint
 import copy
         
-#ssh-copy-id ckogant@152.46.18.27
-#ssh-copy-id ckogant@152.46.19.135
+#ssh-copy-id ckogant@152.46.19.26
+#ssh-copy-id ckogant@152.1.13.228
 
 def get_value():
     primary_data = {
         'username': 'rrathor',
-        'ip': '152.46.20.10',
-        'l2_ip': '10.25.11.125'
+        'ip': '152.46.20.11',
+        'l2_ip': '10.25.7.173'
     }
     secondary_data = {
         'username': 'ckogant',
-        'ip': '152.46.18.27',
-        'l2_ip': '10.25.12.13'
+        'ip': '152.46.19.26',
+        'l2_ip': '10.25.'
     }
     tertiary_data = {
         'username': 'ckogant',
-        'ip': '152.46.19.135',
+        'ip': '152.1.13.228',
         'l2_ip': '10.25.7.94'
     }
     return primary_data, secondary_data, tertiary_data
