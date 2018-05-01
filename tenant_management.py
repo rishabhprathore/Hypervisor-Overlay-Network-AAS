@@ -3,6 +3,7 @@ from __future__ import print_function
 import ipaddress
 import unicodedata
 import os
+import ipcalc
 
 import creation
 import functions
@@ -540,11 +541,17 @@ def run_primary(data, conn):
     os.system(rule)
     
     functions.add_default_route_in_namespace(
-        veth_pgw_ip, veth_igw, igw_name, conn=None, primary=True)
+        veth_pgw_ip.split('/')[0], veth_igw, igw_name, conn=None, primary=True)
     
     functions.add_default_route_in_namespace(
-        veth_hyp_ip, veth_ns, pgw_name, conn=None, primary=True)
-        
+        veth_hyp_ip.split('/')[0], veth_ns, pgw_name, conn=None, primary=True)
+    
+    veth_igw_ip_net = ipcalc.IP(veth_igw_ip).guess_network()
+
+
+    functions.add_route_in_hypervisor_non_default(
+        veth_ns_ip.split('/')[0], str(veth_igw_ip_net), conn=None, primary=True)
+
     #adding routes for GRE subnets in IGW namespace
     s_cidrs, t_cidrs  = _get_gre_subnets_for_primary(data)
     '''
