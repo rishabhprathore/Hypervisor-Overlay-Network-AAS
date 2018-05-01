@@ -17,11 +17,11 @@ def main():
     
     list_p = []
     for a in values.get_user_data()['data']['tenants']:
-        conn = Connection(secondary_data, tertiary_data)
+        #conn = Connection(secondary_data, tertiary_data)
         print("**********************************************")
         pprint(a)
         print("**********************************************")
-        list_p.append(Process(target=tm.run, args=(a, conn)))
+        list_p.append(Process(target=tm.run_p, args=(a)))
     for p in list_p:
         p.start()
     for p in list_p:

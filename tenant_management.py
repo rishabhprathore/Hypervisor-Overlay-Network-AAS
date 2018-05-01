@@ -1223,4 +1223,19 @@ def run(data, conn):
     add_fdb_tenant(data, conn)
     add_rules_tenant(data, conn)
 
+def run_p(data):
+    import values
+    from connection import Connection
+
+    primary_data, secondary_data, tertiary_data = values.get_value()
+    conn = Connection(secondary_data, tertiary_data)
+
+
+    run_primary(data, conn)
+    run_secondary(data, conn)
+    run_tertiary(data, conn)
+    pprint(data)
+    add_fdb_tenant(data, conn)
+    add_rules_tenant(data, conn)
+
 
