@@ -309,6 +309,18 @@ def add_route_in_namespace(name_space,ip_address,conn=None, primary=True):
     ssh_remote(conn, [cmd])
     return
 
+def add_route_in_namespace_dev(name_space, interface, conn=None, primary=True):
+    global prefix
+    cmd = prefix + \
+        '{} sudo ip route add default dev {}'.format(name_space, interface)
+    print(cmd)
+    if primary == True:
+        print('local:')
+        os.system(cmd)
+        return
+    ssh_remote(conn, [cmd])
+    return
+
 def create_vxlan_tunnel(name_space, vxlan_tunnel_name,id,bridge_name,interface,conn=None, primary=True):
     global prefix
     cmd = prefix+ '{} sudo ip link add {} type vxlan id {}  dstport 4789 dev {}'.format(

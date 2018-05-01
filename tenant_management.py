@@ -625,6 +625,8 @@ def run_secondary(data, conn):
 
         gre_tunnel_name = 'gre-igw-'+tenant_name + \
             '-'+remote_ip.replace('.', '')
+        gre_tunnel_name_p = 'gre-igw-'+tenant_name + \
+            '-'+remote_ip.replace('.', '')
         functions.create_gre_tunnel_namespace(
             igw_name, remote_ip, local_ip, gre_tunnel_name, conn.secondary_ssh, primary=False)
 
@@ -784,6 +786,11 @@ def run_secondary(data, conn):
 
     functions.add_route_in_namespace_non_default(
         igw_name, veth_hyp_igw_ip, remote_ip_t_igw, conn.secondary_ssh, primary=False)
+
+    #add default route for internet traffic to go through primary
+
+    functions.add_route_in_namespace_dev(
+        igw_name, gre_tunnel_name_p, conn.secondary_ssh, primary=False)
 
     #adding routes for GRE subnets in IGW namespace
     p_cidrs, t_cidrs = _get_gre_subnets_for_secondary(data)
@@ -1202,7 +1209,11 @@ def add_rules_tenant(data, conn):
                 # add a route to vm_ip in igw-ns go to gre tunnel going to secondary
                 functions.add_route_for_gre_cidr_namespace(
                     igw_name, vm_ip, gre_tunnel_s_name, conn.tertiary_ssh, primary=False)
-       
+
+    #add default route for internet traffic to go through primary
+
+    functions.add_route_in_namespace_dev(
+        igw_name, gre_tunnel_p_name, conn.tertiary_ssh, primary=False)
     
 def run(data, conn):
     run_primary(data, conn)
