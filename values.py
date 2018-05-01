@@ -7,19 +7,19 @@ import copy
 
 def get_value():
     primary_data = {
-        'username': 'rrathor',
-        'ip': '152.46.19.26',
-        'l2_ip': '10.25.7.85'
+        'username': 'sbansal3',
+        'ip': '152.46.20.80',
+        'l2_ip': '10.25.7.241'
     }
     secondary_data = {
-        'username': 'ckogant',
-        'ip': '152.46.20.10',
-        'l2_ip': '10.25.11.125'
+        'username': 'sverma4',
+        'ip': '152.46.18.67',
+        'l2_ip': '10.25.11.155'
     }
     tertiary_data = {
-        'username': 'ckogant',
-        'ip': '152.46.18.27',
-        'l2_ip': '10.25.12.13'
+        'username': 'sbansal3',
+        'ip': '152.46.16.66',
+        'l2_ip': '10.25.7.184'
     }
     return primary_data, secondary_data, tertiary_data
 
